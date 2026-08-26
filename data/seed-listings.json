@@ -51,7 +51,9 @@
     "photos": [],
     "photoDirection": "Three-quarter bow view on a still lake at dawn, hull half in shadow, Rotsee-style tree line behind. Close-up of the wing rigger casting and of the bow number holder.",
     "artSeed": 1001,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1002",
@@ -105,7 +107,9 @@
     "photos": [],
     "photoDirection": "Workshop shot: bare hull on trestles under overhead lighting, yellow deck catching the light. Detail of the Empacher rigger stamp and the hull weight plate.",
     "artSeed": 1002,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1003",
@@ -159,7 +163,9 @@
     "photos": [],
     "photoDirection": "Boat on club slings against a grey Pacific Northwest sky, water flat behind. Honest close-up of the repaired stern section, plus the tracks and footstretcher.",
     "artSeed": 1003,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1004",
@@ -213,7 +219,9 @@
     "photos": [],
     "photoDirection": "Boat being carried down a dock by one rower, Boston skyline soft behind. Detail of the conventional rigger and the well-worn but clean tracks.",
     "artSeed": 1004,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1005",
@@ -267,7 +275,9 @@
     "photos": [],
     "photoDirection": "Row of identical new club singles racked outside a boathouse, morning light raking across the hulls. Wide shot of a learn-to-row session on flat water.",
     "artSeed": 1005,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1006",
@@ -321,7 +331,9 @@
     "photos": [],
     "photoDirection": "Boat on grass beside the Schuylkill, Boathouse Row in the far background. Unflinching detail shots of the deck cracks and the straightened stay — honesty is the selling point.",
     "artSeed": 1006,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1007",
@@ -375,7 +387,9 @@
     "photos": [],
     "photoDirection": "Two scullers lifting the double out of the water at a Canadian club dock, autumn colour on the far bank. Detail of the seat deck and the factory service sticker.",
     "artSeed": 1007,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1008",
@@ -429,7 +443,9 @@
     "photos": [],
     "photoDirection": "Factory floor: hull in the mould shop, Tuscan light through high windows. On-water shot of a double at speed, bow wave crisp, blades feathering.",
     "artSeed": 1008,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1009",
@@ -483,7 +499,9 @@
     "photos": [],
     "photoDirection": "Double on the Yarra at first light, city towers reflected. Wide shot of it strapped to a club trailer. Detail of the aluminium wing and the repaired bow.",
     "artSeed": 1009,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1010",
@@ -537,7 +555,9 @@
     "photos": [],
     "photoDirection": "Boat on the Amstel with the low Dutch horizon and a windmill silhouette. Detail of the faded yellow deck showing honest age. Spare riggers laid out on a boathouse floor.",
     "artSeed": 1010,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1011",
@@ -591,7 +611,9 @@
     "photos": [],
     "photoDirection": "Quad on the water at Lady Bird Lake, downtown Austin skyline compressed behind it. Boathouse interior with the boat racked. Detail of the coxing seat conversion.",
     "artSeed": 1011,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1012",
@@ -645,7 +667,9 @@
     "photos": [],
     "photoDirection": "Junior crew shouldering the four up a ramp, coach launch in the background. Interior shot of the bow-loader cox position. Honest photos of both hull patches.",
     "artSeed": 1012,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1013",
@@ -699,7 +723,9 @@
     "photos": [],
     "photoDirection": "Four at racing pace from a coach launch, four blades locked in at the catch. Factory detail: a rigger being torqued onto a fresh hull.",
     "artSeed": 1013,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1014",
@@ -753,7 +779,9 @@
     "photos": [],
     "photoDirection": "Eight at full pressure, cox visible, water breaking cleanly off the bow. Boathouse shot of it racked at head height. Detail of the wing rigger and bowball.",
     "artSeed": 1014,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1015",
@@ -807,7 +835,9 @@
     "photos": [],
     "photoDirection": "Novice crew launching from a municipal dock, city behind. Wide shot of the whole hull on slings showing its honest, weathered state. Close-up of a repaired panel.",
     "artSeed": 1015,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1016",
@@ -861,7 +891,9 @@
     "photos": [],
     "photoDirection": "New eight being unloaded from a delivery trailer outside a boathouse, protective covers half off. Factory shot of the deck lamination. Yellow deck detail.",
     "artSeed": 1016,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1017",
@@ -915,7 +947,9 @@
     "photos": [],
     "photoDirection": "Quad on the Henley reach, Temple Island in soft focus. Boathouse racking shot. Detail of the bow rigger and the cosmetic deck crazing.",
     "artSeed": 1017,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1018",
@@ -969,7 +1003,9 @@
     "photos": [],
     "photoDirection": "Pair on the flat water of a rowing course, marker buoys receding. Detail of the bow-steer linkage and of the chalky sun-faded paint.",
     "artSeed": 1018,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1019",
@@ -1023,7 +1059,9 @@
     "photos": [],
     "photoDirection": "Coastal single launching off a shingle beach through small surf, Alpine lake or Mediterranean coastline behind. Detail of the self-bailing ports and the reinforced bow.",
     "artSeed": 1019,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1020",
@@ -1077,7 +1115,9 @@
     "photos": [],
     "photoDirection": "Boat on a beach trolley on Ligurian shingle, Mediterranean behind. Keel-line scrape shot honestly. Corroded-but-serviceable rigger hardware close up.",
     "artSeed": 1020,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1021",
@@ -1131,7 +1171,9 @@
     "photos": [],
     "photoDirection": "Coastal double at sea in a moderate swell, calanques cliffs behind. Detail of the salt-clean hardware. Boat on the beach at the end of a long row, crew stretching.",
     "artSeed": 1021,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1022",
@@ -1185,7 +1227,9 @@
     "photos": [],
     "photoDirection": "Boat pulled up on a white-sand Gulf beach at golden hour. Detail of sun-faded decals and the self-bailer. Rower launching through low surf.",
     "artSeed": 1022,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1023",
@@ -1239,7 +1283,9 @@
     "photos": [],
     "photoDirection": "Sculler on calm coastal water at dawn, Maine islands and a lobster boat in the middle distance. Detail of the wider hull section. Boat on stands in a home garage.",
     "artSeed": 1023,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1024",
@@ -1293,7 +1339,9 @@
     "photos": [],
     "photoDirection": "Pair on Burrard Inlet with mountains behind. Archive-feel treatment to signal the listing is closed.",
     "artSeed": 1024,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1025",
@@ -1347,7 +1395,9 @@
     "photos": [],
     "photoDirection": "Single on the Swan River with the Perth skyline low behind, hard Australian afternoon light. Detail of the aluminium wing rigger and the club decal.",
     "artSeed": 1025,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1026",
@@ -1401,7 +1451,9 @@
     "photos": [],
     "photoDirection": "Blades laid on a boathouse floor, painted in club colours, overhead flat-lay. Close-up of the handle and collar. Blades feathering at the finish, spray caught in the light.",
     "artSeed": 1026,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1027",
@@ -1455,7 +1507,9 @@
     "photos": [],
     "photoDirection": "Pair of well-used blades leaning against a weathered boathouse wall, Minnesota winter light. Honest close-up of the chipped blade edges.",
     "artSeed": 1027,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1028",
@@ -1509,7 +1563,9 @@
     "photos": [],
     "photoDirection": "Eight blades stacked in a rack, plain white, geometric repetition. Detail of a collar and the repainted shaft. A crew's blades all locked in at the catch.",
     "artSeed": 1028,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1029",
@@ -1563,7 +1619,9 @@
     "photos": [],
     "photoDirection": "Four fresh blades in a rack, paint crisp, studio-clean lighting. Detail of the Fat2 blade face. Wide shot of a four with blades buried at the catch.",
     "artSeed": 1029,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1030",
@@ -1617,7 +1675,9 @@
     "photos": [],
     "photoDirection": "Pair of sculls across a dock in low autumn light, New England river behind. Warm close-up of the wooden handles showing even wear.",
     "artSeed": 1030,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1031",
@@ -1671,7 +1731,9 @@
     "photos": [],
     "photoDirection": "Loaded trailer at a regatta site at dawn, boats strapped and covered, mist on the course. Detail of the cradles and the tie-down system. Hitch and lighting board close-up.",
     "artSeed": 1031,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1032",
@@ -1725,7 +1787,9 @@
     "photos": [],
     "photoDirection": "Trailer on the road with a full load, autobahn light. Detail of the adjustable racking arms and the oar box interior packed with blades.",
     "artSeed": 1032,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1033",
@@ -1779,7 +1843,9 @@
     "photos": [],
     "photoDirection": "Wing rigger on a workshop bench, raking light picking out the carbon weave. Detail of the gate and pin assembly. The rigger sitting on a jig.",
     "artSeed": 1033,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1034",
@@ -1833,7 +1899,9 @@
     "photos": [],
     "photoDirection": "Single on a Copenhagen canal at blue hour, warm window light on the banks. Studio-clean detail of the near-perfect deck. The build sheet photographed on a table.",
     "artSeed": 1034,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1101",
@@ -1893,7 +1961,9 @@
     "photos": [],
     "photoDirection": "Flat-lay of the full size run on a boathouse floor, arranged small to large. Close-up of the seat panel on a worn one and a fresh one, side by side, so the buyer can see the difference honestly.",
     "artSeed": 1101,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1102",
@@ -1953,7 +2023,9 @@
     "photos": [],
     "photoDirection": "On a rower on a dock at dawn, breath visible, arms extended at the catch position to show the sleeve articulation. Detail of the cuff and the drop hem.",
     "artSeed": 1102,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1103",
@@ -2012,7 +2084,9 @@
     "photos": [],
     "photoDirection": "Studio-clean flat-lay of one suit, tags visible, on a bone-coloured surface. A second shot on a hanger showing the leg and shoulder cut against a plain wall.",
     "artSeed": 1103,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1104",
@@ -2068,7 +2142,9 @@
     "photos": [],
     "photoDirection": "On the handles of a scull in frost, hands inside, shot from the rower's eye line. Detail of the velcro closure and the neoprene edge showing honest wear.",
     "artSeed": 1104,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1105",
@@ -2127,7 +2203,9 @@
     "photos": [],
     "photoDirection": "Jackets hung on a rail in a boathouse, shot down the line. Close-up of the unpicked crest area on one, and of a cuff tear on another. A coach in one, in a launch, in bad weather.",
     "artSeed": 1105,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1106",
@@ -2185,7 +2263,9 @@
     "photos": [],
     "photoDirection": "Folded stack on a boathouse bench, honest and unstyled. A held-up pair against the light showing exactly how thin the seat panel has gone.",
     "artSeed": 1106,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1201",
@@ -2239,7 +2319,9 @@
     "photos": [],
     "photoDirection": "Unit on a boathouse bench beside its harness, cable coiled. Screen lit, showing a stroke rate. Close-up of the casing scuffs so nobody is surprised.",
     "artSeed": 1201,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1202",
@@ -2293,7 +2375,9 @@
     "photos": [],
     "photoDirection": "Mounted on a single's deck ahead of the rower's feet, water moving past, split visible on the display. Product shot of the unit and mount on a clean surface.",
     "artSeed": 1202,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1203",
@@ -2347,7 +2431,9 @@
     "photos": [],
     "photoDirection": "Unit on a sun-bleached boathouse bench, hard Australian light. Macro of the perished seal corner. In use on a single on the Swan.",
     "artSeed": 1203,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1204",
@@ -2401,7 +2487,9 @@
     "photos": [],
     "photoDirection": "Erg in a club erg room, morning light through high windows, monitor showing a completed piece. Close-up of the chain and the maintenance log taped to the frame.",
     "artSeed": 1204,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1205",
@@ -2455,7 +2543,9 @@
     "photos": [],
     "photoDirection": "Slings set up in a row on regatta grass at dawn, mist, a boat on the nearest pair. Detail of the webbing at a load point and of the bent foot.",
     "artSeed": 1205,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   },
   {
     "id": "bx-1206",
@@ -2509,6 +2599,8 @@
     "photos": [],
     "photoDirection": "Cover fitted on a single on outdoor racking, hard afternoon sun, showing how closely it sits to the hull. Detail of the rigger cut-out and the reinforced bow point.",
     "artSeed": 1206,
-    "source": "seed"
+    "source": "seed",
+    "sourceUrl": null,
+    "sourceName": null
   }
 ]

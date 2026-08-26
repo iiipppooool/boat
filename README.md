@@ -23,8 +23,11 @@ alternative.
 > anywhere in the site. Contact details now live in `src/lib/site.ts`, blank by
 > default, and anything left blank is simply not rendered.
 >
-> There are also no photographs — every listing currently shows a generated
-> illustration, clearly labelled as one. See [Photographs](#photographs).
+> There are also no photographs in the repository — every listing shows a
+> generated illustration, clearly labelled as one. `npm run photos:fetch` pulls
+> real stock images if you want them for a demo; they are marked as stock on the
+> page, because a photograph of a *different* boat presented as the item for sale
+> misleads the buyer. See [Photographs](#photographs).
 >
 > **[Before you go live](#before-you-go-live)** lists everything that must be
 > replaced.
@@ -60,6 +63,9 @@ that port 3000 is in use, run `npm run dev -- -p 3001` instead.
 | `npm run db:reset` | Delete the SQLite file so the seed reloads |
 | `npm run photos` | Report photograph coverage across the inventory |
 | `npm run import -- file.csv` | Bulk-create listings from a CSV |
+| `npm run photos:fetch` | Pull real stock photographs from Unsplash (needs a free key) |
+| `npm run fees` | Model commission options against the inventory |
+| `npm run sync-sources` | Pull from registered aggregation feeds |
 
 ---
 
@@ -472,6 +478,91 @@ The version that works is outbound, not automated: find the boat on Facebook or
 a club noticeboard, contact the seller, offer to write the listing for them for
 free, and use this importer once they say yes. It is slower, it gives you a real
 relationship with the supply side, and nobody can take it away from you.
+
+## Billing (Stripe)
+
+Subscriptions and commission invoices run through Stripe. Nothing works until
+you configure it, and nothing breaks either — the account page renders a
+"billing is not configured" state and the endpoints answer 503 with a readable
+message rather than erroring.
+
+```bash
+STRIPE_SECRET_KEY=sk_test_…
+STRIPE_BOATHOUSE_PRICE_ID=price_…     # a recurring Price on a Product
+STRIPE_WEBHOOK_SECRET=whsec_…
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+Locally, forward webhooks with the Stripe CLI:
+
+```bash
+stripe listen --forward-to localhost:3000/api/billing/webhook
+```
+
+| Route | |
+|---|---|
+| `POST /api/billing/checkout` | Starts a Boathouse subscription, returns a Checkout URL |
+| `POST /api/billing/portal` | Opens Stripe's hosted portal — card, invoices, cancellation |
+| `POST /api/billing/webhook` | The **only** thing that grants or removes access |
+| `POST /api/billing/commission` | Raises a commission invoice for a completed sale |
+
+Three things worth knowing about how this is wired:
+
+**The success redirect grants nothing.** Reaching `/account?checkout=success`
+proves a browser followed a link, not that money moved — anyone can type that
+URL. Entitlement is written only by the webhook, after signature verification.
+
+**A failed payment does not downgrade anyone.** Stripe retries for days and emits
+`customer.subscription.updated` when it gives up. Acting on the first
+`invoice.payment_failed` would lock out sellers whose card merely expired.
+
+**No card details reach this application.** Checkout and the billing portal are
+Stripe-hosted. The database holds a customer id and a subscription status, and
+that is all.
+
+The commission endpoint returns `200` with a reason, not an error, in the three
+cases that produce no invoice: the seller is on Boathouse, the sale was below the
+free threshold, or the listing was stock we own. None of those is a failure.
+
+### Changing the fee model
+
+Everything lives in `SITE.fees` in `src/lib/site.ts`:
+
+```
+fee = min(salePrice * rate + flat, cap),  or 0 when salePrice < freeBelow
+```
+
+`npm run fees` models the options against the current inventory:
+
+| Model | Revenue if all 46 sold | % of GMV |
+|---|---|---|
+| 2%, cap £600, free <£750 *(current)* | £6,011 | 1.81% |
+| 2% + £10 flat | £7,119 | 2.14% |
+| 5% flat, no cap | £16,648 | 5.00% |
+| 5%, cap £1,000, free <£200 | £13,941 | 4.19% |
+
+## Getting listings, legitimately
+
+Three routes, and the difference between them matters more than it looks —
+`src/lib/sources/README.md` has the detail.
+
+1. **Sellers submit them** (`/sell`). The primary source.
+2. **You buy stock and resell it.** List with `sellerType: "platform"`; it gets a
+   "Sold by BoatXchange" badge and no commission.
+3. **A licensed feed from another marketplace.** These are `source: "aggregated"`
+   and behave differently on purpose: badged "Listed on <source>", and the buy
+   button links **out** to the source rather than offering to contact a seller
+   who has never heard of you. Write an adapter against `SourceAdapter`, register
+   it, run `npm run sync-sources`.
+
+`npm run import -- file.csv` bulk-creates listings you already have permission
+to carry.
+
+What is deliberately not built: scraping another marketplace and republishing its
+listings as your own. The photographs belong to whoever took them, the source's
+terms forbid it, and republishing a seller's contact details without asking is a
+data-protection problem. It also makes a worse product — enquiries you cannot
+fulfil, about boats that sold weeks ago.
 
 ## Deploying
 

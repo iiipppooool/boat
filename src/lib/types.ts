@@ -106,6 +106,8 @@ export interface ListingPhoto {
   alt: string;
   /** Photographer or source, shown under the gallery when present. */
   credit?: string;
+  /** A stock image of something similar, not of this item. Said so, on the page. */
+  stock?: boolean;
 }
 
 export interface ListingSeller {
@@ -181,8 +183,24 @@ export interface Listing {
   photoDirection: string;
   /** Deterministic seed for the duotone hull artwork stand-in. */
   artSeed: number;
-  /** 'seed' = demo data shipped with the repo; 'seller' = submitted via /sell. */
-  source: "seed" | "seller";
+  /**
+   * Where the listing came from.
+   *   seed        demo data shipped with the repo
+   *   seller      submitted through /sell
+   *   aggregated  pulled from another marketplace under a licensed feed
+   */
+  source: "seed" | "seller" | "aggregated";
+  /**
+   * For aggregated listings: the canonical page on the source marketplace, and
+   * its name. Both required when `source === 'aggregated'`.
+   *
+   * An aggregated listing is a signpost, not a listing we hold. The detail page
+   * sends the buyer to the source rather than offering to contact a seller who
+   * has no relationship with us — which is the difference between aggregating
+   * and quietly republishing someone else's inventory.
+   */
+  sourceUrl: string | null;
+  sourceName: string | null;
 }
 
 /** A listing as it exists in the seed file, before `priceUsd` is derived. */

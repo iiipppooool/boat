@@ -47,15 +47,32 @@ export const SITE = {
   social: [] as SiteSocial[],
 
   /**
-   * Commission on a completed sale, and the bounds around it.
-   * `cap` stops the fee reading as a disincentive on the most expensive boats;
-   * `floor` is the fee below which it is not worth raising an invoice at all.
+   * Commission on a completed sale. Every one of these is a business decision,
+   * so they live here rather than being scattered through the pages — the
+   * pricing page, the account page and the invoicing endpoint all derive from
+   * this, and cannot disagree with each other.
+   *
+   *   fee = min(salePrice * rate + flat, cap),  or 0 when salePrice < freeBelow
+   *
+   * Modelled against the current inventory's price distribution
+   * (`npm run fees` prints the working):
+   *
+   *   2% + £10 flat          ~2.1% of GMV    45% effective rate on a £23 item
+   *   5% flat                ~5.0% of GMV    £2,661 on a £53k eight
+   *   2%, cap £600           ~1.8% of GMV    current setting
+   *   5%, cap £1000          ~4.2% of GMV    touches only the 4 priciest boats
+   *
+   * Set to 2% because that is the rate that was asked for. To switch to the
+   * model the numbers favour, set rate: 0.05, cap: 1000, freeBelow: 200.
    */
   fees: {
     rate: 0.02,
-    ratePercent: "2%",
+    /** Flat amount added to every invoiced sale. Regressive — see `npm run fees`. */
+    flat: 0,
+    /** Ceiling on a single commission. Set to Infinity for no cap. */
     cap: 600,
-    floor: 15,
+    /** Sale prices below this are not invoiced at all. */
+    freeBelow: 750,
     currency: "GBP",
     currencySymbol: "£",
   },

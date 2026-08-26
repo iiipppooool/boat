@@ -111,6 +111,9 @@ export default async function ListingPage({
                 {isPlatformOwned(listing.seller.type) && (
                   <span className="pill pill-platform">Sold by BoatXchange</span>
                 )}
+                {listing.source === "aggregated" && (
+                  <span className="pill">Listed on {listing.sourceName}</span>
+                )}
                 {listing.condition === "new" && <span className="pill pill-new">New build</span>}
                 {listing.status === "pending" && <span className="pill pill-pending">Sale pending</span>}
                 {listing.status === "sold" && <span className="pill pill-sold">Sold</span>}
@@ -200,9 +203,19 @@ export default async function ListingPage({
                 </p>
               ) : (
                 <div className="stack mt-4">
-                  {/* Falls back to the concierge when no contact address is
-                      configured, rather than rendering a dead mailto: link. */}
-                  {SITE.contact.email ? (
+                  {/* An aggregated listing is a signpost, not something we hold.
+                      Offering to "contact the seller" would be a lie: they have
+                      no relationship with us and may have sold it weeks ago. */}
+                  {listing.source === "aggregated" && listing.sourceUrl ? (
+                    <a
+                      href={listing.sourceUrl}
+                      className="btn btn-accent btn-block"
+                      rel="nofollow noreferrer"
+                      target="_blank"
+                    >
+                      View on {listing.sourceName ?? "the source site"} →
+                    </a>
+                  ) : SITE.contact.email ? (
                     <a
                       href={`mailto:${SITE.contact.email}?subject=${encodeURIComponent(`Enquiry: ${listing.title} (${listing.id})`)}`}
                       className="btn btn-accent btn-block"
@@ -248,6 +261,14 @@ export default async function ListingPage({
                 </div>
               </dl>
 
+              {listing.source === "aggregated" && (
+                <p className="notice mt-4">
+                  <strong>Listed elsewhere.</strong> This boat is for sale on{" "}
+                  {listing.sourceName}, not on BoatXchange. We show it so you can
+                  find it, and send you there to buy it — the price and availability
+                  are theirs, and may have moved since we last checked.
+                </p>
+              )}
               {isPlatformOwned(listing.seller.type) && (
                 <p className="notice mt-4">
                   <strong>We own this one.</strong> BoatXchange bought this boat to

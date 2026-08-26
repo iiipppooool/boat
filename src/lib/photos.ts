@@ -27,6 +27,12 @@ const IMAGE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif"]);
 export interface PhotoCaption {
   alt?: string;
   credit?: string;
+  /**
+   * True when the image is a stock photograph of something similar rather than
+   * of this item. Surfaced in the gallery: a stand-in presented as the thing
+   * for sale misleads a buyer, and that is not a trade worth making.
+   */
+  stock?: boolean;
 }
 
 export interface ScannedListing {
@@ -93,6 +99,7 @@ export function scanPhotoFolders(): ScannedListing[] {
         src: `/listings/${entry.name}/${file}`,
         alt: caption.alt ?? derived,
         ...(caption.credit ? { credit: caption.credit } : {}),
+        ...(caption.stock ? { stock: true } : {}),
       };
     });
 

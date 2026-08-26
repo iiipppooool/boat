@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit",
     "db:reset": "node scripts/reset-db.mjs",
     "photos": "node scripts/photos.mjs",
-    "import": "node scripts/import-listings.mjs"
+    "import": "node scripts/import-listings.mjs",
+    "fees": "node scripts/fees.mjs",
+    "photos:fetch": "node scripts/fetch-photos.mjs",
+    "sync-sources": "node scripts/sync-sources.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",
@@ -20,6 +23,7 @@
     "react-dom": "^19.1.1",
     "server-only": "^0.0.1",
     "sharp": "^0.35.4",
+    "stripe": "^22.5.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {

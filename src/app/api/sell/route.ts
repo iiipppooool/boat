@@ -72,6 +72,8 @@ export async function POST(request: Request) {
     listedAt: today,
     updatedAt: today,
     photos: [],
+    sourceUrl: null,
+    sourceName: null,
     highlights: d.highlights,
     description: d.description,
     photoDirection: d.photoNotes || defaultPhotoBrief(d.category),

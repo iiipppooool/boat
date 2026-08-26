@@ -88,9 +88,15 @@ function PhotoGallery({
         </div>
       )}
 
-      {credits.length > 0 && (
+      {(credits.length > 0 || photos.some((p) => p.stock)) && (
         <figcaption className="gallery-caption small">
-          Photographs: {credits.join(" · ")}
+          {photos.some((p) => p.stock) && (
+            <>
+              <strong>Stock photograph, not this item.</strong> Standing in until the
+              seller supplies their own.{" "}
+            </>
+          )}
+          {credits.length > 0 && <>Photographs: {credits.join(" · ")}</>}
         </figcaption>
       )}
     </figure>

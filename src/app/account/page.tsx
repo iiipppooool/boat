@@ -1,54 +1,44 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BillingActions } from "@/components/BillingActions";
+import { getCurrentAccount, isSubscribed } from "@/lib/accounts";
 import { getListingsBySeller } from "@/lib/inventory";
 import { formatPrice } from "@/lib/fx";
 import { formatDate, relativeDate } from "@/lib/format";
+import { CAP_BITES_ABOVE, FREE_BELOW, formatFee, rateLabel } from "@/lib/fees";
+import { getPaymentsProvider } from "@/lib/payments/provider";
+import { SITE } from "@/lib/site";
 
 /**
- * Reads the signed-in seller's own listings, which they may have just edited —
- * a cached copy showing a boat as available after they marked it sold would be
- * worse than a slightly slower page.
+ * Reads the account's own listings and live subscription state, either of which
+ * may have changed a second ago.
  */
 export const dynamic = "force-dynamic";
 
-
 export const metadata: Metadata = {
   title: "Your account",
-  description: "Manage your BoatXchange listings, subscription, payment method and invoices.",
+  description: "Manage your BoatXchange listings, subscription and invoices.",
 };
 
 /**
  * Account and billing.
  *
- * v1 stub: there is no authentication behind this yet, so the page renders a
- * fixed demo account rather than a signed-in session. Everything except the
- * identity is real — the listings table comes out of the live inventory via the
- * same repository the Market page uses, so a boat marked sold changes here too.
+ * Subscription state here is real — it comes from the accounts table, which only
+ * the Stripe webhook writes to. What is still stubbed is *who you are*: there is
+ * no authentication, so the page resolves a single demo account. Wiring real
+ * auth means replacing `getCurrentAccount()` with a session lookup and gating
+ * the route; nothing on this page changes.
  *
- * Wiring this to real auth means replacing DEMO_ACCOUNT with the session's
- * seller record and gating the route; the markup below does not change.
+ * The listings table belongs to a seed seller so it has rows to show before any
+ * real listing exists.
  */
-const DEMO_ACCOUNT = {
-  name: "Ruhr Rowing Supply",
-  contact: "Katrin Mahler",
-  email: "katrin@ruhrrowing.de",
-  tier: "Boathouse",
-  status: "active" as const,
-  renewsOn: "2027-02-14",
-  billedAnnually: true,
-  amount: "£790.00",
-  card: { brand: "Visa", last4: "4291", expiry: "07/29" },
-};
-
-const INVOICES = [
-  { id: "BX-2026-0412", date: "2026-02-14", description: "Boathouse — annual subscription", amount: "£790.00", status: "Paid" },
-  { id: "BX-2025-3877", date: "2025-02-14", description: "Boathouse — annual subscription", amount: "£790.00", status: "Paid" },
-  { id: "BX-2024-2910", date: "2024-11-03", description: "Sale commission — 2019 Empacher double (bx-0881)", amount: "£600.00", status: "Paid" },
-  { id: "BX-2024-2661", date: "2024-09-19", description: "Sale commission — Croker sculls, set of four (bx-0774)", amount: "£96.40", status: "Paid" },
-];
+const DEMO_SELLER_NAME = "Ruhr Rowing Supply";
 
 export default function AccountPage() {
-  const listings = getListingsBySeller(DEMO_ACCOUNT.name);
+  const account = getCurrentAccount();
+  const subscribed = isSubscribed(account);
+  const payments = getPaymentsProvider();
+  const listings = getListingsBySeller(DEMO_SELLER_NAME);
   const live = listings.filter((l) => l.status === "available").length;
 
   return (
@@ -57,10 +47,9 @@ export default function AccountPage() {
         <div className="wrap">
           <p className="eyebrow">Account</p>
           <div className="page-head-grid">
-            <h1>{DEMO_ACCOUNT.name}</h1>
+            <h1>{account.name}</h1>
             <p className="lede">
-              Signed in as {DEMO_ACCOUNT.contact} · {DEMO_ACCOUNT.email} ·{" "}
-              <Link href="/login">not you?</Link>
+              {account.email} · <Link href="/login">not you?</Link>
             </p>
           </div>
         </div>
@@ -68,88 +57,119 @@ export default function AccountPage() {
 
       <div className="wrap section-tight">
         <p className="notice mb-6">
-          <strong>Demonstration account.</strong> Authentication is not wired up in
-          this build, so you are looking at a fixed example account. The listings
-          table below is real — it is read live from the same inventory the market
-          runs on.
+          <strong>No sign-in yet.</strong> Authentication is not wired up, so this
+          page resolves a single demo account. Subscription state below is real —
+          it is written only by the Stripe webhook — and the listings table is read
+          live from the same inventory the market runs on.
         </p>
 
         <div className="account-grid">
           <section className="panel" aria-labelledby="subscription">
             <h2 id="subscription" className="account-h2">Subscription</h2>
             <p className="account-plan">
-              {DEMO_ACCOUNT.tier}
-              <span className="pill pill-verified">Active</span>
+              {subscribed ? "Boathouse" : "Crew"}
+              {subscribed ? (
+                <span className="pill pill-verified">Active</span>
+              ) : (
+                <span className="pill">Free</span>
+              )}
             </p>
+
             <dl className="spec-table-dl mt-4">
               <div>
-                <dt>Billing</dt>
-                <dd>{DEMO_ACCOUNT.billedAnnually ? "Annual" : "Monthly"}</dd>
+                <dt>Commission</dt>
+                <dd>{subscribed ? "0% — included" : rateLabel()}</dd>
               </div>
-              <div>
-                <dt>Amount</dt>
-                <dd>{DEMO_ACCOUNT.amount}</dd>
-              </div>
-              <div>
-                <dt>Renews</dt>
-                <dd>{formatDate(DEMO_ACCOUNT.renewsOn)}</dd>
-              </div>
-              <div>
-                <dt>Commission rate</dt>
-                <dd>0% — included</dd>
-              </div>
+              {!subscribed && (
+                <>
+                  <div>
+                    <dt>Nothing to pay below</dt>
+                    <dd>{formatFee(FREE_BELOW)}</dd>
+                  </div>
+                  <div>
+                    <dt>Capped at</dt>
+                    <dd>
+                      {formatFee(SITE.fees.cap)}
+                      {Number.isFinite(CAP_BITES_ABOVE) && (
+                        <span className="muted"> above {formatFee(CAP_BITES_ABOVE)}</span>
+                      )}
+                    </dd>
+                  </div>
+                </>
+              )}
+              {account.subscriptionStatus && (
+                <div>
+                  <dt>Stripe status</dt>
+                  <dd>{account.subscriptionStatus}</dd>
+                </div>
+              )}
+              {account.currentPeriodEnd && (
+                <div>
+                  <dt>Renews</dt>
+                  <dd>{formatDate(account.currentPeriodEnd)}</dd>
+                </div>
+              )}
             </dl>
-            <div className="cluster mt-5">
-              <Link href="/pricing" className="btn btn-ghost btn-sm">Change plan</Link>
-              <button type="button" className="btn btn-ghost btn-sm">Cancel</button>
-            </div>
+
+            {payments.enabled ? (
+              <BillingActions
+                subscribed={subscribed}
+                hasBillingHistory={Boolean(account.stripeCustomerId)}
+              />
+            ) : (
+              <p className="notice mt-5">
+                <strong>Billing is not configured.</strong> Set{" "}
+                <code>STRIPE_SECRET_KEY</code> and <code>STRIPE_BOATHOUSE_PRICE_ID</code>{" "}
+                to enable subscriptions and commission invoices. See{" "}
+                <code>.env.example</code>.
+              </p>
+            )}
           </section>
 
           <section className="panel" aria-labelledby="payment">
             <h2 id="payment" className="account-h2">Payment method</h2>
-            <div className="card-on-file">
-              <span className="card-brand">{DEMO_ACCOUNT.card.brand}</span>
-              <span className="card-number">
-                •••• •••• •••• {DEMO_ACCOUNT.card.last4}
-              </span>
-              <span className="small muted">Expires {DEMO_ACCOUNT.card.expiry}</span>
-            </div>
-            <p className="small muted mt-4">
-              Charged in pounds sterling. We never see or store your card number —
-              it sits with the payment processor and we hold a token.
-            </p>
-            <div className="cluster mt-5">
-              <button type="button" className="btn btn-ghost btn-sm">Update card</button>
-              <button type="button" className="btn btn-ghost btn-sm">Billing address</button>
-            </div>
+            {account.stripeCustomerId ? (
+              <>
+                <p className="small muted">
+                  Cards, billing address and invoice history are held by Stripe and
+                  managed in its hosted portal. No card details ever reach this
+                  application — we store a customer reference and nothing else.
+                </p>
+                <dl className="spec-table-dl mt-4">
+                  <div>
+                    <dt>Stripe customer</dt>
+                    <dd className="tiny">{account.stripeCustomerId}</dd>
+                  </div>
+                </dl>
+              </>
+            ) : (
+              <p className="small muted">
+                Nothing on file. A payment method is collected the first time you
+                subscribe or are invoiced — through Stripe&rsquo;s own checkout, never
+                through a form here.
+              </p>
+            )}
           </section>
 
           <section className="panel" aria-labelledby="summary">
-            <h2 id="summary" className="account-h2">This year</h2>
+            <h2 id="summary" className="account-h2">Your listings</h2>
             <dl className="spec-table-dl">
               <div>
-                <dt>Live listings</dt>
+                <dt>Live</dt>
                 <dd>{live}</dd>
               </div>
               <div>
-                <dt>Listings total</dt>
+                <dt>Total</dt>
                 <dd>{listings.length}</dd>
               </div>
               <div>
-                <dt>Enquiries received</dt>
-                <dd>47</dd>
-              </div>
-              <div>
-                <dt>Median time to sell</dt>
-                <dd>38 days</dd>
-              </div>
-              <div>
                 <dt>Commission paid</dt>
-                <dd>£0.00</dd>
+                <dd>{formatFee(0)}</dd>
               </div>
             </dl>
             <p className="small muted mt-4">
-              On the Single tier those sales would have cost £1,284 in commission.
+              Commission is invoiced after a sale completes and you confirm the price
+              it went for. Nothing is charged on a listing that does not sell.
             </p>
           </section>
         </div>
@@ -221,37 +241,11 @@ export default function AccountPage() {
               <h2 id="invoices-heading">Invoices</h2>
             </div>
           </div>
-          <div className="table-scroll">
-            <table className="spec-table account-table">
-              <thead>
-                <tr>
-                  <th scope="col">Invoice</th>
-                  <th scope="col">Date</th>
-                  <th scope="col">Description</th>
-                  <th scope="col">Amount</th>
-                  <th scope="col">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {INVOICES.map((invoice) => (
-                  <tr key={invoice.id}>
-                    <th scope="row">
-                      <button type="button" className="link-button">{invoice.id}</button>
-                    </th>
-                    <td className="nowrap">{formatDate(invoice.date)}</td>
-                    <td>{invoice.description}</td>
-                    <td className="nowrap">{invoice.amount}</td>
-                    <td>
-                      <span className="pill pill-verified">{invoice.status}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="small muted mt-4">
-            Commission invoices are raised at the end of the month in which a sale
-            completes.
+          <p className="panel muted small">
+            Invoices are issued and stored by Stripe.{" "}
+            {account.stripeCustomerId
+              ? "Open the billing portal above to view, download or pay them."
+              : "There is no billing history on this account yet."}
           </p>
         </section>
       </div>
