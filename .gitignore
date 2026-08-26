@@ -1,0 +1,21 @@
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local environment — never commit real keys
+.env
+.env.local
+.env*.local
+
+# SQLite inventory database (generated from data/seed-listings.json on first run)
+/var/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+.DS_Store
+*.log
