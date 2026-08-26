@@ -71,6 +71,7 @@ export async function POST(request: Request) {
     status: "pending",
     listedAt: today,
     updatedAt: today,
+    photos: [],
     highlights: d.highlights,
     description: d.description,
     photoDirection: d.photoNotes || defaultPhotoBrief(d.category),

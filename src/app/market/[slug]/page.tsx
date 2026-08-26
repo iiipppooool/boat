@@ -119,7 +119,9 @@ export default async function ListingPage({
             </header>
 
             <ListingGallery
+              photos={listing.photos}
               seed={listing.artSeed}
+              category={listing.category}
               title={listing.title}
               direction={listing.photoDirection}
             />

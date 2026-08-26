@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { HullArt } from "./HullArt";
+import { ListingImage } from "./ListingImage";
 import { formatPrice } from "@/lib/fx";
 import {
   BOAT_CLASS_LABELS, CATEGORY_LABELS, FIT_LABELS, GRADE_LABELS,
@@ -35,10 +35,12 @@ export function ListingCard({ listing }: { listing: Listing }) {
       {/* The whole card is one click target via the stretched title link below,
           so the artwork is not a second link — one tab stop per listing. */}
       <div className="card-media">
-        <HullArt
+        <ListingImage
+          photos={listing.photos}
           seed={listing.artSeed}
           category={listing.category}
           label={`Illustration standing in for photography of ${listing.title}`}
+          sizes="(max-width: 40rem) 100vw, (max-width: 70rem) 45vw, 22rem"
         />
         <div className="card-media-tags">
           {listing.condition === "new" && <span className="pill pill-new">New build</span>}

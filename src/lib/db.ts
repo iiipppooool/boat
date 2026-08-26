@@ -2,6 +2,7 @@ import path from "node:path";
 import fs from "node:fs";
 import Database from "better-sqlite3";
 import seedListings from "../../data/seed-listings.json";
+import { syncPhotos } from "./photos";
 import { toUsd } from "./fx";
 import type { Listing, SeedListing } from "./types";
 
@@ -62,6 +63,7 @@ CREATE TABLE IF NOT EXISTS listings (
   updated_at        TEXT NOT NULL,
   highlights        TEXT NOT NULL,  -- JSON array
   description       TEXT NOT NULL,
+  photos            TEXT NOT NULL DEFAULT '[]',  -- JSON array of ListingPhoto
   photo_direction   TEXT NOT NULL,
   art_seed          INTEGER NOT NULL,
   source            TEXT NOT NULL
@@ -93,6 +95,9 @@ export function getDb(): Database.Database {
   db.exec(SCHEMA);
   migrate(db);
   seed(db);
+  // Photographs live on disk, not in the seed file: drop files into
+  // public/listings/<slug>/ and they are picked up here on the next start.
+  syncPhotos(db);
 
   return db;
 }
@@ -115,6 +120,7 @@ function migrate(database: Database.Database): void {
     ["sizes", "TEXT NOT NULL DEFAULT '[]'"],
     ["fit", "TEXT"],
     ["quantity", "INTEGER"],
+    ["photos", "TEXT NOT NULL DEFAULT '[]'"],
   ];
 
   for (const [column, definition] of added) {
@@ -165,7 +171,7 @@ export function insertListingRow(database: Database.Database, l: Listing): void 
         sizes, fit, quantity,
         price, currency, price_basis, price_usd,
         location, continent, country, seller, seller_type, seller_verified,
-        status, listed_at, updated_at, highlights, description,
+        status, listed_at, updated_at, highlights, description, photos,
         photo_direction, art_seed, source
       ) VALUES (
         @id, @slug, @title, @category, @boat_class, @discipline, @seats, @coxed,
@@ -174,7 +180,7 @@ export function insertListingRow(database: Database.Database, l: Listing): void 
         @sizes, @fit, @quantity,
         @price, @currency, @price_basis, @price_usd,
         @location, @continent, @country, @seller, @seller_type, @seller_verified,
-        @status, @listed_at, @updated_at, @highlights, @description,
+        @status, @listed_at, @updated_at, @highlights, @description, @photos,
         @photo_direction, @art_seed, @source
       )`,
     )
@@ -216,6 +222,7 @@ export function insertListingRow(database: Database.Database, l: Listing): void 
       updated_at: l.updatedAt,
       highlights: JSON.stringify(l.highlights),
       description: l.description,
+      photos: JSON.stringify(l.photos ?? []),
       photo_direction: l.photoDirection,
       art_seed: l.artSeed,
       source: l.source,
@@ -242,7 +249,7 @@ export interface ListingRow {
   location: string; continent: string; country: string;
   seller: string; seller_type: string; seller_verified: number;
   status: string; listed_at: string; updated_at: string;
-  highlights: string; description: string; photo_direction: string;
+  highlights: string; description: string; photos: string; photo_direction: string;
   art_seed: number; source: string;
 }
 
@@ -281,6 +288,7 @@ export function rowToListing(r: ListingRow): Listing {
     updatedAt: r.updated_at,
     highlights: JSON.parse(r.highlights) as string[],
     description: r.description,
+    photos: JSON.parse(r.photos || "[]") as Listing["photos"],
     photoDirection: r.photo_direction,
     artSeed: r.art_seed,
     source: r.source as Listing["source"],

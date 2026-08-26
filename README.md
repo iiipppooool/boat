@@ -10,15 +10,47 @@ YachtWorld, motor boats have Boats.com; a £40,000 racing eight gets sold throug
 a club noticeboard and a regional Facebook group. This is the specialist
 alternative.
 
+> ### ⚠︎ Everything in this build is invented
+>
+> **No listing on this site is real.** All 46 are fabricated demo data. The
+> manufacturers and model families are real companies and real products — that
+> is deliberate, because the filters have to reflect what rowers actually search
+> for — but every specific item, price, seller, club, location, email address
+> and phone number was made up for this build.
+>
+> So are the company details in the footer and on /contact: **the company
+> registration number, VAT number, postal address, phone number and all
+> `@boatxchange.com` email addresses are invented placeholders.** Publishing
+> them unchanged would put false company information on a live site.
+>
+> There are also no photographs — every listing currently shows a generated
+> illustration, clearly labelled as one. See [Photographs](#photographs).
+>
+> **[Before you go live](#before-you-go-live)** lists everything that must be
+> replaced.
+
+## Seeing it running
+
+There is no hosted instance. To run it on your own machine you need
+[Node.js 20 or newer](https://nodejs.org) and nothing else:
+
 ```bash
+git clone https://github.com/iiipppooool/boat.git
+cd boat
+git checkout claude/boatxchange-marketplace-build-u41zy2
 npm install
-npm run dev          # http://localhost:3000
+npm run dev
 ```
 
-No database to start and no API key required — the SQLite file is created and
-seeded on first request, and the concierge falls back to an offline mode that
-returns raw retrieval results. To enable real concierge answers, copy
-`.env.example` to `.env.local` and set `ANTHROPIC_API_KEY`.
+Then open **http://localhost:3000**.
+
+No database to set up, no API key needed, no services to start. The SQLite file
+is created and seeded on the first request. The AI Concierge runs in an offline
+mode that returns raw retrieval results and says so on screen; to get real
+answers, copy `.env.example` to `.env.local` and set `ANTHROPIC_API_KEY`.
+
+`npm install` takes a minute or two the first time. If `npm run dev` reports
+that port 3000 is in use, run `npm run dev -- -p 3001` instead.
 
 | Script | |
 |---|---|
@@ -228,11 +260,37 @@ for prices and hull weights, and emphatically not Inter or Roboto.
 
 Both self-hosted via `next/font` — no runtime request to Google, no layout shift.
 
-### Imagery
+### Photographs
 
-There are no photographs yet, and the two easy answers — grey boxes, or
-synthetic "boat photos" — would both cheapen a page where someone is deciding
-whether to spend £12,000.
+**There are no photographs in this repository.** Adding them requires no code:
+
+```
+public/listings/<listing-slug>/01-bow-quarter.jpg
+                               02-hull-profile.jpg
+                               captions.json          ← alt text and credit
+```
+
+Drop image files into a folder named after the listing's slug, restart, and they
+become that listing's gallery in filename order. The listing page switches from
+the illustration to a real gallery with a thumbnail strip and photographer
+credit; the card, the market grid and the concierge results all follow. Listings
+without a folder keep the illustration.
+
+`npm run photos` reports coverage: which listings have photographs, which files
+are relying on filename-derived alt text rather than written alt text, and
+whether any folder name matches no listing — a slug typo is otherwise invisible,
+you just never see your photos.
+
+Full conventions, formats and a shot list are in
+[`public/listings/README.md`](public/listings/README.md). Images are served
+through `next/image`, so upload full-size originals and let it resize per
+breakpoint. For photographs on a CDN, put the absolute URL in `photos[].src` and
+add the hostname to `images.remotePatterns` in `next.config.mjs`.
+
+### Imagery, while there are no photographs
+
+The two easy answers — grey boxes, or synthetic "boat photos" — would both
+cheapen a page where someone is deciding whether to spend £12,000.
 
 Instead every listing gets a flat two-tone illustration built from six
 rowing-specific compositions: a hull profile above its reflection on banded
@@ -246,10 +304,10 @@ looks the same everywhere and a grid looks composed rather than random. See
 `src/components/HullArt.tsx`.
 
 The gallery labels them as illustration rather than passing them off as
-photography, and prints the seller's photo brief for that specific boat
+photography, and prints the seller's photo brief for that specific item
 underneath. Every seed listing carries a `photoDirection` field describing the
 shot that should replace it — three-quarter bow views on flat water at dawn,
-rigger castings, honest close-ups of repairs.
+rigger castings, honest close-ups of repairs, flat-lays of a full size run.
 
 ### Wordmark
 
@@ -349,6 +407,24 @@ Each is a self-contained gap, marked with a comment in the file:
 - **Apparel measurements.** Sizes are the letter run only. Brand-to-brand sizing
   varies enough that flat chest and inside-leg measurements would be the real
   fix; for now the listing page tells buyers to ask for them.
+
+## Before you go live
+
+Everything here is invented and has to be replaced. In rough order of how much
+trouble it causes if you miss it:
+
+| | Where |
+|---|---|
+| Company registration number, VAT number, postal address | `src/components/SiteFooter.tsx`, `src/app/contact/page.tsx` |
+| Phone number and every `@boatxchange.com` email address | same two files, plus the "Contact the seller" link in `src/app/market/[slug]/page.tsx` |
+| All 46 fabricated listings, sellers and clubs | `DELETE FROM listings WHERE source = 'seed';` |
+| Invoice numbers, VAT line and the demo account | `src/app/account/page.tsx` |
+| Fee model — 4% capped at £600, £79/month — is a proposal, not a decision | `src/app/pricing/page.tsx` |
+| The verification process described on /about is a description of intent, not a process that exists | `src/app/about/page.tsx` |
+| Auth, payments, contact form delivery and photo upload are all stubbed | see [Stubbed in v1](#stubbed-in-v1) |
+
+The seed listings are the only one of these that can be removed with a single
+statement, because they are tagged `source = 'seed'` specifically so they can be.
 
 ## Deploying
 

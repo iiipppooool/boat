@@ -85,6 +85,19 @@ export interface ListingLocation {
   continent: Continent;
 }
 
+/**
+ * A photograph of the actual item. Listings with photos render them; listings
+ * without fall back to the generated illustration in `HullArt`.
+ */
+export interface ListingPhoto {
+  /** Path under /public, or an absolute URL on a configured remote host. */
+  src: string;
+  /** What the photograph shows. Required — a marketplace photo always says something. */
+  alt: string;
+  /** Photographer or source, shown under the gallery when present. */
+  credit?: string;
+}
+
 export interface ListingSeller {
   name: string;
   type: SellerType;
@@ -149,6 +162,11 @@ export interface Listing {
   updatedAt: string;
   highlights: string[];
   description: string;
+  /**
+   * Photographs of this item, in display order. Empty means none yet, and the
+   * generated illustration stands in — see `photoDirection` for what to shoot.
+   */
+  photos: ListingPhoto[];
   /** Art-direction brief for the photography that should replace generated artwork. */
   photoDirection: string;
   /** Deterministic seed for the duotone hull artwork stand-in. */

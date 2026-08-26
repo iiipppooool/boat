@@ -1744,3 +1744,14 @@ legend { padding: 0; }
 .size-chip input:focus-visible + span { outline: 3px solid var(--brass-600); outline-offset: 2px; }
 /* On the sell form the size chips get more room than in the filter rail. */
 .size-grid-wide { grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr)); max-width: 30rem; }
+
+/* Real photography, where a listing has it. The container sets the aspect
+   ratio; the image fills it and crops rather than letterboxing, because seller
+   photos arrive in every shape there is. */
+.listing-photo { object-fit: cover; }
+.gallery-main { position: relative; }
+.gallery-main-photo { background: var(--bone-2); }
+.gallery-thumb-photo { position: relative; aspect-ratio: 3 / 2; }
+.gallery-thumbs:has(.gallery-thumb-photo) {
+  grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+}
