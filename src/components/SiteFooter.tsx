@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SITE } from "@/lib/site";
 import { Wordmark } from "./Wordmark";
 
 const SITEMAP: { heading: string; links: { href: string; label: string }[] }[] = [
@@ -51,10 +52,7 @@ export function SiteFooter() {
               Built by rowers, for a sport whose boats have never had a market of
               their own.
             </p>
-            <p className="tiny muted-on-hull">
-              Registered in England &amp; Wales · Company 15,482,006<br />
-              Unit 4, The Boathouse Yard, Chiswick Mall, London W4 2PS
-            </p>
+
           </div>
 
           {SITEMAP.map((column) => (
@@ -75,16 +73,28 @@ export function SiteFooter() {
 
         <div className="site-footer-bottom">
           <p className="tiny">© {new Date().getFullYear()} BoatXchange Ltd.</p>
-          <p className="tiny">
-            <a href="mailto:crew@boatxchange.com">crew@boatxchange.com</a>
-            <span aria-hidden="true"> · </span>
-            <a href="tel:+442080771904">+44 20 8077 1904</a>
-          </p>
-          <ul className="site-footer-social">
-            <li><a href="https://instagram.com/boatxchange" rel="me noreferrer" target="_blank">Instagram</a></li>
-            <li><a href="https://www.youtube.com/@boatxchange" rel="me noreferrer" target="_blank">YouTube</a></li>
-            <li><a href="https://www.strava.com/clubs/boatxchange" rel="me noreferrer" target="_blank">Strava</a></li>
-          </ul>
+          {/* Contact details come from src/lib/site.ts and render only when set,
+              so an unconfigured site shows nothing rather than a placeholder. */}
+          {(SITE.contact.email || SITE.contact.phone) && (
+            <p className="tiny">
+              {SITE.contact.email && (
+                <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a>
+              )}
+              {SITE.contact.email && SITE.contact.phone && <span aria-hidden="true"> · </span>}
+              {SITE.contact.phone && (
+                <a href={`tel:${SITE.contact.phone}`}>{SITE.contact.phoneDisplay || SITE.contact.phone}</a>
+              )}
+            </p>
+          )}
+          {SITE.social.length > 0 && (
+            <ul className="site-footer-social">
+              {SITE.social.map((s) => (
+                <li key={s.href}>
+                  <a href={s.href} rel="me noreferrer" target="_blank">{s.label}</a>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </footer>

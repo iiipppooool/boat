@@ -1755,3 +1755,11 @@ legend { padding: 0; }
 .gallery-thumbs:has(.gallery-thumb-photo) {
   grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
 }
+/* Stock the platform owns outright. Deliberately distinct from the verified
+   badge — one is a check we ran on someone else, the other is a disclosure
+   about ourselves. */
+.pill-platform {
+  border-color: var(--hull);
+  background: var(--hull);
+  color: var(--bone);
+}

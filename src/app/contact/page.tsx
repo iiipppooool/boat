@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ContactForm } from "@/components/ContactForm";
+import { SITE, hasContactDetails } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact us",
@@ -17,8 +18,7 @@ export default function ContactPage() {
           <div className="page-head-grid">
             <h1>Talk to us.</h1>
             <p className="lede">
-              Four of us, all rowers, based in west London and answering our own
-              email. One working day, usually a lot less.
+              Rowers answering our own email. One working day, usually a lot less.
             </p>
           </div>
         </div>
@@ -28,57 +28,69 @@ export default function ContactPage() {
         <ContactForm />
 
         <aside className="stack">
-          <div className="panel panel-quiet">
-            <h2 className="concierge-aside-title">Direct</h2>
-            <dl className="contact-list">
-              <div>
-                <dt>General &amp; support</dt>
-                <dd><a href="mailto:crew@boatxchange.com">crew@boatxchange.com</a></dd>
-              </div>
-              <div>
-                <dt>Listing verification</dt>
-                <dd><a href="mailto:verify@boatxchange.com">verify@boatxchange.com</a></dd>
-              </div>
-              <div>
-                <dt>Dealers &amp; clubs</dt>
-                <dd><a href="mailto:boathouse@boatxchange.com">boathouse@boatxchange.com</a></dd>
-              </div>
-              <div>
-                <dt>Press</dt>
-                <dd><a href="mailto:press@boatxchange.com">press@boatxchange.com</a></dd>
-              </div>
-              <div>
-                <dt>Phone</dt>
-                <dd><a href="tel:+442080771904">+44 20 8077 1904</a></dd>
-              </div>
-            </dl>
-            <p className="small muted mt-4">
-              Weekdays 08:00–18:00 UK time. We are usually on the water before 08:00.
-            </p>
-          </div>
+          {/* Every direct contact detail comes from src/lib/site.ts. Blank
+              entries are omitted rather than shown as placeholders, so this
+              panel disappears entirely until real details are configured. */}
+          {hasContactDetails() && (
+            <div className="panel panel-quiet">
+              <h2 className="concierge-aside-title">Direct</h2>
+              <dl className="contact-list">
+                {SITE.contact.email && (
+                  <div>
+                    <dt>General &amp; support</dt>
+                    <dd><a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a></dd>
+                  </div>
+                )}
+                {SITE.contact.verificationEmail && (
+                  <div>
+                    <dt>Listing verification</dt>
+                    <dd><a href={`mailto:${SITE.contact.verificationEmail}`}>{SITE.contact.verificationEmail}</a></dd>
+                  </div>
+                )}
+                {SITE.contact.dealerEmail && (
+                  <div>
+                    <dt>Dealers &amp; clubs</dt>
+                    <dd><a href={`mailto:${SITE.contact.dealerEmail}`}>{SITE.contact.dealerEmail}</a></dd>
+                  </div>
+                )}
+                {SITE.contact.pressEmail && (
+                  <div>
+                    <dt>Press</dt>
+                    <dd><a href={`mailto:${SITE.contact.pressEmail}`}>{SITE.contact.pressEmail}</a></dd>
+                  </div>
+                )}
+                {SITE.contact.phone && (
+                  <div>
+                    <dt>Phone</dt>
+                    <dd><a href={`tel:${SITE.contact.phone}`}>{SITE.contact.phoneDisplay || SITE.contact.phone}</a></dd>
+                  </div>
+                )}
+              </dl>
+              {SITE.contact.hours && <p className="small muted mt-4">{SITE.contact.hours}</p>}
+            </div>
+          )}
+
+          {SITE.social.length > 0 && (
+            <div className="panel panel-quiet">
+              <h2 className="concierge-aside-title">Elsewhere</h2>
+              <ul className="contact-social">
+                {SITE.social.map((s) => (
+                  <li key={s.href}>
+                    <a href={s.href} rel="me noreferrer" target="_blank">{s.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="panel panel-quiet">
-            <h2 className="concierge-aside-title">Post</h2>
-            <address className="contact-address">
-              BoatXchange Ltd<br />
-              Unit 4, The Boathouse Yard<br />
-              Chiswick Mall<br />
-              London W4 2PS<br />
-              United Kingdom
-            </address>
-            <p className="tiny muted mt-4">
-              Registered in England &amp; Wales, company 15,482,006.<br />
-              VAT GB 429 8817 03.
+            <h2 className="concierge-aside-title">Response times</h2>
+            <p className="small muted">
+              The form is the fastest route and reaches the same people as email.
+              If your message is about a specific listing, quoting its reference —
+              the <code>bx-</code> code on the listing page — gets you an answer
+              without a round trip.
             </p>
-          </div>
-
-          <div className="panel panel-quiet">
-            <h2 className="concierge-aside-title">Elsewhere</h2>
-            <ul className="contact-social">
-              <li><a href="https://instagram.com/boatxchange" rel="me noreferrer" target="_blank">Instagram — boats, mostly</a></li>
-              <li><a href="https://www.youtube.com/@boatxchange" rel="me noreferrer" target="_blank">YouTube — buying guides</a></li>
-              <li><a href="https://www.strava.com/clubs/boatxchange" rel="me noreferrer" target="_blank">Strava — the BoatXchange club</a></li>
-            </ul>
           </div>
 
           <p className="small">

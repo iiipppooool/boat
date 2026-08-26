@@ -18,10 +18,10 @@ alternative.
 > for — but every specific item, price, seller, club, location, email address
 > and phone number was made up for this build.
 >
-> So are the company details in the footer and on /contact: **the company
-> registration number, VAT number, postal address, phone number and all
-> `@boatxchange.com` email addresses are invented placeholders.** Publishing
-> them unchanged would put false company information on a live site.
+> The invented company details are **gone** — there is no longer a company
+> registration number, VAT number, postal address, phone number or email address
+> anywhere in the site. Contact details now live in `src/lib/site.ts`, blank by
+> default, and anything left blank is simply not rendered.
 >
 > There are also no photographs — every listing currently shows a generated
 > illustration, clearly labelled as one. See [Photographs](#photographs).
@@ -58,6 +58,8 @@ that port 3000 is in use, run `npm run dev -- -p 3001` instead.
 | `npm run build` / `npm start` | Production build and serve |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run db:reset` | Delete the SQLite file so the seed reloads |
+| `npm run photos` | Report photograph coverage across the inventory |
+| `npm run import -- file.csv` | Bulk-create listings from a CSV |
 
 ---
 
@@ -415,16 +417,61 @@ trouble it causes if you miss it:
 
 | | Where |
 |---|---|
-| Company registration number, VAT number, postal address | `src/components/SiteFooter.tsx`, `src/app/contact/page.tsx` |
-| Phone number and every `@boatxchange.com` email address | same two files, plus the "Contact the seller" link in `src/app/market/[slug]/page.tsx` |
+| Your real contact details (all blank — nothing is rendered until you set them) | `src/lib/site.ts` |
 | All 46 fabricated listings, sellers and clubs | `DELETE FROM listings WHERE source = 'seed';` |
-| Invoice numbers, VAT line and the demo account | `src/app/account/page.tsx` |
-| Fee model — 4% capped at £600, £79/month — is a proposal, not a decision | `src/app/pricing/page.tsx` |
+| Invoice numbers and the demo account | `src/app/account/page.tsx` |
+| Fee model — 2% capped at £600, waived under £750, £79/month — is a proposal | `src/app/pricing/page.tsx` and `src/lib/site.ts` |
 | The verification process described on /about is a description of intent, not a process that exists | `src/app/about/page.tsx` |
 | Auth, payments, contact form delivery and photo upload are all stubbed | see [Stubbed in v1](#stubbed-in-v1) |
 
 The seed listings are the only one of these that can be removed with a single
 statement, because they are tagged `source = 'seed'` specifically so they can be.
+
+## Adding listings in bulk
+
+For your own stock, or for listings a seller has given you permission to carry:
+
+```bash
+npm run dev                                     # in one terminal
+npm run import -- my-stock.csv --dry-run        # validate, write nothing
+npm run import -- my-stock.csv                  # create them
+```
+
+`data/import-template.csv` is a working two-row example. The importer posts to
+`/api/sell` rather than writing to SQLite directly, so every row goes through
+exactly the same validation a seller's form submission does — there is no second
+copy of the rules to drift. Failures are reported per row and per field; the
+rest of the file still imports.
+
+### Reselling your own stock
+
+Boats you buy in to sell on are listed with `sellerType: "platform"`. They carry
+a visible **Sold by BoatXchange** badge, a note on the listing page explaining
+that you own the boat rather than listing it for someone else, and they are
+excluded from commission.
+
+That disclosure is deliberate and worth keeping. A marketplace that quietly
+competes with its own sellers stops being trusted the moment anyone notices, and
+someone always notices. Being obvious about it costs nothing and removes the
+question entirely.
+
+### What the importer is not for
+
+Copying listings — text, photographs, seller contact details — out of other
+marketplaces and republishing them here. That is a different act from buying a
+boat and reselling it, and it goes wrong in three ways at once: the photographs
+belong to whoever took them, the source site's terms almost always forbid it,
+and republishing a seller's contact details without asking is a data-protection
+problem in the UK and EU.
+
+It also makes a worse product. Those sellers never agreed to sell through you,
+so a buyer's enquiry reaches someone with no relationship to your site, about a
+boat that may have sold weeks ago.
+
+The version that works is outbound, not automated: find the boat on Facebook or
+a club noticeboard, contact the seller, offer to write the listing for them for
+free, and use this importer once they say yes. It is slower, it gives you a real
+relationship with the supply side, and nobody can take it away from you.
 
 ## Deploying
 

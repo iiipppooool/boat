@@ -161,8 +161,8 @@ export default function HomePage() {
             <li>
               <h3>No listing fees</h3>
               <p>
-                Listing is free for private sellers and clubs. We take a fee only when
-                a boat actually sells.
+                Listing is free for private sellers and clubs. We take 2% only when
+                something actually sells, and nothing under £750.
               </p>
             </li>
           </ul>
@@ -272,9 +272,9 @@ export default function HomePage() {
               <p className="eyebrow">Selling</p>
               <h2>Got a boat in the rack you no longer row?</h2>
               <p className="muted">
-                Listing is free. We charge 4% when it sells, capped at £600, and
-                nothing at all if it does not. Clubs and dealers with fleets to move
-                have their own tier.
+                Listing is free. We charge 2% when it sells, capped at £600, nothing
+                under £750, and nothing at all if it does not sell. Clubs and dealers
+                with fleets to move have their own tier.
               </p>
             </div>
             <div className="cluster">

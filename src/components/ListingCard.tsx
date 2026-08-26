@@ -3,7 +3,7 @@ import { ListingImage } from "./ListingImage";
 import { formatPrice } from "@/lib/fx";
 import {
   BOAT_CLASS_LABELS, CATEGORY_LABELS, FIT_LABELS, GRADE_LABELS,
-  lotSize, relativeDate, sizeRange, weightBand,
+  isPlatformOwned, lotSize, relativeDate, sizeRange, weightBand,
 } from "@/lib/format";
 import type { Listing } from "@/lib/types";
 
@@ -43,6 +43,9 @@ export function ListingCard({ listing }: { listing: Listing }) {
           sizes="(max-width: 40rem) 100vw, (max-width: 70rem) 45vw, 22rem"
         />
         <div className="card-media-tags">
+          {isPlatformOwned(listing.seller.type) && (
+            <span className="pill pill-platform">Sold by us</span>
+          )}
           {listing.condition === "new" && <span className="pill pill-new">New build</span>}
           {listing.status === "sold" && <span className="pill pill-sold">Sold</span>}
           {listing.status === "pending" && <span className="pill pill-pending">Sale pending</span>}

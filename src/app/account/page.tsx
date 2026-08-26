@@ -250,8 +250,8 @@ export default function AccountPage() {
             </table>
           </div>
           <p className="small muted mt-4">
-            Invoices are issued by BoatXchange Ltd, VAT GB 429 8817 03. Commission
-            invoices are raised at the end of the month in which a sale completes.
+            Commission invoices are raised at the end of the month in which a sale
+            completes.
           </p>
         </section>
       </div>

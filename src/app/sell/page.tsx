@@ -44,8 +44,8 @@ export default function SellPage() {
                 between yourselves.
               </li>
               <li>
-                We invoice our fee after the sale completes. If it does not sell, you
-                owe nothing.
+                We invoice 2% after the sale completes, capped at £600. Nothing under
+                £750, and nothing at all if it does not sell.
               </li>
             </ol>
           </div>

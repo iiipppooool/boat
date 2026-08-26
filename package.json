@@ -9,7 +9,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "db:reset": "node scripts/reset-db.mjs",
-    "photos": "node scripts/photos.mjs"
+    "photos": "node scripts/photos.mjs",
+    "import": "node scripts/import-listings.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",

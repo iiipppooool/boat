@@ -58,7 +58,17 @@ export const RIGGING_TYPES = [
 ] as const;
 export type RiggingType = (typeof RIGGING_TYPES)[number];
 
-export const SELLER_TYPES = ["private", "club", "dealer", "manufacturer"] as const;
+/**
+ * `platform` marks stock BoatXchange owns and is reselling itself — boats bought
+ * in to sell on, rather than listed on someone else's behalf. It is a seller
+ * type rather than a hidden flag precisely so it shows: a marketplace that
+ * quietly competes with its own sellers stops being trusted the moment anyone
+ * notices, and someone always notices. Platform listings carry a visible badge
+ * and are excluded from commission.
+ */
+export const SELLER_TYPES = [
+  "private", "club", "dealer", "manufacturer", "platform",
+] as const;
 export type SellerType = (typeof SELLER_TYPES)[number];
 
 export const LISTING_STATUSES = ["available", "pending", "sold"] as const;

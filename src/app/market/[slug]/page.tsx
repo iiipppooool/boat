@@ -4,11 +4,12 @@ import { notFound } from "next/navigation";
 import { ListingCard } from "@/components/ListingCard";
 import { ListingGallery } from "@/components/ListingGallery";
 import { getAllSlugs, getListingBySlug, getRelatedListings } from "@/lib/inventory";
+import { SITE } from "@/lib/site";
 import { formatPrice, formatUsdApprox } from "@/lib/fx";
 import {
   BOAT_CLASS_LABELS, CATEGORY_LABELS, DISCIPLINE_LABELS, FIT_LABELS,
   GRADE_LABELS, MATERIAL_LABELS, RIGGING_LABELS, SELLER_TYPE_LABELS,
-  formatDate, lotSize, metres, relativeDate, sizeRange, weightBand,
+  formatDate, isPlatformOwned, lotSize, metres, relativeDate, sizeRange, weightBand,
 } from "@/lib/format";
 
 /**
@@ -107,6 +108,9 @@ export default async function ListingPage({
             <header className="listing-header">
               <div className="cluster">
                 <span className="pill pill-accent">{classLabel}</span>
+                {isPlatformOwned(listing.seller.type) && (
+                  <span className="pill pill-platform">Sold by BoatXchange</span>
+                )}
                 {listing.condition === "new" && <span className="pill pill-new">New build</span>}
                 {listing.status === "pending" && <span className="pill pill-pending">Sale pending</span>}
                 {listing.status === "sold" && <span className="pill pill-sold">Sold</span>}
@@ -196,12 +200,20 @@ export default async function ListingPage({
                 </p>
               ) : (
                 <div className="stack mt-4">
-                  <a
-                    href={`mailto:crew@boatxchange.com?subject=${encodeURIComponent(`Enquiry: ${listing.title} (${listing.id})`)}`}
-                    className="btn btn-accent btn-block"
-                  >
-                    Contact the seller
-                  </a>
+                  {/* Falls back to the concierge when no contact address is
+                      configured, rather than rendering a dead mailto: link. */}
+                  {SITE.contact.email ? (
+                    <a
+                      href={`mailto:${SITE.contact.email}?subject=${encodeURIComponent(`Enquiry: ${listing.title} (${listing.id})`)}`}
+                      className="btn btn-accent btn-block"
+                    >
+                      Contact the seller
+                    </a>
+                  ) : (
+                    <Link href={`/contact?listing=${listing.slug}`} className="btn btn-accent btn-block">
+                      Contact the seller
+                    </Link>
+                  )}
                   <Link href={`/concierge?listing=${listing.slug}`} className="btn btn-ghost btn-block">
                     Ask the concierge about this boat
                   </Link>
@@ -236,6 +248,14 @@ export default async function ListingPage({
                 </div>
               </dl>
 
+              {isPlatformOwned(listing.seller.type) && (
+                <p className="notice mt-4">
+                  <strong>We own this one.</strong> BoatXchange bought this boat to
+                  sell on, so you are buying from us rather than through us. No
+                  commission is charged on it, and it gets no special placement in
+                  search or in concierge results.
+                </p>
+              )}
               <p className="tiny muted mt-4">
                 {listing.seller.verified ? (
                   <>

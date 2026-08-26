@@ -39,7 +39,7 @@ const SELLER_STEPS = [
   },
   {
     title: "Pay only when it sells",
-    body: "4% capped at £600, or nothing at all on the Boathouse tier. If the boat does not sell, you owe nothing and the listing stays up.",
+    body: "2% capped at £600, nothing under £750, or nothing at all on the Boathouse tier. If it does not sell you owe nothing and the listing stays up.",
   },
 ];
 

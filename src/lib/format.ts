@@ -82,7 +82,13 @@ export const SELLER_TYPE_LABELS: Record<SellerType, string> = {
   club: "Club",
   dealer: "Dealer",
   manufacturer: "Manufacturer",
+  platform: "BoatXchange",
 };
+
+/** Stock the platform owns outright, as opposed to listing for someone else. */
+export function isPlatformOwned(sellerType: SellerType): boolean {
+  return sellerType === "platform";
+}
 
 /** "3 days ago" / "last updated 2 weeks ago" — listing freshness matters here. */
 export function relativeDate(iso: string, now = new Date()): string {
