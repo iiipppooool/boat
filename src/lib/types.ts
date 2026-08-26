@@ -4,8 +4,23 @@
  * page, the Sell form and the AI Concierge all speak this vocabulary.
  */
 
-export const CATEGORIES = ["shell", "oars", "rigging", "trailer"] as const;
+export const CATEGORIES = [
+  "shell", "oars", "rigging", "trailer", "apparel", "gear",
+] as const;
 export type Category = (typeof CATEGORIES)[number];
+
+/**
+ * `apparel` and `gear` are separate categories rather than one "everything
+ * else" bucket, because they are searched on different things. Nobody filters
+ * kit by hull material and nobody filters a cox box by chest size — apparel
+ * needs sizes and a cut, gear needs a quantity and not much else.
+ */
+export const APPAREL_SIZES = ["XS", "S", "M", "L", "XL", "XXL"] as const;
+export type ApparelSize = (typeof APPAREL_SIZES)[number];
+
+/** Rowing kit is cut differently for men and women; a lot of it is neither. */
+export const FITS = ["mens", "womens", "unisex"] as const;
+export type Fit = (typeof FITS)[number];
 
 /**
  * Boat classes use the standard rowing shorthand:
@@ -32,6 +47,9 @@ export type ConditionGrade = (typeof CONDITION_GRADES)[number];
 export const MATERIALS = [
   "carbon", "carbon-nomex", "carbon-honeycomb", "composite",
   "fibreglass", "wood", "aluminium", "steel",
+  // Kit and gear. `electronics` is the honest answer for a cox box: the
+  // material genuinely is not the interesting fact about it.
+  "lycra", "polyester", "merino", "neoprene", "mixed-textile", "electronics",
 ] as const;
 export type Material = (typeof MATERIALS)[number];
 
@@ -100,6 +118,20 @@ export interface Listing {
   crewWeightMaxKg: number | null;
   hullWeightKg: number | null;
   lengthCm: number | null;
+  /**
+   * Sizes this listing covers. A single unisuit carries one; a club clearing
+   * out a season's kit carries the whole spread, which is why this is a list
+   * and not a field. Empty for anything that is not apparel.
+   */
+  sizes: ApparelSize[];
+  /** Cut, for apparel. Null for everything else. */
+  fit: Fit | null;
+  /**
+   * How many items are in the lot. Null means one, or not applicable — a boat
+   * is a boat. Kit and gear are frequently sold in bulk, and "22 all-in-ones"
+   * is a completely different proposition from one.
+   */
+  quantity: number | null;
   price: number;
   currency: Currency;
   priceBasis: PriceBasis;
@@ -145,6 +177,11 @@ export interface ListingQuery {
   status?: ListingStatus[];
   coxed?: boolean;
   seats?: number[];
+  /** Matches listings offering any of these sizes. */
+  sizes?: ApparelSize[];
+  fit?: Fit[];
+  /** Only lots — more than one item. Useful when kitting out a squad. */
+  bulkOnly?: boolean;
   /** Inclusive bounds, in USD, against the normalised `priceUsd`. */
   minPriceUsd?: number;
   maxPriceUsd?: number;

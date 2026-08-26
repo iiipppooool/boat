@@ -1,7 +1,8 @@
 import { z } from "zod";
 import {
-  BOAT_CLASSES, CATEGORIES, CONDITIONS, CONDITION_GRADES, CONTINENTS,
-  CURRENCIES, DISCIPLINES, MATERIALS, PRICE_BASES, RIGGING_TYPES, SELLER_TYPES,
+  APPAREL_SIZES, BOAT_CLASSES, CATEGORIES, CONDITIONS, CONDITION_GRADES,
+  CONTINENTS, CURRENCIES, DISCIPLINES, FITS, MATERIALS, PRICE_BASES,
+  RIGGING_TYPES, SELLER_TYPES,
 } from "./types";
 
 /**
@@ -28,6 +29,10 @@ export const SellSubmissionSchema = z
     crewWeightMaxKg: z.coerce.number().min(30).max(160).nullish(),
     hullWeightKg: z.coerce.number().min(1).max(250).nullish(),
     lengthCm: z.coerce.number().int().min(100).max(2200).nullish(),
+
+    sizes: z.array(z.enum(APPAREL_SIZES)).max(6).default([]),
+    fit: z.enum(FITS).nullish(),
+    quantity: z.coerce.number().int().min(1).max(500).nullish(),
 
     price: z.coerce.number().min(1).max(500_000),
     currency: z.enum(CURRENCIES),
@@ -64,6 +69,11 @@ export const SellSubmissionSchema = z
   .refine((d) => d.category !== "shell" || Boolean(d.boatClass), {
     message: "Boats need a class — a buyer filters on it before anything else.",
     path: ["boatClass"],
+  })
+  .refine((d) => d.category !== "apparel" || d.sizes.length > 0, {
+    message:
+      "Kit needs at least one size. It is the first thing a buyer filters on, and a listing without it gets skipped.",
+    path: ["sizes"],
   });
 
 export type SellSubmission = z.infer<typeof SellSubmissionSchema>;

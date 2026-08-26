@@ -44,6 +44,9 @@ CREATE TABLE IF NOT EXISTS listings (
   crew_weight_max   REAL,
   hull_weight_kg    REAL,
   length_cm         INTEGER,
+  sizes             TEXT NOT NULL DEFAULT '[]',  -- JSON array, apparel only
+  fit               TEXT,
+  quantity          INTEGER,
   price             REAL NOT NULL,
   currency          TEXT NOT NULL,
   price_basis       TEXT NOT NULL,
@@ -88,25 +91,63 @@ export function getDb(): Database.Database {
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
   db.exec(SCHEMA);
-
-  const { count } = db.prepare("SELECT COUNT(*) AS count FROM listings").get() as { count: number };
-  if (count === 0) seed(db);
+  migrate(db);
+  seed(db);
 
   return db;
 }
 
 /**
- * Loads `data/seed-listings.json` once, into an empty database. The JSON file is
- * demo inventory, not production data — see `data/README.md`. Real listings
- * arrive through /sell and are written with `source = 'seller'`, so the seed
- * rows can be deleted later without touching anything else.
+ * `CREATE TABLE IF NOT EXISTS` does nothing to a table that already exists, so
+ * a database created before a column was added would be missing it. Adding the
+ * apparel and gear columns to an existing install is exactly that case.
+ *
+ * Every column added here must be nullable or carry a default — SQLite will not
+ * add a NOT NULL column without one, and more importantly a seller's existing
+ * listing has no sensible value for a column invented after they wrote it.
+ */
+function migrate(database: Database.Database): void {
+  const existing = new Set(
+    (database.pragma("table_info(listings)") as { name: string }[]).map((c) => c.name),
+  );
+
+  const added: [string, string][] = [
+    ["sizes", "TEXT NOT NULL DEFAULT '[]'"],
+    ["fit", "TEXT"],
+    ["quantity", "INTEGER"],
+  ];
+
+  for (const [column, definition] of added) {
+    if (!existing.has(column)) {
+      database.exec(`ALTER TABLE listings ADD COLUMN ${column} ${definition}`);
+    }
+  }
+}
+
+/**
+ * Loads `data/seed-listings.json`. The JSON file is demo inventory, not
+ * production data — see `data/README.md`. Real listings arrive through /sell
+ * and are written with `source = 'seller'`, so the seed rows can be deleted
+ * later without touching anything else.
+ *
+ * This tops up by id rather than only filling an empty database: when new seed
+ * listings are added to the JSON — a new category, say — they appear on the
+ * next boot without anyone having to wipe a database that already holds real
+ * seller submissions. Seed rows already present are left alone, so a local edit
+ * to a seed listing is not stamped back over on every restart.
  */
 function seed(database: Database.Database): void {
   const rows = seedListings as unknown as SeedListing[];
+  const known = new Set(
+    (database.prepare("SELECT id FROM listings").all() as { id: string }[]).map((r) => r.id),
+  );
+  const missing = rows.filter((row) => !known.has(row.id));
+  if (!missing.length) return;
+
   const insertMany = database.transaction((items: SeedListing[]) => {
     for (const item of items) insertListingRow(database, withPriceUsd(item));
   });
-  insertMany(rows);
+  insertMany(missing);
 }
 
 /** Derives the internal USD sort key. Never trust a client-supplied `priceUsd`. */
@@ -121,6 +162,7 @@ export function insertListingRow(database: Database.Database, l: Listing): void 
         id, slug, title, category, boat_class, discipline, seats, coxed,
         manufacturer, model, year, condition, condition_grade, material, rigging,
         crew_weight_min, crew_weight_max, hull_weight_kg, length_cm,
+        sizes, fit, quantity,
         price, currency, price_basis, price_usd,
         location, continent, country, seller, seller_type, seller_verified,
         status, listed_at, updated_at, highlights, description,
@@ -129,6 +171,7 @@ export function insertListingRow(database: Database.Database, l: Listing): void 
         @id, @slug, @title, @category, @boat_class, @discipline, @seats, @coxed,
         @manufacturer, @model, @year, @condition, @condition_grade, @material, @rigging,
         @crew_weight_min, @crew_weight_max, @hull_weight_kg, @length_cm,
+        @sizes, @fit, @quantity,
         @price, @currency, @price_basis, @price_usd,
         @location, @continent, @country, @seller, @seller_type, @seller_verified,
         @status, @listed_at, @updated_at, @highlights, @description,
@@ -155,6 +198,9 @@ export function insertListingRow(database: Database.Database, l: Listing): void 
       crew_weight_max: l.crewWeightMaxKg,
       hull_weight_kg: l.hullWeightKg,
       length_cm: l.lengthCm,
+      sizes: JSON.stringify(l.sizes ?? []),
+      fit: l.fit,
+      quantity: l.quantity,
       price: l.price,
       currency: l.currency,
       price_basis: l.priceBasis,
@@ -191,6 +237,7 @@ export interface ListingRow {
   condition: string; condition_grade: string; material: string; rigging: string | null;
   crew_weight_min: number | null; crew_weight_max: number | null;
   hull_weight_kg: number | null; length_cm: number | null;
+  sizes: string; fit: string | null; quantity: number | null;
   price: number; currency: string; price_basis: string; price_usd: number;
   location: string; continent: string; country: string;
   seller: string; seller_type: string; seller_verified: number;
@@ -220,6 +267,9 @@ export function rowToListing(r: ListingRow): Listing {
     crewWeightMaxKg: r.crew_weight_max,
     hullWeightKg: r.hull_weight_kg,
     lengthCm: r.length_cm,
+    sizes: JSON.parse(r.sizes || "[]") as Listing["sizes"],
+    fit: r.fit as Listing["fit"],
+    quantity: r.quantity,
     price: r.price,
     currency: r.currency as Listing["currency"],
     priceBasis: r.price_basis as Listing["priceBasis"],

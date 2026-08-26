@@ -1707,3 +1707,40 @@ legend { padding: 0; }
 .notfound-art { border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
 .notfound-art svg { width: 100%; display: block; }
 .notfound h1 { font-size: var(--step-4); margin-bottom: var(--sp-4); }
+
+/* Size chips — a six-way toggle reads better as a row than as six checkboxes. */
+.size-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(2.6rem, 1fr));
+  gap: var(--sp-2);
+}
+.size-chip { position: relative; cursor: pointer; }
+.size-chip input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+.size-chip span {
+  display: block;
+  text-align: center;
+  padding: 0.4rem 0.2rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bone);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--slate);
+}
+.size-chip:hover span { border-color: var(--hull-3); }
+.size-chip input:checked + span {
+  background: var(--hull);
+  border-color: var(--hull);
+  color: var(--bone);
+}
+.size-chip input:focus-visible + span { outline: 3px solid var(--brass-600); outline-offset: 2px; }
+/* On the sell form the size chips get more room than in the filter rail. */
+.size-grid-wide { grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr)); max-width: 30rem; }

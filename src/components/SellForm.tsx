@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import {
-  BOAT_CLASS_LABELS, CATEGORY_LABELS, DISCIPLINE_LABELS, GRADE_LABELS,
-  MATERIAL_LABELS, RIGGING_LABELS, SELLER_TYPE_LABELS,
+  BOAT_CLASS_LABELS, CATEGORY_LABELS, DISCIPLINE_LABELS, FIT_LABELS,
+  GRADE_LABELS, MATERIAL_LABELS, RIGGING_LABELS, SELLER_TYPE_LABELS,
 } from "@/lib/format";
 import {
-  BOAT_CLASSES, CATEGORIES, CONDITION_GRADES, CONTINENTS, CURRENCIES,
-  DISCIPLINES, MATERIALS, RIGGING_TYPES, SELLER_TYPES,
+  APPAREL_SIZES, BOAT_CLASSES, CATEGORIES, CONDITION_GRADES, CONTINENTS,
+  CURRENCIES, DISCIPLINES, FITS, MATERIALS, RIGGING_TYPES, SELLER_TYPES,
 } from "@/lib/types";
 
 interface Success {
@@ -34,6 +34,14 @@ export function SellForm() {
   const [condition, setCondition] = useState<string>("used");
 
   const isBoat = category === "shell";
+  const isApparel = category === "apparel";
+  const isGear = category === "gear";
+  // Kit and gear share one trait that matters to this form: none of the hull
+  // specs apply. Asking a seller for the crew weight band of a cox box is how
+  // you teach them the form was not written for them.
+  const softGoods = isApparel || isGear;
+
+  const defaultMaterial = isApparel ? "lycra" : isGear ? "electronics" : "carbon-nomex";
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -64,6 +72,9 @@ export function SellForm() {
       crewWeightMaxKg: numeric("crewWeightMaxKg"),
       hullWeightKg: numeric("hullWeightKg"),
       lengthCm: numeric("lengthCm"),
+      sizes: form.getAll("sizes").map(String),
+      fit: text("fit") ?? null,
+      quantity: numeric("quantity"),
       price: numeric("price"),
       currency: text("currency"),
       priceBasis: text("priceBasis"),
@@ -169,40 +180,44 @@ export function SellForm() {
             </select>
           </Field>
 
-          <Field
-            label="Boat class"
-            name="boatClass"
-            error={errors.boatClass}
-            hint={isBoat ? undefined : "Optional for equipment"}
-          >
-            <select id="boatClass" name="boatClass" defaultValue={isBoat ? "1x" : ""}>
-              <option value="">Not applicable</option>
-              {BOAT_CLASSES.map((c) => (
-                <option key={c} value={c}>
-                  {BOAT_CLASS_LABELS[c]}
-                </option>
-              ))}
-            </select>
-          </Field>
+          {!softGoods && (
+            <>
+              <Field
+                label="Boat class"
+                name="boatClass"
+                error={errors.boatClass}
+                hint={isBoat ? undefined : "Optional for equipment"}
+              >
+                <select id="boatClass" name="boatClass" defaultValue={isBoat ? "1x" : ""}>
+                  <option value="">Not applicable</option>
+                  {BOAT_CLASSES.map((c) => (
+                    <option key={c} value={c}>
+                      {BOAT_CLASS_LABELS[c]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
 
-          <Field label="Discipline" name="discipline" error={errors.discipline}>
-            <select id="discipline" name="discipline" defaultValue="sculling">
-              <option value="">Not applicable</option>
-              {DISCIPLINES.map((d) => (
-                <option key={d} value={d}>
-                  {DISCIPLINE_LABELS[d]}
-                </option>
-              ))}
-            </select>
-          </Field>
+              <Field label="Discipline" name="discipline" error={errors.discipline}>
+                <select id="discipline" name="discipline" defaultValue="sculling">
+                  <option value="">Not applicable</option>
+                  {DISCIPLINES.map((d) => (
+                    <option key={d} value={d}>
+                      {DISCIPLINE_LABELS[d]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </>
+          )}
         </div>
 
         <div className="field-row">
           <Field label="Manufacturer" name="manufacturer" error={errors.manufacturer}>
-            <input id="manufacturer" name="manufacturer" type="text" placeholder="Filippi" required />
+            <input id="manufacturer" name="manufacturer" type="text" placeholder={isApparel ? "JL Racing" : isGear ? "Nielsen-Kellerman" : "Filippi"} required />
           </Field>
           <Field label="Model" name="model" error={errors.model}>
-            <input id="model" name="model" type="text" placeholder="F1" required />
+            <input id="model" name="model" type="text" placeholder={isApparel ? "Alta All-in-One" : isGear ? "CoxBox Gold" : "F1"} required />
           </Field>
           <Field label="Year built" name="year" error={errors.year}>
             <input id="year" name="year" type="number" min={1950} max={2028} placeholder="2021" required />
@@ -246,8 +261,12 @@ export function SellForm() {
             </select>
           </Field>
 
-          <Field label="Material" name="material" error={errors.material}>
-            <select id="material" name="material" defaultValue="carbon-nomex">
+          <Field
+            label={isApparel ? "Fabric" : "Material"}
+            name="material"
+            error={errors.material}
+          >
+            <select id="material" name="material" defaultValue={defaultMaterial} key={category}>
               {MATERIALS.map((m) => (
                 <option key={m} value={m}>
                   {MATERIAL_LABELS[m]}
@@ -256,18 +275,65 @@ export function SellForm() {
             </select>
           </Field>
 
-          <Field label="Rigging" name="rigging" error={errors.rigging}>
-            <select id="rigging" name="rigging" defaultValue="">
-              <option value="">Not applicable</option>
-              {RIGGING_TYPES.map((r) => (
-                <option key={r} value={r}>
-                  {RIGGING_LABELS[r]}
-                </option>
-              ))}
-            </select>
-          </Field>
+          {!softGoods && (
+            <Field label="Rigging" name="rigging" error={errors.rigging}>
+              <select id="rigging" name="rigging" defaultValue="">
+                <option value="">Not applicable</option>
+                {RIGGING_TYPES.map((r) => (
+                  <option key={r} value={r}>
+                    {RIGGING_LABELS[r]}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          )}
         </div>
 
+        {isApparel && (
+          <fieldset className="field">
+            <legend className="field-label">Sizes in this listing</legend>
+            <p className="field-hint" style={{ marginTop: 0, marginBottom: "var(--sp-3)" }}>
+              Tick every size the listing covers. One suit gets one size; a club
+              clearing out a season&rsquo;s kit gets the whole run. This is the first
+              thing a buyer filters on.
+            </p>
+            <div className="size-grid size-grid-wide">
+              {APPAREL_SIZES.map((size) => (
+                <label key={size} className="size-chip">
+                  <input type="checkbox" name="sizes" value={size} />
+                  <span>{size}</span>
+                </label>
+              ))}
+            </div>
+            {errors.sizes && <span className="field-error">{errors.sizes}</span>}
+          </fieldset>
+        )}
+
+        {softGoods && (
+          <div className="field-row">
+            {isApparel && (
+              <Field label="Cut" name="fit" error={errors.fit}>
+                <select id="fit" name="fit" defaultValue="unisex">
+                  {FITS.map((f) => (
+                    <option key={f} value={f}>
+                      {FIT_LABELS[f]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            )}
+            <Field
+              label="How many"
+              name="quantity"
+              error={errors.quantity}
+              hint="Leave blank for a single item. A lot of twenty is a different proposition and buyers filter for it."
+            >
+              <input id="quantity" name="quantity" type="number" min={1} max={500} placeholder="1" />
+            </Field>
+          </div>
+        )}
+
+        {!softGoods && (
         <fieldset className="field">
           <legend className="field-label">Crew weight band (kg, per rower)</legend>
           <p className="field-hint" style={{ marginTop: 0, marginBottom: "var(--sp-3)" }}>
@@ -287,7 +353,9 @@ export function SellForm() {
           </div>
           {errors.crewWeightMinKg && <span className="field-error">{errors.crewWeightMinKg}</span>}
         </fieldset>
+        )}
 
+        {!softGoods && (
         <div className="field-row">
           <Field label="Hull weight (kg)" name="hullWeightKg" error={errors.hullWeightKg}>
             <input id="hullWeightKg" name="hullWeightKg" type="number" min={1} max={250} step={0.1} placeholder="14" />
@@ -306,6 +374,7 @@ export function SellForm() {
             </label>
           </div>
         </div>
+        )}
       </Section>
 
       <Section title="Price and location" number="03">
@@ -360,9 +429,7 @@ export function SellForm() {
         <div className="field">
           <span className="field-label">Three things a buyer should know</span>
           <div className="stack">
-            <input name="highlight1" type="text" maxLength={120} placeholder="One owner from new, stored indoors" required />
-            <input name="highlight2" type="text" maxLength={120} placeholder="Carbon wing rigger, straight and unrepaired" />
-            <input name="highlight3" type="text" maxLength={120} placeholder="Includes shoes, bow ball and fitted cover" />
+            {HIGHLIGHT_PLACEHOLDERS[category] ?? HIGHLIGHT_PLACEHOLDERS.shell}
           </div>
           {errors.highlights && <span className="field-error">{errors.highlights}</span>}
         </div>
@@ -378,7 +445,13 @@ export function SellForm() {
             name="description"
             rows={9}
             maxLength={4000}
-            placeholder="Bought new in 2021 for our lightweight squad and used for four seasons. Stored indoors in slings, never trailered abroad. Light gelcoat crazing at the bow ball and a scuff on the port gunwale from a landing stage…"
+            placeholder={
+              isApparel
+                ? "Our old racing kit, replaced after a rebrand. Twenty-two suits: 3 XS, 5 S, 7 M, 5 L, 2 XL. Washed cold and hung to dry. Eleven have been raced in for two seasons and show mild bobbling on the seat; the rest are barely worn…"
+                : isGear
+                  ? "Bought new in 2021 and looked after. The battery is the part that dies on these and this one was replaced in 2025, so it holds a full two-hour session. Comes with the charger and a complete boat wiring harness. Casing has the usual scuffs…"
+                  : "Bought new in 2021 for our lightweight squad and used for four seasons. Stored indoors in slings, never trailered abroad. Light gelcoat crazing at the bow ball and a scuff on the port gunwale from a landing stage…"
+            }
             required
           />
         </Field>
@@ -426,6 +499,42 @@ export function SellForm() {
     </form>
   );
 }
+
+/**
+ * Example highlights, per category. Placeholder text is the most-read copy on
+ * any form — it is where people learn what a good answer looks like — so a
+ * seller listing kit should not be shown an example about wing riggers.
+ */
+const HIGHLIGHT_PLACEHOLDERS: Record<string, React.ReactNode> = {
+  shell: (
+    <>
+      <input name="highlight1" type="text" maxLength={120} placeholder="One owner from new, stored indoors" required />
+      <input name="highlight2" type="text" maxLength={120} placeholder="Carbon wing rigger, straight and unrepaired" />
+      <input name="highlight3" type="text" maxLength={120} placeholder="Includes shoes, bow ball and fitted cover" />
+    </>
+  ),
+  apparel: (
+    <>
+      <input name="highlight1" type="text" maxLength={120} placeholder="Full size run — 3 XS, 5 S, 7 M, 5 L, 2 XL" required />
+      <input name="highlight2" type="text" maxLength={120} placeholder="Plain navy, no club crest — wearable anywhere" />
+      <input name="highlight3" type="text" maxLength={120} placeholder="Washed cold and hung dry, so the lycra has held" />
+    </>
+  ),
+  gear: (
+    <>
+      <input name="highlight1" type="text" maxLength={120} placeholder="Battery replaced 2025 — holds a full session" required />
+      <input name="highlight2" type="text" maxLength={120} placeholder="Includes charger and boat wiring harness" />
+      <input name="highlight3" type="text" maxLength={120} placeholder="Screen unmarked, every button works" />
+    </>
+  ),
+  oars: (
+    <>
+      <input name="highlight1" type="text" maxLength={120} placeholder="Matched set from one production batch" required />
+      <input name="highlight2" type="text" maxLength={120} placeholder="Shafts straight, adjustable 284–290 cm" />
+      <input name="highlight3" type="text" maxLength={120} placeholder="Blade edges chipped — training pair, not race" />
+    </>
+  ),
+};
 
 function Section({
   title, number, children,

@@ -6,9 +6,9 @@ import { ListingGallery } from "@/components/ListingGallery";
 import { getAllSlugs, getListingBySlug, getRelatedListings } from "@/lib/inventory";
 import { formatPrice, formatUsdApprox } from "@/lib/fx";
 import {
-  BOAT_CLASS_LABELS, CATEGORY_LABELS, DISCIPLINE_LABELS, GRADE_LABELS,
-  MATERIAL_LABELS, RIGGING_LABELS, SELLER_TYPE_LABELS,
-  formatDate, metres, relativeDate, weightBand,
+  BOAT_CLASS_LABELS, CATEGORY_LABELS, DISCIPLINE_LABELS, FIT_LABELS,
+  GRADE_LABELS, MATERIAL_LABELS, RIGGING_LABELS, SELLER_TYPE_LABELS,
+  formatDate, lotSize, metres, relativeDate, sizeRange, weightBand,
 } from "@/lib/format";
 
 /**
@@ -52,16 +52,28 @@ export default async function ListingPage({
     ? BOAT_CLASS_LABELS[listing.boatClass]
     : CATEGORY_LABELS[listing.category];
 
+  const isApparel = listing.category === "apparel";
+
+  /**
+   * The spec sheet is built per category — rows with nothing to say are dropped
+   * below, so a cox box does not get an empty "Crew weight band" line and a
+   * hull does not get a size run. "Material" is the one label that has to change
+   * wording rather than disappear: fabric is not hull material.
+   */
   const specs: [string, string | null][] = [
-    ["Class", classLabel],
+    ["Class", listing.boatClass ? classLabel : null],
+    ["Type", listing.boatClass ? null : CATEGORY_LABELS[listing.category]],
     ["Manufacturer", listing.manufacturer],
     ["Model", listing.model],
     ["Year", String(listing.year)],
     ["Condition", GRADE_LABELS[listing.conditionGrade]],
     ["Discipline", listing.discipline ? DISCIPLINE_LABELS[listing.discipline] : null],
+    ["Sizes", sizeRange(listing.sizes)],
+    ["Cut", listing.fit ? FIT_LABELS[listing.fit] : null],
+    ["Quantity", lotSize(listing.quantity)],
     ["Seats", listing.seats ? String(listing.seats) : null],
     ["Coxed", listing.coxed == null ? null : listing.coxed ? "Yes" : "No"],
-    ["Hull material", MATERIAL_LABELS[listing.material]],
+    [isApparel ? "Fabric" : "Material", MATERIAL_LABELS[listing.material]],
     ["Rigging", listing.rigging ? RIGGING_LABELS[listing.rigging] : null],
     ["Crew weight band", band],
     ["Hull weight", listing.hullWeightKg ? `${listing.hullWeightKg} kg` : null],
@@ -145,6 +157,15 @@ export default async function ListingPage({
                   </tbody>
                 </table>
               </div>
+              {isApparel && sizeRange(listing.sizes) && (
+                <p className="notice mt-5">
+                  <strong>On sizing.</strong> Racing kit runs small, and it runs small
+                  differently at every brand — a {listing.manufacturer} medium is not a
+                  medium anywhere else. Ask the seller for the flat measurement across
+                  the chest and the inside leg before you commit, particularly on a
+                  lot you cannot return.
+                </p>
+              )}
               {band && (
                 <p className="notice mt-5">
                   <strong>On the weight band.</strong> {listing.manufacturer} publishes

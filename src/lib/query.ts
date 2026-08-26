@@ -1,7 +1,7 @@
 import {
-  BOAT_CLASSES, CATEGORIES, CONDITIONS, CONDITION_GRADES, CONTINENTS,
-  DISCIPLINES, LISTING_SORTS, LISTING_STATUSES, MATERIALS, RIGGING_TYPES,
-  SELLER_TYPES,
+  APPAREL_SIZES, BOAT_CLASSES, CATEGORIES, CONDITIONS, CONDITION_GRADES,
+  CONTINENTS, DISCIPLINES, FITS, LISTING_SORTS, LISTING_STATUSES, MATERIALS,
+  RIGGING_TYPES, SELLER_TYPES,
 } from "./types";
 import type { ListingQuery } from "./types";
 
@@ -61,6 +61,9 @@ export function parseListingQuery(params: ParamsLike): ListingQuery {
     status: pick(all(params, "status"), LISTING_STATUSES),
     seats: seats.length ? seats : undefined,
     coxed: coxedRaw === "true" ? true : coxedRaw === "false" ? false : undefined,
+    sizes: pick(all(params, "size"), APPAREL_SIZES),
+    fit: pick(all(params, "fit"), FITS),
+    bulkOnly: one(params, "bulk") === "true" || undefined,
     minPriceUsd: num(one(params, "minPrice"), 0, 1_000_000),
     maxPriceUsd: num(one(params, "maxPrice"), 0, 1_000_000),
     fitsRowerKg: num(one(params, "rowerKg"), 30, 160),
@@ -91,6 +94,9 @@ export function toSearchParams(query: ListingQuery): URLSearchParams {
   push("sellerType", query.sellerType);
   push("status", query.status);
   push("seats", query.seats);
+  push("size", query.sizes);
+  push("fit", query.fit);
+  if (query.bulkOnly) params.set("bulk", "true");
   if (query.coxed !== undefined) params.set("coxed", String(query.coxed));
   if (query.minPriceUsd != null) params.set("minPrice", String(query.minPriceUsd));
   if (query.maxPriceUsd != null) params.set("maxPrice", String(query.maxPriceUsd));
@@ -108,6 +114,7 @@ export function countActiveFilters(query: ListingQuery): number {
     query.category, query.boatClass, query.discipline, query.condition,
     query.conditionGrade, query.material, query.rigging, query.manufacturer,
     query.continent, query.sellerType, query.status, query.seats,
+    query.sizes, query.fit,
   ];
   let n = groups.reduce<number>((sum, g) => sum + (g?.length ?? 0), 0);
   if (query.q) n += 1;
@@ -116,5 +123,6 @@ export function countActiveFilters(query: ListingQuery): number {
   if (query.maxPriceUsd != null) n += 1;
   if (query.fitsRowerKg != null) n += 1;
   if (query.verifiedOnly) n += 1;
+  if (query.bulkOnly) n += 1;
   return n;
 }

@@ -1,6 +1,7 @@
 # Inventory data
 
-`seed-listings.json` is the **seed** dataset for BoatXchange.
+`seed-listings.json` is the **seed** dataset for BoatXchange, covering all six
+categories: boats, oars, riggers, trailers, kit and gear.
 
 It exists so a fresh install of the site is not empty, and so the AI Concierge has
 real records to ground its recommendations in during development. **It is not
@@ -11,10 +12,14 @@ and contact details are invented.
 
 ## Replacing it with real inventory
 
-`seed-listings.json` is loaded into SQLite once, on first boot, by
-`src/lib/db.ts`. After that the database is the live source of truth and the JSON
-file is never read again — new listings arrive through the **Sell a Boat** form
-(`/sell` → `POST /api/sell`) and land in the same table.
+`seed-listings.json` is loaded into SQLite by `src/lib/db.ts` on boot, topped up
+by id: rows already in the database are left alone, and seed listings not yet
+present are inserted. That means adding a new seed listing — or a whole new
+category, as happened with kit and gear — shows up on the next start without
+wiping a database that already holds real seller submissions.
+
+New listings otherwise arrive through the **Sell a Boat** form (`/sell` →
+`POST /api/sell`) and land in the same table.
 
 So the migration path is simply: keep the seed for demos, and let real
 seller-submitted listings accumulate alongside it. To purge the seed data once
@@ -44,7 +49,14 @@ See `src/lib/types.ts` for the authoritative TypeScript definitions and
 - `crewWeightMinKg` / `crewWeightMaxKg` — the manufacturer's *per-rower* weight
   band. This is the single most important spec for matching a rower to a hull,
   and the concierge leans on it heavily.
-- `artSeed` — integer used to deterministically generate the duotone hull artwork
+- `sizes` — the size run an apparel listing covers, as a list. One suit carries
+  one size; a club clearing out a season's kit carries the whole spread, and the
+  size filter matches a lot that merely *contains* the size asked for. Empty for
+  everything that is not apparel.
+- `fit` — men's, women's or unisex cut. Apparel only.
+- `quantity` — how many items are in the lot. Null means one, or not applicable.
+  Kit and gear are frequently sold in bulk and buyers filter for exactly that.
+- `artSeed` — integer used to deterministically generate the duotone artwork
   shown in place of photography. Real listings carry `photos[]` instead.
 - `photoDirection` — the art direction brief for the photograph that should
   replace the generated artwork once real imagery exists.

@@ -52,6 +52,21 @@ function buildWhere(query: ListingQuery): WhereClause {
     clauses.push("coxed = ?");
     params.push(query.coxed ? 1 : 0);
   }
+
+  inClause("fit", query.fit);
+
+  // Sizes live in a JSON array because one apparel listing can cover a spread.
+  // json_each unrolls it so "show me anything in L" matches a club lot that
+  // happens to include an L, not just listings that are only L.
+  if (query.sizes?.length) {
+    clauses.push(
+      `EXISTS (SELECT 1 FROM json_each(listings.sizes)
+               WHERE json_each.value IN (${query.sizes.map(() => "?").join(", ")}))`,
+    );
+    params.push(...query.sizes);
+  }
+
+  if (query.bulkOnly) clauses.push("quantity > 1");
   if (query.verifiedOnly) clauses.push("seller_verified = 1");
 
   if (query.minPriceUsd != null) {

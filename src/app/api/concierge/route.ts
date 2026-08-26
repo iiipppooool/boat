@@ -6,8 +6,8 @@ import {
 import { getConciergeProvider } from "@/lib/ai/provider";
 import { formatPrice } from "@/lib/fx";
 import {
-  BOAT_CLASS_LABELS, CATEGORY_LABELS, GRADE_LABELS, MATERIAL_LABELS,
-  SELLER_TYPE_LABELS, weightBand,
+  BOAT_CLASS_LABELS, CATEGORY_LABELS, FIT_LABELS, GRADE_LABELS, MATERIAL_LABELS,
+  SELLER_TYPE_LABELS, lotSize, sizeRange, weightBand,
 } from "@/lib/format";
 import type { ConciergeEvent, ConciergeListingRef } from "@/lib/ai/shared";
 import type { Listing } from "@/lib/types";
@@ -135,6 +135,9 @@ function toRef(l: Listing): ConciergeListingRef {
     materialLabel: MATERIAL_LABELS[l.material],
     weightBand: weightBand(l.crewWeightMinKg, l.crewWeightMaxKg),
     hullWeightKg: l.hullWeightKg,
+    sizeRange: sizeRange(l.sizes),
+    fitLabel: l.fit ? FIT_LABELS[l.fit] : null,
+    lotSize: lotSize(l.quantity),
     priceLabel: formatPrice(l.price, l.currency),
     priceNote:
       l.priceBasis === "ono" ? "or near offer" : l.priceBasis === "poa" ? "indicative" : null,

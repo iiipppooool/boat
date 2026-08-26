@@ -269,25 +269,19 @@ function ReferencedListings({ listings }: { listings: ConciergeListingRef[] }) {
               </tr>
             </thead>
             <tbody>
-              {(
-                [
-                  ["Price", (l: ConciergeListingRef) => `${l.priceLabel}${l.priceNote ? ` (${l.priceNote})` : ""}`],
-                  ["Class", (l: ConciergeListingRef) => l.boatClassLabel],
-                  ["Condition", (l: ConciergeListingRef) => l.conditionLabel],
-                  ["Crew weight", (l: ConciergeListingRef) => l.weightBand ?? "—"],
-                  ["Hull weight", (l: ConciergeListingRef) => (l.hullWeightKg ? `${l.hullWeightKg} kg` : "—")],
-                  ["Material", (l: ConciergeListingRef) => l.materialLabel],
-                  ["Location", (l: ConciergeListingRef) => l.location],
-                  ["Seller", (l: ConciergeListingRef) => `${l.sellerLabel}${l.verified ? " · verified" : ""}`],
-                ] as const
-              ).map(([label, get]) => (
-                <tr key={label}>
-                  <th scope="row">{label}</th>
-                  {listings.map((l) => (
-                    <td key={l.id}>{get(l)}</td>
-                  ))}
-                </tr>
-              ))}
+              {COMPARE_ROWS
+                // Comparing a unisuit against a cox box should not print four
+                // empty hull rows: a row survives only if something in this
+                // comparison actually has a value for it.
+                .filter(([, get]) => listings.some((l) => get(l) !== null))
+                .map(([label, get]) => (
+                  <tr key={label}>
+                    <th scope="row">{label}</th>
+                    {listings.map((l) => (
+                      <td key={l.id}>{get(l) ?? "—"}</td>
+                    ))}
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -314,6 +308,21 @@ function ReferencedListings({ listings }: { listings: ConciergeListingRef[] }) {
     </div>
   );
 }
+
+/** Spec rows for the side-by-side table, in the order a buyer scans them. */
+const COMPARE_ROWS: [string, (l: ConciergeListingRef) => string | null][] = [
+  ["Price", (l) => `${l.priceLabel}${l.priceNote ? ` (${l.priceNote})` : ""}`],
+  ["Type", (l) => l.boatClassLabel],
+  ["Condition", (l) => l.conditionLabel],
+  ["Sizes", (l) => l.sizeRange],
+  ["Cut", (l) => l.fitLabel],
+  ["Quantity", (l) => l.lotSize],
+  ["Crew weight", (l) => l.weightBand],
+  ["Hull weight", (l) => (l.hullWeightKg ? `${l.hullWeightKg} kg` : null)],
+  ["Material", (l) => l.materialLabel],
+  ["Location", (l) => l.location],
+  ["Seller", (l) => `${l.sellerLabel}${l.verified ? " · verified" : ""}`],
+];
 
 function applyEvent(turns: Turn[], event: ConciergeEvent): Turn[] {
   const next = [...turns];

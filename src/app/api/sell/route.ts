@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { SellSubmissionSchema, fieldErrors } from "@/lib/sell-schema";
+import { SellSubmissionSchema, fieldErrors, type SellSubmission } from "@/lib/sell-schema";
 import { createListing } from "@/lib/inventory";
 
 export const runtime = "nodejs";
@@ -47,6 +47,9 @@ export async function POST(request: Request) {
     crewWeightMaxKg: d.crewWeightMaxKg ?? null,
     hullWeightKg: d.hullWeightKg ?? null,
     lengthCm: d.lengthCm ?? null,
+    sizes: d.sizes,
+    fit: d.fit ?? null,
+    quantity: d.quantity ?? null,
     price: d.price,
     currency: d.currency,
     priceBasis: d.priceBasis,
@@ -70,9 +73,7 @@ export async function POST(request: Request) {
     updatedAt: today,
     highlights: d.highlights,
     description: d.description,
-    photoDirection:
-      d.photoNotes ||
-      "Seller has not yet supplied photographs. Requested: three-quarter bow view, full hull profile, rigger detail, and an honest close-up of every repair.",
+    photoDirection: d.photoNotes || defaultPhotoBrief(d.category),
   });
 
   return NextResponse.json({
@@ -81,4 +82,18 @@ export async function POST(request: Request) {
     slug: listing.slug,
     title: listing.title,
   });
+}
+
+/** What we ask a seller to photograph, which is not the same for a hull as for kit. */
+function defaultPhotoBrief(category: SellSubmission["category"]): string {
+  switch (category) {
+    case "apparel":
+      return "Seller has not yet supplied photographs. Requested: a flat-lay of every size in the lot, a shot on a person for the cut, and an honest close-up of wear on the seat panel.";
+    case "gear":
+      return "Seller has not yet supplied photographs. Requested: the unit powered on with the screen readable, everything included laid out together, and a close-up of any damage to the casing or cable.";
+    case "oars":
+      return "Seller has not yet supplied photographs. Requested: the full set laid out, a close-up of the blade edges, and the collar and handle showing wear.";
+    default:
+      return "Seller has not yet supplied photographs. Requested: three-quarter bow view, full hull profile, rigger detail, and an honest close-up of every repair.";
+  }
 }

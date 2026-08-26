@@ -17,7 +17,7 @@
  * a grid of them looks composed rather than random.
  */
 
-type Scene = "waterline" | "puddles" | "rigger" | "boathouse";
+type Scene = "waterline" | "puddles" | "rigger" | "boathouse" | "kit" | "gear";
 
 interface Duotone {
   /** Background wash. */
@@ -35,7 +35,7 @@ const PALETTES: Duotone[] = [
   { base: "#e9e2d3", mid: "#9aa6a0", ink: "#12303a" },
 ];
 
-const SCENES: Scene[] = ["waterline", "puddles", "rigger", "boathouse"];
+const SCENES: Scene[] = ["waterline", "puddles", "rigger", "boathouse", "kit", "gear"];
 
 /**
  * Which composition suits which kind of listing. Drawing a hull profile on a
@@ -51,6 +51,8 @@ const SCENES_BY_CATEGORY: Record<string, Scene[]> = {
   oars: ["puddles"],
   rigging: ["rigger"],
   trailer: ["boathouse"],
+  apparel: ["kit"],
+  gear: ["gear"],
 };
 
 /** Small deterministic PRNG — same seed, same picture, every render. */
@@ -115,6 +117,8 @@ export function HullArt({
       {chosen === "puddles" && <Puddles w={w} h={h} p={palette} rand={rand} />}
       {chosen === "rigger" && <Rigger w={w} h={h} p={palette} rand={rand} />}
       {chosen === "boathouse" && <Boathouse w={w} h={h} p={palette} rand={rand} />}
+      {chosen === "kit" && <Kit w={w} h={h} p={palette} rand={rand} />}
+      {chosen === "gear" && <Gear w={w} h={h} p={palette} rand={rand} />}
     </svg>
   );
 }
@@ -350,6 +354,143 @@ function Boathouse({ w, h, p, rand }: SceneProps) {
         d={`M${w * 0.06} ${deck - h * 0.015} l ${w * 0.13} ${-h * 0.035} l ${w * 0.02} ${h * 0.05} l ${-w * 0.14} ${h * 0.032} z`}
         fill="var(--brass-600)"
       />
+    </g>
+  );
+}
+
+/**
+ * An all-in-one, flat-laid. The rowing unisuit is one of the few garments with a
+ * silhouette a rower can name across a room — straps, a torso that runs
+ * uninterrupted into the shorts, and a club stripe on the diagonal. The stripe
+ * is drawn as an explicit parallelogram inside the body rather than clipped,
+ * so several of these can sit on one page without colliding over an element id.
+ */
+function Kit({ w, h, p, rand }: SceneProps) {
+  const cx = w * 0.5;
+  const top = h * 0.14;
+  const shoulder = w * 0.075;
+  const chest = w * 0.115;
+  const waist = w * 0.095;
+  const hip = w * 0.13;
+  const chestY = top + h * 0.14;
+  const waistY = top + h * 0.4;
+  const hemY = h * 0.86;
+  const gusset = h * 0.72;
+
+  const body = [
+    `M${cx - shoulder} ${top}`,
+    `L${cx - chest} ${chestY}`,
+    `L${cx - waist} ${waistY}`,
+    `L${cx - hip} ${hemY}`,
+    `L${cx - w * 0.012} ${hemY}`,
+    `L${cx} ${gusset}`,
+    `L${cx + w * 0.012} ${hemY}`,
+    `L${cx + hip} ${hemY}`,
+    `L${cx + waist} ${waistY}`,
+    `L${cx + chest} ${chestY}`,
+    `L${cx + shoulder} ${top}`,
+    `L${cx + w * 0.028} ${top + h * 0.045}`,
+    `L${cx - w * 0.028} ${top + h * 0.045}`,
+    "Z",
+  ].join(" ");
+
+  // Club stripe: a band across the torso, running corner to corner.
+  const stripeTop = chestY + h * 0.04;
+  const stripeBand = h * 0.075;
+  const stripe = [
+    `M${cx - chest * 0.98} ${stripeTop + stripeBand}`,
+    `L${cx + chest * 0.9} ${stripeTop - h * 0.05}`,
+    `L${cx + chest * 0.88} ${stripeTop + h * 0.02}`,
+    `L${cx - chest * 0.96} ${stripeTop + stripeBand + h * 0.07}`,
+    "Z",
+  ].join(" ");
+
+  return (
+    <g>
+      {/* folded shelf behind, so the frame is not one object in a void */}
+      {[0, 1, 2].map((i) => (
+        <rect key={i} x={0} y={h * (0.1 + i * 0.3)} width={w} height={h * 0.02} fill={p.mid} opacity={0.3 - i * 0.06} />
+      ))}
+      <rect x={0} y={h * 0.88} width={w} height={h * 0.12} fill={p.mid} opacity="0.34" />
+
+      {/* a second garment, folded, off to the side */}
+      <g opacity="0.55">
+        <rect x={w * 0.06} y={h * 0.5} width={w * 0.15} height={h * 0.26} fill={p.ink} opacity="0.75" />
+        <rect x={w * 0.06} y={h * 0.58} width={w * 0.15} height={h * 0.035} fill={p.base} opacity="0.8" />
+      </g>
+      <g opacity="0.45">
+        <rect x={w * 0.79} y={h * 0.44} width={w * 0.15} height={h * 0.22} fill={p.ink} opacity="0.6" />
+        <rect x={w * 0.79} y={h * 0.52} width={w * 0.15} height={h * 0.03} fill={p.base} opacity="0.8" />
+      </g>
+
+      <path d={body} fill={p.ink} />
+      <path d={stripe} fill="var(--brass-600)" />
+      {/* the numbered patch every club suit ends up with */}
+      <rect x={cx - w * 0.035} y={waistY + h * 0.08} width={w * 0.07} height={h * 0.07} fill={p.base} opacity="0.85" />
+    </g>
+  );
+}
+
+/**
+ * A cox box in plan view, drawn on the same graph paper as the rigger sketch —
+ * the two are the workshop half of the inventory, and sharing a visual language
+ * makes a mixed grid feel deliberate rather than assembled.
+ */
+function Gear({ w, h, p, rand }: SceneProps) {
+  const bx = w * 0.2;
+  const by = h * 0.2;
+  const bw = w * 0.44;
+  const bh = h * 0.58;
+  const r = Math.min(w, h) * 0.04;
+  const jitter = rand();
+
+  return (
+    <g>
+      {Array.from({ length: 9 }).map((_, i) => (
+        <rect key={`h${i}`} x={0} y={(h / 9) * i} width={w} height="1" fill={p.mid} opacity="0.3" />
+      ))}
+      {Array.from({ length: 14 }).map((_, i) => (
+        <rect key={`v${i}`} x={(w / 14) * i} y={0} width="1" height={h} fill={p.mid} opacity="0.18" />
+      ))}
+
+      {/* cable, coiling away to the boat */}
+      <path
+        d={`M${bx + bw} ${by + bh * 0.5} C ${w * 0.82} ${by + bh * (0.2 + jitter * 0.2)}, ${w * 0.72} ${h * 0.92}, ${w * 0.96} ${h * 0.82}`}
+        stroke={p.ink}
+        strokeWidth={h * 0.016}
+        fill="none"
+        strokeLinecap="round"
+        opacity="0.85"
+      />
+      <rect x={w * 0.93} y={h * 0.78} width={w * 0.055} height={h * 0.075} rx={r * 0.4} fill="var(--brass-600)" />
+
+      {/* body */}
+      <rect x={bx} y={by} width={bw} height={bh} rx={r} fill={p.ink} />
+      {/* display */}
+      <rect x={bx + bw * 0.1} y={by + bh * 0.1} width={bw * 0.8} height={bh * 0.42} rx={r * 0.4} fill={p.base} opacity="0.92" />
+      {/* readout: a big figure and two smaller ones */}
+      <rect x={bx + bw * 0.16} y={by + bh * 0.18} width={bw * 0.42} height={bh * 0.13} fill={p.ink} opacity="0.85" />
+      <rect x={bx + bw * 0.16} y={by + bh * 0.36} width={bw * 0.24} height={bh * 0.07} fill={p.ink} opacity="0.5" />
+      <rect x={bx + bw * 0.46} y={by + bh * 0.36} width={bw * 0.28} height={bh * 0.07} fill={p.ink} opacity="0.5" />
+
+      {/* buttons */}
+      {[0.22, 0.5, 0.78].map((t, i) => (
+        <circle
+          key={t}
+          cx={bx + bw * t}
+          cy={by + bh * 0.74}
+          r={Math.min(w, h) * 0.038}
+          fill={i === 1 ? "var(--brass-600)" : p.base}
+          opacity={i === 1 ? 1 : 0.75}
+        />
+      ))}
+
+      {/* dimension tick, as on the rigger sketch */}
+      <g stroke={p.ink} strokeWidth="1.2" opacity="0.55" fill="none">
+        <path d={`M${bx} ${h * 0.1} H${bx + bw}`} />
+        <path d={`M${bx} ${h * 0.07} V${h * 0.13}`} />
+        <path d={`M${bx + bw} ${h * 0.07} V${h * 0.13}`} />
+      </g>
     </g>
   );
 }

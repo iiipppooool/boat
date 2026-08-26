@@ -12,6 +12,8 @@ const SITEMAP: { heading: string; links: { href: string; label: string }[] }[] =
       { href: "/market?boatClass=8%2B", label: "Eights" },
       { href: "/market?discipline=coastal", label: "Coastal boats" },
       { href: "/market?category=oars", label: "Oars & sculls" },
+      { href: "/market?category=apparel", label: "Kit & apparel" },
+      { href: "/market?category=gear", label: "Gear & electronics" },
       { href: "/market?category=trailer", label: "Trailers" },
     ],
   },
@@ -45,8 +47,9 @@ export function SiteFooter() {
           <div className="site-footer-brand">
             <Wordmark size="1.5rem" />
             <p className="small">
-              The global marketplace for rowing boats — new and used. Built by
-              rowers, for a sport whose boats have never had a market of their own.
+              The global marketplace for rowing boats, kit and gear — new and used.
+              Built by rowers, for a sport whose boats have never had a market of
+              their own.
             </p>
             <p className="tiny muted-on-hull">
               Registered in England &amp; Wales · Company 15,482,006<br />

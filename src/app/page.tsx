@@ -30,6 +30,8 @@ const BROWSE_BY: { href: string; label: string; note: string }[] = [
   { href: "/market?boatClass=8%2B", label: BOAT_CLASS_LABELS["8+"], note: "Club and racing eights" },
   { href: "/market?discipline=coastal", label: "Coastal", note: "Open water and beach starts" },
   { href: "/market?category=oars", label: "Oars & sculls", note: "Sweep and sculling" },
+  { href: "/market?category=apparel", label: "Kit & apparel", note: "All-in-ones, trou, splash tops" },
+  { href: "/market?category=gear", label: "Gear & electronics", note: "Cox boxes, stroke coaches, ergs" },
   { href: "/market?category=trailer", label: "Trailers", note: "Club and regatta" },
   { href: "/market?category=rigging", label: "Riggers & parts", note: "Spares and hardware" },
 ];
@@ -53,8 +55,8 @@ export default function HomePage() {
             </h1>
             <p className="lede">
               Singles, doubles, quads, fours, eights and coastal hulls — plus the
-              oars, riggers and trailers that go with them. Sold by clubs, builders,
-              dealers and the person who rowed it last.
+              oars, riggers, trailers, racing kit and cox boxes that go with them.
+              Sold by clubs, builders, dealers and the person who rowed it last.
             </p>
             <div className="cluster hero-actions">
               <Link href="/market" className="btn btn-accent btn-lg">

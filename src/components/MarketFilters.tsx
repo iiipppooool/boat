@@ -3,11 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
-  BOAT_CLASS_LABELS, CATEGORY_LABELS, DISCIPLINE_LABELS, GRADE_LABELS,
-  MATERIAL_LABELS, RIGGING_LABELS, SELLER_TYPE_LABELS,
+  BOAT_CLASS_LABELS, CATEGORY_LABELS, DISCIPLINE_LABELS, FIT_LABELS,
+  GRADE_LABELS, MATERIAL_LABELS, RIGGING_LABELS, SELLER_TYPE_LABELS,
 } from "@/lib/format";
 import {
-  CONDITION_GRADES, CONTINENTS, DISCIPLINES, MATERIALS, RIGGING_TYPES, SELLER_TYPES,
+  APPAREL_SIZES, CONDITION_GRADES, CONTINENTS, DISCIPLINES, FITS, MATERIALS,
+  RIGGING_TYPES, SELLER_TYPES,
 } from "@/lib/types";
 import type { BoatClass, Category, ListingQuery, MarketFacets } from "@/lib/types";
 
@@ -205,8 +206,46 @@ export function MarketFilters({
           </span>
         </FilterGroup>
 
-        <FilterGroup label="Hull material">
-          {MATERIALS.filter((m) => !["aluminium", "steel", "wood"].includes(m)).map((m) => (
+        <FilterGroup label="Size">
+          <div className="size-grid">
+            {APPAREL_SIZES.map((size) => (
+              <label key={size} className="size-chip">
+                <input
+                  type="checkbox"
+                  name="size"
+                  value={size}
+                  defaultChecked={has(query.sizes, size)}
+                />
+                <span>{size}</span>
+              </label>
+            ))}
+          </div>
+          <span className="field-hint">
+            Matches kit offering that size — including a club lot that happens to
+            contain one.
+          </span>
+        </FilterGroup>
+
+        <FilterGroup label="Cut">
+          {FITS.map((f) => (
+            <Check
+              key={f}
+              name="fit"
+              value={f}
+              label={FIT_LABELS[f]}
+              defaultChecked={has(query.fit, f)}
+            />
+          ))}
+          <label className="checkline">
+            <input type="checkbox" name="bulk" value="true" defaultChecked={query.bulkOnly} />
+            <span>Bulk lots only</span>
+          </label>
+        </FilterGroup>
+
+        <FilterGroup label="Material &amp; fabric">
+          {MATERIALS.filter(
+            (m) => !["aluminium", "steel", "wood", "electronics", "mixed-textile"].includes(m),
+          ).map((m) => (
             <Check
               key={m}
               name="material"

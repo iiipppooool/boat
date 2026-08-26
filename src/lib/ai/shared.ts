@@ -18,6 +18,9 @@ export interface ConciergeListingRef {
   materialLabel: string;
   weightBand: string | null;
   hullWeightKg: number | null;
+  sizeRange: string | null;
+  fitLabel: string | null;
+  lotSize: string | null;
   priceLabel: string;
   priceNote: string | null;
   location: string;

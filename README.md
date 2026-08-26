@@ -1,9 +1,9 @@
 # BoatXchange
 
 The global marketplace for rowing boats — new and used. Single sculls, doubles,
-quads, fours, eights and coastal hulls, plus the oars, riggers and trailers that
-go with them, with an AI concierge that reads the live inventory before it
-recommends anything.
+quads, fours, eights and coastal hulls, plus the oars, riggers, trailers, racing
+kit and gear that go with them, with an AI concierge that reads the live
+inventory before it recommends anything.
 
 Rowing is the last boat category without a marketplace of its own. Sailing has
 YachtWorld, motor boats have Boats.com; a £40,000 racing eight gets sold through
@@ -160,15 +160,20 @@ that it is running offline.
 The model never sees the inventory and is never asked to remember it. Each turn:
 
 1. **Constraints are extracted in code.** Weight, budget (currency-aware —
-   £7,000 is not $7,000), boat class, category, region, new/used. Regular
-   expressions, not a model call.
+   £7,000 is not $7,000), boat class, category, apparel size, region, new/used.
+   Regular expressions, not a model call. Two ambiguities are handled
+   explicitly: a bare "S"/"M"/"L" is only read as a size when the word "size"
+   precedes it or the word is spelled out, and "scull" is disambiguated — a
+   *single scull* is a boat, a *pair of sculls* is a set of oars, and reading
+   the second sense in the first sentence used to return a page of blades.
 2. **Those become a `ListingQuery`** and run against the same repository the
    Market page uses. If too little comes back, constraints are relaxed in a
    defined order — and in two tiers. Preferences (new/used, budget, region) are
    relaxed to fill out a thin shortlist; *defining* constraints (boat class, the
-   crew weight band) are only dropped when there is nothing at all, because a
-   page of singles is not a useful answer to a question about eights. Whatever
-   was relaxed is passed to the model, which is told to say so.
+   crew weight band, an apparel size) are only dropped when there is nothing at
+   all, because a page of singles is not a useful answer to a question about
+   eights and a large is not a useful answer to someone who needs a small.
+   Whatever was relaxed is passed to the model, which is told to say so.
 3. **The model receives that shortlist and nothing else,** with instructions
    that it is the complete set of boats it may recommend.
 4. **References are validated on the way out.** `[bx-1001]` codes are matched
@@ -229,13 +234,16 @@ There are no photographs yet, and the two easy answers — grey boxes, or
 synthetic "boat photos" — would both cheapen a page where someone is deciding
 whether to spend £12,000.
 
-Instead every listing gets a flat two-tone illustration built from four
+Instead every listing gets a flat two-tone illustration built from six
 rowing-specific compositions: a hull profile above its reflection on banded
 water; blade puddles from above with the wake running off; wing-rigger geometry
 drawn as a workshop dimension sketch; a boathouse horizon with dock pilings and
-a shell out on the water. Composition and palette are picked deterministically
-from each listing's `artSeed`, so a boat looks the same everywhere and a grid of
-them looks composed rather than random. See `src/components/HullArt.tsx`.
+a shell out on the water; an all-in-one flat-laid with a club stripe on the
+diagonal; and a cox box in plan view on the same graph paper as the rigger
+sketch. Composition follows the listing's category — kit gets kit, a cox box
+gets a cox box — and palette and variant come from its `artSeed`, so an item
+looks the same everywhere and a grid looks composed rather than random. See
+`src/components/HullArt.tsx`.
 
 The gallery labels them as illustration rather than passing them off as
 photography, and prints the seller's photo brief for that specific boat
@@ -253,11 +261,14 @@ every rower recognises from twenty metres away. `src/components/Wordmark.tsx`.
 
 ## Inventory
 
-`data/seed-listings.json` holds 34 seed listings across 21 manufacturers,
-5 currencies and 11 countries — real manufacturers and model families, invented
-boats, prices, sellers and locations. **It is demo data, not production
-inventory.** It is loaded into SQLite once on first boot and never read again;
-after that the database is the source of truth.
+`data/seed-listings.json` holds 46 seed listings across six categories — boats,
+oars, riggers, trailers, kit and gear — spanning 27 manufacturers, 5 currencies
+and 11 countries. Real manufacturers and model families; invented items, prices,
+sellers and locations. **It is demo data, not production inventory.**
+
+It is topped up into SQLite by id on boot: new seed listings appear on the next
+start without wiping a database that already holds real seller submissions, and
+seed rows already present are left alone rather than being stamped back over.
 
 Real listings arrive through **`/sell` → `POST /api/sell`** and are written with
 `source = 'seller'`, so the seed rows can be deleted with one statement once real
@@ -270,8 +281,30 @@ DELETE FROM listings WHERE source = 'seed';
 Full schema notes are in `data/README.md`; the authoritative types are in
 `src/lib/types.ts`.
 
-Two fields are worth calling out because a general classifieds schema would not
-have them:
+### Categories
+
+| Category | | Filters on |
+|---|---|---|
+| `shell` | Boats | Class, crew weight band, layup, rigging |
+| `oars` | Oars & sculls | Sweep vs. sculling, length, condition |
+| `rigging` | Riggers & parts | Class it fits, condition |
+| `trailer` | Trailers | Capacity, condition |
+| `apparel` | Kit & apparel | **Size run, cut, lot size** |
+| `gear` | Gear & electronics | Lot size, condition, what's included |
+
+`apparel` and `gear` are separate rather than one "everything else" bucket
+because they are searched on different things — nobody filters kit by hull
+material and nobody filters a cox box by chest size. The card, the spec sheet,
+the filter panel and the sell form all switch on category, so a cox box never
+shows an empty "crew weight band" row and a hull is never asked for a size run.
+
+Three fields exist only for these categories: `sizes` (a list, because one club
+lot covers a whole size run), `fit` (men's/women's/unisex), and `quantity` — a
+club clearing out 22 all-in-ones is solving a different problem from one person
+who needs one suit, and buyers filter for exactly that.
+
+Two more fields are worth calling out because a general classifieds schema would
+not have them:
 
 - **`crewWeightMinKg` / `crewWeightMaxKg`** — the manufacturer's per-rower weight
   band. It is the spec that decides whether a hull will ever feel right, it is
@@ -313,6 +346,9 @@ Each is a self-contained gap, marked with a comment in the file:
   instant-publish would be the wrong default.
 - **Photo upload.** Sellers describe their photographs; there is no file upload
   or image pipeline yet.
+- **Apparel measurements.** Sizes are the letter run only. Brand-to-brand sizing
+  varies enough that flat chest and inside-leg measurements would be the real
+  fix; for now the listing page tells buyers to ask for them.
 
 ## Deploying
 

@@ -1,14 +1,34 @@
 import Link from "next/link";
 import { HullArt } from "./HullArt";
 import { formatPrice } from "@/lib/fx";
-import { BOAT_CLASS_LABELS, CATEGORY_LABELS, GRADE_LABELS, relativeDate, weightBand } from "@/lib/format";
+import {
+  BOAT_CLASS_LABELS, CATEGORY_LABELS, FIT_LABELS, GRADE_LABELS,
+  lotSize, relativeDate, sizeRange, weightBand,
+} from "@/lib/format";
 import type { Listing } from "@/lib/types";
 
 export function ListingCard({ listing }: { listing: Listing }) {
-  const band = weightBand(listing.crewWeightMinKg, listing.crewWeightMaxKg);
   const classLabel = listing.boatClass
     ? BOAT_CLASS_LABELS[listing.boatClass]
     : CATEGORY_LABELS[listing.category];
+
+  /**
+   * Two rows of specs, chosen for the category. A crew weight band on a cox box
+   * is noise; a size run on a hull is nonsense. The card shows whichever two
+   * facts a buyer of *this* kind of thing scans for.
+   */
+  const band = weightBand(listing.crewWeightMinKg, listing.crewWeightMaxKg);
+  const sizes = sizeRange(listing.sizes);
+  const lot = lotSize(listing.quantity);
+
+  const detail: { label: string; value: string } | null =
+    listing.category === "apparel" && sizes
+      ? { label: "Sizes", value: listing.fit ? `${sizes} · ${FIT_LABELS[listing.fit]}` : sizes }
+      : lot
+        ? { label: "Quantity", value: lot }
+        : band
+          ? { label: "Crew weight", value: band }
+          : null;
 
   return (
     <article className={`card${listing.status === "sold" ? " card-sold" : ""}`}>
@@ -43,10 +63,10 @@ export function ListingCard({ listing }: { listing: Listing }) {
             <dt>Condition</dt>
             <dd>{GRADE_LABELS[listing.conditionGrade]}</dd>
           </div>
-          {band && (
+          {detail && (
             <div>
-              <dt>Crew weight</dt>
-              <dd>{band}</dd>
+              <dt>{detail.label}</dt>
+              <dd>{detail.value}</dd>
             </div>
           )}
           <div>

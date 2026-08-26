@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: "%s · BoatXchange",
   },
   description:
-    "Buy and sell rowing boats worldwide: single sculls, doubles, quads, eights, coastal hulls, oars, riggers and trailers. New and used, from clubs, dealers and private owners.",
+    "Buy and sell rowing boats worldwide: single sculls, doubles, quads, eights, coastal hulls, oars, riggers, trailers, racing kit and gear. New and used, from clubs, dealers and private owners.",
   openGraph: {
     title: "BoatXchange — the global marketplace for rowing boats",
     description:

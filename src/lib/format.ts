@@ -1,6 +1,6 @@
 import type {
-  BoatClass, Category, ConditionGrade, Discipline, Material,
-  RiggingType, SellerType,
+  ApparelSize, BoatClass, Category, ConditionGrade, Discipline, Fit,
+  Material, RiggingType, SellerType,
 } from "./types";
 
 export const BOAT_CLASS_LABELS: Record<BoatClass, string> = {
@@ -23,6 +23,21 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   oars: "Oars & sculls",
   rigging: "Riggers & parts",
   trailer: "Trailers",
+  apparel: "Kit & apparel",
+  gear: "Gear & electronics",
+};
+
+/** Categories where size, cut and quantity matter more than hull specs. */
+export const SOFT_GOODS: Category[] = ["apparel", "gear"];
+
+export function isSoftGoods(category: Category): boolean {
+  return SOFT_GOODS.includes(category);
+}
+
+export const FIT_LABELS: Record<Fit, string> = {
+  mens: "Men's cut",
+  womens: "Women's cut",
+  unisex: "Unisex",
 };
 
 export const MATERIAL_LABELS: Record<Material, string> = {
@@ -34,6 +49,12 @@ export const MATERIAL_LABELS: Record<Material, string> = {
   wood: "Wood",
   aluminium: "Aluminium",
   steel: "Steel",
+  lycra: "Lycra / elastane",
+  polyester: "Technical polyester",
+  merino: "Merino wool",
+  neoprene: "Neoprene",
+  "mixed-textile": "Mixed textile",
+  electronics: "Electronics",
 };
 
 export const RIGGING_LABELS: Record<RiggingType, string> = {
@@ -91,4 +112,23 @@ export function weightBand(min: number | null, max: number | null): string | nul
 
 export function metres(cm: number | null): string | null {
   return cm == null ? null : `${(cm / 100).toFixed(2)} m`;
+}
+
+/** "S–XL" for a contiguous run, "S, L, XXL" for a gappy one. */
+export function sizeRange(sizes: ApparelSize[]): string | null {
+  if (!sizes.length) return null;
+  const order: ApparelSize[] = ["XS", "S", "M", "L", "XL", "XXL"];
+  const present = order.filter((s) => sizes.includes(s));
+  if (!present.length) return null;
+  if (present.length === 1) return present[0];
+
+  const first = order.indexOf(present[0]);
+  const last = order.indexOf(present[present.length - 1]);
+  const contiguous = last - first + 1 === present.length;
+  return contiguous ? `${present[0]}\u2013${present[present.length - 1]}` : present.join(", ");
+}
+
+/** "22 items" — only worth saying when a listing is a lot rather than a thing. */
+export function lotSize(quantity: number | null): string | null {
+  return quantity && quantity > 1 ? `${quantity} items` : null;
 }

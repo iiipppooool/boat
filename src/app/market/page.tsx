@@ -10,7 +10,7 @@ import { countActiveFilters, parseListingQuery } from "@/lib/query";
 export const metadata: Metadata = {
   title: "Market",
   description:
-    "Every rowing boat currently for sale on BoatXchange: singles, doubles, quads, fours, eights, coastal hulls, oars, riggers and trailers, filtered by class, weight band, material, price and region.",
+    "Everything currently for sale on BoatXchange: singles, doubles, quads, fours, eights, coastal hulls, oars, riggers, trailers, racing kit and gear — filtered by class, crew weight band, size, material, price and region.",
 };
 
 /**
@@ -39,11 +39,12 @@ export default async function MarketPage({
         <div className="wrap">
           <p className="eyebrow">The market</p>
           <div className="page-head-grid">
-            <h1>Every rowing boat currently for sale.</h1>
+            <h1>Everything a rowing club buys, in one place.</h1>
             <p className="lede">
-              {facets.availableTotal} live listings from clubs, dealers, builders and
-              private owners across {facets.continents.length} continents. Filter by
-              class, crew weight band, material or region — or{" "}
+              {facets.availableTotal} live listings — boats, oars, kit, gear and
+              trailers — from clubs, dealers, builders and private owners across{" "}
+              {facets.continents.length} continents. Filter by class, crew weight
+              band, size or region — or{" "}
               <Link href="/concierge">ask the concierge</Link> to do it for you.
             </p>
           </div>

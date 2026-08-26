@@ -1,9 +1,14 @@
 import "server-only";
 import { getListingBySlug, searchListings } from "@/lib/inventory";
 import { formatPrice, toUsd } from "@/lib/fx";
-import { BOAT_CLASS_LABELS, GRADE_LABELS, MATERIAL_LABELS, relativeDate, weightBand } from "@/lib/format";
+import {
+  BOAT_CLASS_LABELS, CATEGORY_LABELS, FIT_LABELS, GRADE_LABELS, MATERIAL_LABELS,
+  lotSize, relativeDate, sizeRange, weightBand,
+} from "@/lib/format";
 import { CONTINENTS } from "@/lib/types";
-import type { BoatClass, Category, Continent, Currency, Listing, ListingQuery } from "@/lib/types";
+import type {
+  ApparelSize, BoatClass, Category, Continent, Currency, Listing, ListingQuery,
+} from "@/lib/types";
 import type { ConciergeMessage } from "./provider";
 
 /**
@@ -23,6 +28,7 @@ import type { ConciergeMessage } from "./provider";
 const SHORTLIST_SIZE = 12;
 
 export interface ExtractedConstraints {
+  sizes?: ApparelSize[];
   weightKg?: number;
   heightCm?: number;
   budgetUsd?: number;
@@ -66,6 +72,36 @@ const CATEGORY_PATTERNS: [RegExp, Category][] = [
   [/\b(oars?|sculls?|blades?|sweeps?)\b/i, "oars"],
   [/\b(trailer|transport rack)\b/i, "trailer"],
   [/\b(rigger|riggers|gate|pin|spread)\b/i, "rigging"],
+  // "zootie" is what a lot of crews actually call an all-in-one, so it is here
+  // for the same reason "1x" is: people type what they say.
+  [
+    /\b(all[- ]?in[- ]?ones?|unisuits?|zooties?|zoot suits?|trou|kit|apparel|clothing|clothes|splash ?tops?|pogies|thermals?|jackets?|leggings?|jerseys?)\b/i,
+    "apparel",
+  ],
+  [
+    /\b(cox ?box(?:es)?|speed ?coach|stroke ?coach|ergs?|ergos?|ergometers?|slings?|boat covers?|blade bags?|gear|electronics)\b/i,
+    "gear",
+  ],
+  // People ask for the problem, not the product. Nobody types "pogies" until
+  // somebody has told them pogies exist.
+  [/\b(pogies|gloves?|hand ?warmers?|keep (?:my |your )?hands warm)\b/i, "apparel"],
+];
+
+/**
+ * Words that mean oars and only oars. "Scull" does not: a single scull is a
+ * boat and a pair of sculls is a set of oars, and the word alone cannot tell
+ * you which. Used below to stop "I want a single scull" returning oars.
+ */
+const UNAMBIGUOUS_OARS =
+  /\b(oars?|blades?|looms?|sweep oars?|(?:pairs?|sets?) of sculls)\b/i;
+
+/** Words people use for sizes, mapped onto the size run kit is sold in. */
+const SIZE_WORDS: [RegExp, ApparelSize][] = [
+  [/\bextra[- ]small\b/i, "XS"],
+  [/\bextra[- ]large\b/i, "XL"],
+  [/\bsmall\b/i, "S"],
+  [/\bmedium\b/i, "M"],
+  [/\blarge\b/i, "L"],
 ];
 
 /**
@@ -108,7 +144,11 @@ export function extractConstraints(text: string): ExtractedConstraints {
       if (!marker && !parts[3] && value < 1000) return 0;
       return toUsd(value, currencyFor(marker));
     })
-    .filter((v) => v >= 300 && v <= 500_000);
+    // Floor is deliberately low: a pair of pogies is $45, and a floor set for
+    // boat prices would silently throw away every kit budget. Bare numbers under
+    // 1000 are already excluded above unless something marks them as money, so
+    // this does not start reading weights as budgets.
+    .filter((v) => v >= 20 && v <= 500_000);
   if (budgets.length) out.budgetUsd = Math.max(...budgets);
 
   for (const [pattern, classes] of CLASS_PATTERNS) {
@@ -120,6 +160,35 @@ export function extractConstraints(text: string): ExtractedConstraints {
   for (const [pattern, category] of CATEGORY_PATTERNS) {
     if (pattern.test(text)) out.categories = [...new Set([...(out.categories ?? []), category])];
   }
+
+  // "single scull", "double scull", "quad scull" are boats, but the word scull
+  // also matched the oars rule. When the message names a boat class and nothing
+  // unambiguously says oars, drop oars — otherwise the two filters intersect to
+  // nothing and the shortlist relaxes its way into a page of blades.
+  if (
+    out.boatClasses?.length &&
+    out.categories?.includes("oars") &&
+    !UNAMBIGUOUS_OARS.test(text)
+  ) {
+    const kept = out.categories.filter((c) => c !== "oars");
+    if (kept.length) out.categories = kept;
+    else delete out.categories;
+  }
+
+  // Sizes. Bare "XS", "XL" and "XXL" are unambiguous; bare "S", "M" and "L" are
+  // initials as often as they are sizes, so those need either the word "size"
+  // in front or the word spelled out.
+  const sizes = new Set<ApparelSize>();
+  for (const match of text.matchAll(/\bsizes?\s*[:\-]?\s*(xs|s|m|l|xl|xxl)\b/gi)) {
+    sizes.add(match[1].toUpperCase() as ApparelSize);
+  }
+  for (const match of text.matchAll(/\b(xs|xl|xxl)\b/gi)) {
+    sizes.add(match[1].toUpperCase() as ApparelSize);
+  }
+  for (const [pattern, size] of SIZE_WORDS) {
+    if (pattern.test(text)) sizes.add(size);
+  }
+  if (sizes.size) out.sizes = [...sizes];
 
   const continents = CONTINENTS.filter((c) => new RegExp(`\\b${c}\\b`, "i").test(text));
   // A few country and region words people actually type, mapped to continents.
@@ -151,6 +220,9 @@ function toQuery(c: ExtractedConstraints): ListingQuery {
   const query: ListingQuery = { perPage: SHORTLIST_SIZE, sort: "newest" };
   if (c.boatClasses?.length) query.boatClass = c.boatClasses;
   if (c.categories?.length) query.category = c.categories;
+  // A size only becomes a filter once we are confident the question is about
+  // kit. Otherwise "I'm a large bloke" would silently exclude every boat.
+  if (c.sizes?.length && c.categories?.includes("apparel")) query.sizes = c.sizes;
   if (c.continents?.length) query.continent = c.continents;
   if (c.weightKg) query.fitsRowerKg = c.weightKg;
   // A stated budget is a ceiling, with a little headroom: a boat 10% over budget
@@ -202,6 +274,7 @@ export function retrieve(messages: ConciergeMessage[], pinnedSlug?: string | nul
     },
     { label: "boat class", hard: true, relax: () => { delete query.boatClass; } },
     { label: "crew weight band", hard: true, relax: () => { delete query.fitsRowerKg; } },
+    { label: "size", hard: true, relax: () => { delete query.sizes; } },
   ];
 
   for (const { label, hard, relax } of relaxations) {
@@ -244,6 +317,14 @@ The things that actually decide whether a boat is right, roughly in order:
 4. **Condition and honesty.** A well-documented repair is not a problem. An undocumented one is. Say what the listing actually says.
 5. **Total cost.** Boats rarely include oars. Freight on an eight is not trivial. Mention it when it matters.
 
+## Kit, apparel and gear
+The inventory is not only boats. It also carries racing kit (all-in-ones, trou, splash tops, jackets, pogies) and gear (cox boxes, stroke coaches, ergs, slings, covers). Different things decide those:
+
+- **Size, and honesty about it.** Racing kit runs small and runs small differently at every brand. If someone gives you a size, check it against what each listing actually offers, and tell them to ask for flat chest and inside-leg measurements before buying a lot they cannot return.
+- **Lots versus single items.** A club clearing out twenty-two all-in-ones is solving a different problem from one person who needs one suit. Say which a listing is, and do not push a 22-piece lot at an individual sculler.
+- **What kit at a given price actually is.** Cheap second-hand trou is training kit, not race kit — thin lycra is see-through under stadium lights. Say so rather than letting someone find out at a regatta.
+- **For gear, what is included and whether it still works.** A cox box without its harness is half a purchase. Batteries are the part that dies. An erg's total metres matter far less than people think.
+
 ## Style
 - 150-250 words for a recommendation. Shorter for a follow-up.
 - Use the seller's own currency figures as given.
@@ -254,9 +335,13 @@ The things that actually decide whether a boat is right, roughly in order:
 /** Compact digest of one listing — enough to reason over, no wasted tokens. */
 function digest(l: Listing): string {
   const band = weightBand(l.crewWeightMinKg, l.crewWeightMaxKg);
+  const sizes = sizeRange(l.sizes);
   const bits = [
     `[${l.id}] ${l.title}`,
-    l.boatClass ? BOAT_CLASS_LABELS[l.boatClass] : l.category,
+    l.boatClass ? BOAT_CLASS_LABELS[l.boatClass] : CATEGORY_LABELS[l.category],
+    sizes ? `sizes ${sizes}` : null,
+    l.fit ? FIT_LABELS[l.fit].toLowerCase() : null,
+    lotSize(l.quantity),
     `${l.condition === "new" ? "new" : `used, ${GRADE_LABELS[l.conditionGrade].toLowerCase()}`}`,
     MATERIAL_LABELS[l.material].toLowerCase(),
     band ? `crew weight ${band}` : null,
