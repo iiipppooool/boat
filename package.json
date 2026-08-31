@@ -13,7 +13,8 @@
     "import": "node scripts/import-listings.mjs",
     "fees": "node scripts/fees.mjs",
     "photos:fetch": "node scripts/fetch-photos.mjs",
-    "sync-sources": "node scripts/sync-sources.mjs"
+    "sync-sources": "node scripts/sync-sources.mjs",
+    "backup": "node scripts/backup.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",

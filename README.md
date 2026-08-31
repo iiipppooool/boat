@@ -66,6 +66,7 @@ that port 3000 is in use, run `npm run dev -- -p 3001` instead.
 | `npm run photos:fetch` | Pull real stock photographs from Unsplash (needs a free key) |
 | `npm run fees` | Model commission options against the inventory |
 | `npm run sync-sources` | Pull from registered aggregation feeds |
+| `npm run backup` | Consistent SQLite snapshot (not a file copy) |
 
 ---
 
@@ -566,10 +567,25 @@ fulfil, about boats that sold weeks ago.
 
 ## Deploying
 
-Runs anywhere Node 20+ runs. The one requirement is a **persistent writable
-volume** for the SQLite file — set `DATABASE_PATH` to a path on it. On Fly.io,
-Railway or Render that is a mounted volume; on a serverless platform with an
-ephemeral filesystem, swap `src/lib/db.ts` for a hosted Postgres and rewrite the
-queries in `src/lib/inventory.ts`.
+**[DEPLOY.md](DEPLOY.md)** has the full guide. The short version:
 
-Environment variables are documented in `.env.example`.
+```bash
+fly launch --no-deploy
+fly volumes create boatxchange_data --size 1 --region lhr
+fly deploy
+```
+
+A `Dockerfile`, `fly.toml` and a `/api/health` check that reads the database are
+in the repo. Railway and Render work from the same Dockerfile.
+
+The one thing that matters: SQLite needs a **persistent volume** and **one
+machine**. Without the volume, every deploy resets the database to seed data.
+Two machines on one volume corrupts it. At a few hundred listings that is the
+right architecture rather than a compromise — and about £5 a month.
+
+Vercel needs the Postgres swap first, including making the repository functions
+async; DEPLOY.md is honest about the size of that. **GitHub Pages cannot host
+this at all** — it serves static files, and this is a Node server with a database.
+
+Back up before there is anything to lose: `npm run backup` uses SQLite's backup
+API rather than copying the file, which matters in WAL mode.

@@ -1,0 +1,19 @@
+# Build context hygiene: anything here either bloats the image or, worse, bakes
+# local state into it. `var/` is the live SQLite database — copying a developer's
+# database into a production image is exactly the bug this file exists to stop.
+node_modules
+.next
+out
+build
+var
+*.db
+*.db-*
+.git
+.gitignore
+.env
+.env.local
+.env*.local
+*.log
+.DS_Store
+README.md
+DEPLOY.md
