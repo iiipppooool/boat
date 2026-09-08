@@ -2548,3 +2548,82 @@ legend { padding: 0; }
 .faq-list summary:hover h3 { color: var(--brass-700); }
 .faq-list summary:focus-visible { outline: 3px solid var(--brass-600); outline-offset: 2px; }
 .faq-body { padding: 0 2.5rem var(--sp-5) 0; color: var(--slate); max-width: 68ch; line-height: 1.65; }
+
+/* Three doors on one card: express interest, create an account, sign in. */
+.wl-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--hull-line);
+}
+.wl-tab {
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #7d919b;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 0.9rem;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.wl-tab:first-child { padding-left: 0; }
+.wl-tab:hover { color: var(--bone); }
+.wl-tab.is-on { color: var(--brass-300); border-bottom-color: var(--brass-500); }
+.wl-tab:focus-visible { outline: 3px solid var(--brass-500); outline-offset: 2px; }
+
+.wl-strap {
+  font-size: var(--step--1);
+  color: #93a8b2;
+  line-height: 1.55;
+  margin: 0 0 var(--sp-5);
+  max-width: 48ch;
+}
+
+.wl-password { margin-top: var(--sp-4); }
+.wl-password-row { display: flex; gap: var(--sp-2); }
+.wl-password-row input { flex: 1 1 auto; }
+.wl-reveal {
+  flex: none;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #93a8b2;
+  background: transparent;
+  border: 1.5px solid var(--hull-line);
+  border-radius: var(--radius);
+  padding: 0 0.8rem;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.wl-reveal:hover { color: var(--bone); border-color: var(--brass-600); }
+.wl-reveal:focus-visible { outline: 3px solid var(--brass-500); outline-offset: 2px; }
+.wl-hint code {
+  font-size: 0.85em;
+  background: rgba(6, 22, 29, 0.6);
+  padding: 0.05em 0.3em;
+  border-radius: 2px;
+}
+
+.wl-confirm-actions { display: flex; gap: var(--sp-3); flex-wrap: wrap; margin: var(--sp-5) 0 0; }
+.wl-go {
+  font-size: var(--step--1);
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--hull);
+  background: var(--brass-500);
+  border: 1px solid var(--brass-600);
+  border-radius: var(--radius);
+  padding: 0.55rem 1rem;
+  transition: filter 160ms ease, transform 140ms ease;
+}
+.wl-go:hover { filter: brightness(1.07); transform: translateY(-1px); }
+.wl-go-quiet {
+  color: var(--bone);
+  background: transparent;
+  border-color: var(--hull-line);
+}
+.wl-go-quiet:hover { border-color: var(--brass-500); }
+.wl-go:focus-visible { outline: 3px solid var(--bone); outline-offset: 2px; }

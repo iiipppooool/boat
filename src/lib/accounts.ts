@@ -8,9 +8,10 @@ import { getDb } from "./db";
  * is live, and this table is a local cache of what the webhook last told us.
  * Nothing here decides whether someone has paid — it records what Stripe said.
  *
- * There is still no authentication in front of this (see /login), so the app
- * resolves a single demo account. Wiring real auth means replacing
- * `getCurrentAccount()` with a session lookup; nothing else changes.
+ * Who is signed in is decided in `auth.ts` — `getSessionAccount()` — and every
+ * page and route uses that. `getCurrentAccount()` below survives only as the
+ * demo-account fallback used by scripts and local poking; nothing user-facing
+ * calls it.
  */
 
 export const ACCOUNTS_SCHEMA = `

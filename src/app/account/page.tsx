@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BillingActions } from "@/components/BillingActions";
-import { getCurrentAccount, isSubscribed } from "@/lib/accounts";
+import { redirect } from "next/navigation";
+import { isSubscribed } from "@/lib/accounts";
+import { getSessionAccount } from "@/lib/auth";
+import { SignOutButton } from "@/components/SignOutButton";
 import { getListingsBySeller } from "@/lib/inventory";
 import { formatPrice } from "@/lib/fx";
 import { formatDate, relativeDate } from "@/lib/format";
@@ -24,18 +27,18 @@ export const metadata: Metadata = {
  * Account and billing.
  *
  * Subscription state here is real — it comes from the accounts table, which only
- * the Stripe webhook writes to. What is still stubbed is *who you are*: there is
- * no authentication, so the page resolves a single demo account. Wiring real
- * auth means replacing `getCurrentAccount()` with a session lookup and gating
- * the route; nothing on this page changes.
+ * the Stripe webhook writes to. So is *who you are*: the page resolves the
+ * session set at sign-in and sends anyone without one to /login.
  *
  * The listings table belongs to a seed seller so it has rows to show before any
  * real listing exists.
  */
 const DEMO_SELLER_NAME = "Ruhr Rowing Supply";
 
-export default function AccountPage() {
-  const account = getCurrentAccount();
+export default async function AccountPage() {
+  const account = await getSessionAccount();
+  if (!account) redirect("/login");
+
   const subscribed = isSubscribed(account);
   const payments = getPaymentsProvider();
   const listings = getListingsBySeller(DEMO_SELLER_NAME);
@@ -49,7 +52,7 @@ export default function AccountPage() {
           <div className="page-head-grid">
             <h1>{account.name}</h1>
             <p className="lede">
-              {account.email} · <Link href="/login">not you?</Link>
+              {account.email} · <SignOutButton />
             </p>
           </div>
         </div>
@@ -57,10 +60,11 @@ export default function AccountPage() {
 
       <div className="wrap section-tight">
         <p className="notice mb-6">
-          <strong>No sign-in yet.</strong> Authentication is not wired up, so this
-          page resolves a single demo account. Subscription state below is real —
-          it is written only by the Stripe webhook — and the listings table is read
-          live from the same inventory the market runs on.
+          <strong>Signed in as {account.email}.</strong> Subscription state below is
+          real — it is written only by the Stripe webhook — and the listings table is
+          read live from the same inventory the market runs on. The table currently
+          shows a seed seller&rsquo;s stock so there is something to look at before
+          your first listing.
         </p>
 
         <div className="account-grid">

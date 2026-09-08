@@ -4,6 +4,7 @@ import Database from "better-sqlite3";
 import seedListings from "../../data/seed-listings.json";
 import { ACCOUNTS_SCHEMA } from "./accounts";
 import { WAITLIST_SCHEMA } from "./waitlist";
+import { SESSIONS_SCHEMA, ACCOUNT_AUTH_COLUMNS } from "./auth";
 import { syncPhotos } from "./photos";
 import { toUsd } from "./fx";
 import type { Listing, SeedListing } from "./types";
@@ -99,6 +100,7 @@ export function getDb(): Database.Database {
   db.exec(SCHEMA);
   db.exec(ACCOUNTS_SCHEMA);
   db.exec(WAITLIST_SCHEMA);
+  db.exec(SESSIONS_SCHEMA);
   migrate(db);
   seed(db);
   // Photographs live on disk, not in the seed file: drop files into
@@ -118,6 +120,8 @@ export function getDb(): Database.Database {
  * listing has no sensible value for a column invented after they wrote it.
  */
 function migrate(database: Database.Database): void {
+  migrateColumns(database, "accounts", ACCOUNT_AUTH_COLUMNS);
+
   const existing = new Set(
     (database.pragma("table_info(listings)") as { name: string }[]).map((c) => c.name),
   );
@@ -131,9 +135,21 @@ function migrate(database: Database.Database): void {
     ["source_name", "TEXT"],
   ];
 
-  for (const [column, definition] of added) {
+  migrateColumns(database, "listings", added);
+}
+
+/** Adds any of `columns` that the table does not already have. */
+function migrateColumns(
+  database: Database.Database,
+  table: string,
+  columns: [string, string][],
+): void {
+  const existing = new Set(
+    (database.pragma(`table_info(${table})`) as { name: string }[]).map((c) => c.name),
+  );
+  for (const [column, definition] of columns) {
     if (!existing.has(column)) {
-      database.exec(`ALTER TABLE listings ADD COLUMN ${column} ${definition}`);
+      database.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
     }
   }
 }

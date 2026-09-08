@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getCurrentAccount, isSubscribed } from "@/lib/accounts";
+import { isSubscribed } from "@/lib/accounts";
+import { getSessionAccount } from "@/lib/auth";
 import { getListingBySlug } from "@/lib/inventory";
 import { commissionFor } from "@/lib/fees";
 import { toUsd } from "@/lib/fx";
@@ -44,7 +45,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ invoiced: false, reason: "platform-owned", fee: 0 });
   }
 
-  const account = getCurrentAccount();
+  // Billing acts on the signed-in account and no other. Without a session there
+  // is nobody to bill, so this is a 401 rather than a silent demo account.
+  const account = await getSessionAccount();
+  if (!account) {
+    return NextResponse.json({ error: "Sign in first." }, { status: 401 });
+  }
   if (isSubscribed(account)) {
     return NextResponse.json({ invoiced: false, reason: "boathouse-includes-commission", fee: 0 });
   }

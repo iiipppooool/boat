@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCurrentAccount } from "@/lib/accounts";
+import { getSessionAccount } from "@/lib/auth";
 import { PaymentsNotConfigured, getPaymentsProvider } from "@/lib/payments/provider";
 
 export const runtime = "nodejs";
@@ -12,7 +12,12 @@ export const dynamic = "force-dynamic";
  */
 export async function POST() {
   const payments = getPaymentsProvider();
-  const account = getCurrentAccount();
+  // Billing acts on the signed-in account and no other. Without a session there
+  // is nobody to bill, so this is a 401 rather than a silent demo account.
+  const account = await getSessionAccount();
+  if (!account) {
+    return NextResponse.json({ error: "Sign in first." }, { status: 401 });
+  }
 
   if (!account.stripeCustomerId) {
     return NextResponse.json(

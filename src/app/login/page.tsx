@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { SignInForm } from "@/components/SignInForm";
+import { getSessionAccount } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -7,48 +12,33 @@ export const metadata: Metadata = {
 };
 
 /**
- * v1 stub. There is no session, no password store and no email delivery behind
- * this yet — the form is here so the flow is designed and reachable, and the
- * account page it leads to renders a fixed demo account.
+ * Sign-in.
  *
- * The intended implementation is the emailed sign-in link shown below: it suits
- * a marketplace where people sell one boat every four years and will not
- * remember a password, and it avoids storing credentials for an audience that
- * would reuse them.
+ * Email and password, checked against a scrypt hash, issuing a real session
+ * cookie — see src/lib/auth.ts for why those choices and not others. Somebody
+ * already signed in is sent straight to their account rather than shown a form
+ * they do not need.
  */
-export default function LoginPage() {
+export default async function LoginPage() {
+  if (await getSessionAccount()) redirect("/account");
+
   return (
     <div className="wrap section login-wrap">
       <div className="login-panel panel">
         <p className="eyebrow">Sign in</p>
         <h1 className="login-title">Welcome back.</h1>
         <p className="muted small">
-          We email you a link rather than asking for a password. Most people sell a
-          boat once every few years and nobody remembers a password that long.
+          The address and password you registered with. Buyers do not need an
+          account — this is for sellers, clubs and dealers.
         </p>
 
-        <form className="mt-6">
-          <div className="field">
-            <label className="field-label" htmlFor="login-email">Email address</label>
-            <input id="login-email" name="email" type="email" autoComplete="email" required />
-            <span className="field-hint">
-              The address you listed with, or the one your club uses.
-            </span>
-          </div>
-          <button type="submit" className="btn btn-accent btn-block">
-            Email me a sign-in link
-          </button>
-        </form>
+        <SignInForm />
 
-        <p className="notice mt-6">
-          <strong>Not wired up in this build.</strong> Authentication is stubbed —{" "}
-          <Link href="/account">go straight to the demo account</Link> to see what
-          sits behind it.
-        </p>
-
-        <p className="small muted mt-5">
-          Don&rsquo;t have an account? One is created the first time you{" "}
-          <Link href="/sell">list a boat</Link>. Buyers do not need an account at all.
+        <p className="small muted mt-6">
+          No account yet?{" "}
+          <Link href="/#waitlist">Create one from the home page</Link> — it takes a
+          name, an address and a password, and puts you on the waiting list at the
+          same time.
         </p>
       </div>
     </div>

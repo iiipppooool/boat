@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   WAITLIST_INTERESTS,
   WAITLIST_INTEREST_LABELS,
@@ -11,12 +12,29 @@ import {
 type Interest = (typeof WAITLIST_INTERESTS)[number];
 type Role = (typeof WAITLIST_ROLES)[number];
 
+/**
+ * Three ways in, on one card.
+ *
+ * `interest` is the low-commitment door — an email address and nothing else
+ * required. `account` is for somebody who already knows they want to sell,
+ * and creates a real account with a real session. `signin` is there because a
+ * returning seller who lands on the home page should not have to hunt for it.
+ */
+type Mode = "interest" | "account" | "signin";
+
+const MODES: { id: Mode; label: string }[] = [
+  { id: "interest", label: "Express interest" },
+  { id: "account", label: "Create an account" },
+  { id: "signin", label: "Sign in" },
+];
+
 interface Response {
   ok: boolean;
   existing?: boolean;
   position?: number | null;
   total?: number | null;
   emailed?: boolean;
+  name?: string;
   errors?: Record<string, string>;
 }
 
@@ -135,6 +153,7 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
   const uid = useId();
   const reduced = usePrefersReducedMotion();
   const cardRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -145,6 +164,9 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
   const [interests, setInterests] = useState<Interest[]>(
     defaultInterest ? [defaultInterest] : [],
   );
+  const [mode, setMode] = useState<Mode>("interest");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [expanded, setExpanded] = useState(variant === "full");
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [result, setResult] = useState<Response | null>(null);
@@ -198,22 +220,45 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
     setState("sending");
     setErrors({});
 
+    // One handler, three endpoints. The card's shape barely changes between
+    // them, so branching here beats three near-identical components.
+    const endpoint =
+      mode === "interest"
+        ? "/api/waitlist"
+        : mode === "account"
+          ? "/api/account/register"
+          : "/api/account/session";
+
+    const body =
+      mode === "interest"
+        ? { email, name, role, country, interests, note, website }
+        : mode === "account"
+          ? { email, password, name: name || email, country, joinWaitlist: true, website }
+          : { email, password };
+
     try {
-      const response = await fetch("/api/waitlist", {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, name, role, country, interests, note, website }),
+        body: JSON.stringify(body),
       });
-      const data = (await response.json()) as Response;
+      const data = (await response.json()) as Response & { error?: string };
 
       if (!response.ok || !data.ok) {
-        setErrors(data.errors ?? { form: "Something went wrong. Try again in a moment." });
+        setErrors(
+          data.errors ?? {
+            form: data.error ?? "Something went wrong. Try again in a moment.",
+          },
+        );
         setState("error");
         return;
       }
 
       setResult(data);
       setState("done");
+      // A new session changes what the header should show, so let the server
+      // components re-render rather than leaving a stale "Account" link.
+      if (mode !== "interest") router.refresh();
     } catch {
       setErrors({ form: "We could not reach the server. Check your connection and try again." });
       setState("error");
@@ -238,11 +283,38 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
           <Water />
 
           <form className="wl-form" onSubmit={submit} noValidate>
+            {/* The hero keeps one door: an email field and a button. Offering
+                three choices in the first screenful is how a hero form stops
+                being filled in. The full card below carries all three. */}
             {variant === "full" && (
-              <p className="wl-heading">
-                <span className="wl-heading-mark" aria-hidden="true" />
-                Put your name down
-              </p>
+            <div className="wl-tabs" role="tablist" aria-label="How to join">
+              {MODES.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === item.id}
+                  className={`wl-tab${mode === item.id ? " is-on" : ""}`}
+                  onClick={() => {
+                    setMode(item.id);
+                    setErrors({});
+                    if (item.id !== "interest") setExpanded(true);
+                  }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+            )}
+
+            {variant === "full" && (
+            <p className="wl-strap">
+              {mode === "interest"
+                ? "An email address is all we need. Everything below is optional and helps us decide which region opens first."
+                : mode === "account"
+                  ? "An account lets you list a boat, track enquiries and manage your invoices. Free, and it puts you on the waiting list too."
+                  : "Welcome back."}
+            </p>
             )}
 
             <div className="wl-line">
@@ -274,11 +346,92 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
 
               <button type="submit" className="wl-submit" disabled={busy || done}>
                 <span className="wl-submit-label">
-                  {busy ? "Pulling…" : "Join the waiting list"}
+                  {busy
+                    ? "Pulling…"
+                    : mode === "interest"
+                      ? "Join the waiting list"
+                      : mode === "account"
+                        ? "Create my account"
+                        : "Sign in"}
                 </span>
                 <span className="wl-submit-stroke" aria-hidden="true" />
               </button>
             </div>
+
+            {mode !== "interest" && (
+              <div className="wl-field wl-password">
+                <label className="wl-label" htmlFor={`${uid}-password`}>
+                  Password
+                </label>
+                <div className="wl-password-row">
+                  <input
+                    id={`${uid}-password`}
+                    type={showPassword ? "text" : "password"}
+                    autoComplete={mode === "account" ? "new-password" : "current-password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    aria-invalid={errors.password ? true : undefined}
+                    aria-describedby={errors.password ? `${uid}-password-error` : undefined}
+                  />
+                  <button
+                    type="button"
+                    className="wl-reveal"
+                    onClick={() => setShowPassword((v) => !v)}
+                    aria-pressed={showPassword}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+                {errors.password ? (
+                  <p className="wl-error" id={`${uid}-password-error`}>
+                    {errors.password}
+                  </p>
+                ) : (
+                  mode === "account" && (
+                    <p className="wl-hint">
+                      Twelve characters or more. Length beats punctuation — three
+                      unrelated words are stronger than <code>P@ssw0rd</code> and far
+                      easier to remember.
+                    </p>
+                  )
+                )}
+              </div>
+            )}
+
+            {mode === "account" && (
+              <div className="wl-row">
+                <div className="wl-field">
+                  <label className="wl-label" htmlFor={`${uid}-acct-name`}>
+                    Your name or club
+                  </label>
+                  <input
+                    id={`${uid}-acct-name`}
+                    type="text"
+                    autoComplete="organization"
+                    required
+                    placeholder="Thames RC, or your own name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    aria-invalid={errors.name ? true : undefined}
+                  />
+                  {errors.name && <p className="wl-error">{errors.name}</p>}
+                </div>
+                <div className="wl-field">
+                  <label className="wl-label" htmlFor={`${uid}-acct-country`}>
+                    Country <span className="wl-optional">optional</span>
+                  </label>
+                  <input
+                    id={`${uid}-acct-country`}
+                    type="text"
+                    autoComplete="country-name"
+                    placeholder="United Kingdom"
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Honeypot: hidden from sight and from screen readers. */}
             <div className="visually-hidden" aria-hidden="true">
@@ -294,7 +447,7 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
               />
             </div>
 
-            <div className={`wl-more${expanded ? " is-open" : ""}`}>
+            <div className={`wl-more${expanded && mode === "interest" ? " is-open" : ""}`}>
               <div className="wl-more-inner">
                 <div className="wl-row">
                   <div className="wl-field">
@@ -390,8 +543,9 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
             {errors.form && <p className="wl-error">{errors.form}</p>}
 
             <p className="wl-smallprint">
-              One address, used to tell you when the market opens and nothing else. No
-              selling it on, no sharing it, one click to leave from any email we send.
+              {mode === "signin"
+                ? "Signed in for sixty days on this device. Sign out from your account page at any time."
+                : "One address, used to tell you when the market opens and nothing else. No selling it on, no sharing it, one click to leave from any email we send."}
             </p>
           </form>
         </div>
@@ -403,7 +557,13 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
             <CrossingBoat />
 
             <p className="wl-confirm-kicker">
-              {result?.existing ? "We had you already" : "You are on the list"}
+              {mode === "signin"
+                ? "Signed in"
+                : mode === "account"
+                  ? "Account created"
+                  : result?.existing
+                    ? "We had you already"
+                    : "You are on the list"}
             </p>
 
             {counted !== null ? (
@@ -415,20 +575,40 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
               </p>
             ) : (
               <h3 className="wl-confirm-title">
-                {result?.existing
-                  ? "Your answers are updated."
-                  : "That is you signed up."}
+                {mode === "signin"
+                  ? `Welcome back${result?.name ? `, ${result.name}` : ""}.`
+                  : mode === "account"
+                    ? "Your account is ready."
+                    : result?.existing
+                      ? "Your answers are updated."
+                      : "That is you signed up."}
               </h3>
             )}
 
             {counted !== null && <p className="wl-confirm-title-sub">in the queue</p>}
 
             <p className="wl-confirm-body">
-              {result?.emailed
+              {mode === "signin"
+                ? "You are signed in. Your listings, enquiries and invoices are on your account page."
+                : mode === "account"
+                  ? "You are signed in and on the waiting list. Listing a boat is free and open now — everything you put up goes live once a person has checked it."
+                  : result?.emailed
                 ? "A confirmation is on its way. If it is not there in a few minutes, look in spam and mark it as safe — that is the only way the launch email reaches you."
-                : "You are saved on the list. Our confirmation email did not go out just now, but that does not affect your place."}
+                    : "You are saved on the list. Our confirmation email did not go out just now, but that does not affect your place."}
             </p>
 
+            {mode !== "interest" && (
+              <p className="wl-confirm-actions">
+                <a className="wl-go" href="/account">
+                  Go to your account
+                </a>
+                <a className="wl-go wl-go-quiet" href="/sell">
+                  List a boat
+                </a>
+              </p>
+            )}
+
+            {mode === "interest" && (
             <button
               type="button"
               className="wl-again"
@@ -442,6 +622,7 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
             >
               Add someone else
             </button>
+            )}
           </div>
         </div>
       </div>
