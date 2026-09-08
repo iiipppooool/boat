@@ -74,7 +74,7 @@ that port 3000 is in use, run `npm run dev -- -p 3001` instead.
 
 | Route | |
 |---|---|
-| `/` | Home — the proposition, trust signals, recent listings, concierge entry point |
+| `/` | Landing page — the problem, the solution, the products, the money promise, live listings, waiting-list signup and FAQ |
 | `/market` | The full inventory grid: filters, sort, pagination |
 | `/market/[slug]` | Listing detail: gallery, spec sheet, seller, related boats |
 | `/concierge` | The AI concierge chat |
@@ -84,6 +84,7 @@ that port 3000 is in use, run `npm run dev -- -p 3001` instead.
 | `/contact` | Contact form and company details |
 | `/about` | Why rowing needed this, how verification works, how the AI is kept honest |
 | `/login` | Sign-in *(stubbed)* |
+| `/waitlist/leave` | Unsubscribe confirmation, linked from every waiting-list email |
 | `404` | Not found |
 
 ---
@@ -406,7 +407,8 @@ Each is a self-contained gap, marked with a comment in the file:
 - **Payments.** `/pricing` defines the fee model; `/account` shows a card on file
   and an invoice history as static data. No processor is integrated.
 - **Contact form.** Validates and acknowledges in the browser; does not yet post
-  anywhere.
+  anywhere. (The waiting-list form on `/` is *not* stubbed — it writes to the
+  database and sends real email once a provider is configured.)
 - **Seller verification.** Submissions land as `pending` and go live after a
   human check, described on `/about#verification`. The check itself is manual by
   design — for a market where one transaction can be £40,000, unchecked
@@ -479,6 +481,57 @@ The version that works is outbound, not automated: find the boat on Facebook or
 a club noticeboard, contact the seller, offer to write the listing for them for
 free, and use this importer once they say yes. It is slower, it gives you a real
 relationship with the supply side, and nobody can take it away from you.
+
+## The waiting list
+
+The landing page's signup is a working feature, not a mock-up.
+
+```
+WaitlistForm (client)
+        │  POST /api/waitlist          validated by src/lib/waitlist-schema.ts
+        ▼
+joinWaitlist()  ──▶ SQLite `waitlist` table   ← the only step allowed to fail
+        │
+        ├──▶ welcome email to the person        best-effort
+        └──▶ notification to EMAIL_NOTIFY_TO    best-effort, if set
+```
+
+**Why that order.** A bounced confirmation is an annoyance; a lost signup is a
+lost customer. The database write happens first and decides the response, so a
+mail-provider outage costs an email and nothing else.
+
+**Email.** Everything goes through the one adapter in `src/lib/email/provider.ts`
+— the same arrangement as the AI adapter. With no credentials set, the `log`
+adapter writes the message to the server log and reports success, so a fresh
+install still collects signups. Set `RESEND_API_KEY` (and `EMAIL_FROM` on a
+domain you have verified) to send for real. Adding Postmark or SES is one
+function in that file.
+
+**Details worth knowing:**
+
+- Email is unique and lower-cased. Signing up twice updates your answers and
+  keeps your original place in the queue rather than making a second row.
+- A hidden honeypot field catches bots; a filled one gets a cheerful 200 and is
+  thrown away.
+- Unsubscribing is a `POST` behind a confirmation page (`/waitlist/leave`), not a
+  GET link — mail clients and link previewers follow GET URLs by themselves.
+  Leaving sets a timestamp rather than deleting the row, so an import cannot put
+  somebody back on the list.
+- The landing page shows the real signup count only once it passes a floor of
+  25 (`COUNT_FLOOR` in `src/lib/waitlist.ts`). Below that the figure is omitted
+  entirely rather than inflated.
+
+**Reading the list:**
+
+```bash
+npm run waitlist            # summary by role, country and interest
+npm run waitlist -- --csv   # the whole list as CSV
+```
+
+There is deliberately no admin page for this: a page that renders a few hundred
+email addresses is a page that can leak them.
+
+---
 
 ## Billing (Stripe)
 

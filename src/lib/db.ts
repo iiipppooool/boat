@@ -3,6 +3,7 @@ import fs from "node:fs";
 import Database from "better-sqlite3";
 import seedListings from "../../data/seed-listings.json";
 import { ACCOUNTS_SCHEMA } from "./accounts";
+import { WAITLIST_SCHEMA } from "./waitlist";
 import { syncPhotos } from "./photos";
 import { toUsd } from "./fx";
 import type { Listing, SeedListing } from "./types";
@@ -97,6 +98,7 @@ export function getDb(): Database.Database {
   db.pragma("foreign_keys = ON");
   db.exec(SCHEMA);
   db.exec(ACCOUNTS_SCHEMA);
+  db.exec(WAITLIST_SCHEMA);
   migrate(db);
   seed(db);
   // Photographs live on disk, not in the seed file: drop files into

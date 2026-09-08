@@ -31,6 +31,7 @@ const SITEMAP: { heading: string; links: { href: string; label: string }[] }[] =
   {
     heading: "BoatXchange",
     links: [
+      { href: "/#waitlist", label: "Join the waiting list" },
       { href: "/about", label: "How it works" },
       { href: "/about#verification", label: "Listing verification" },
       { href: "/concierge", label: "AI Concierge" },

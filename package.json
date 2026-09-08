@@ -14,7 +14,8 @@
     "fees": "node scripts/fees.mjs",
     "photos:fetch": "node scripts/fetch-photos.mjs",
     "sync-sources": "node scripts/sync-sources.mjs",
-    "backup": "node scripts/backup.mjs"
+    "backup": "node scripts/backup.mjs",
+    "waitlist": "node scripts/waitlist.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",

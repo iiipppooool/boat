@@ -1763,3 +1763,788 @@ legend { padding: 0; }
   background: var(--hull);
   color: var(--bone);
 }
+
+/* ==========================================================================
+   Landing page
+
+   The home page carries more sections than any other route, so its parts live
+   together here. Everything reuses the existing tokens — no new colours, no new
+   type scale — so a change to the palette still reaches the landing page.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   The waiting-list card
+
+   The one interactive object on the page, so it is allowed to behave like a
+   physical thing: it sits on water, it leans towards the pointer, and when it
+   is filled in it turns over to show the confirmation on its back. Every one
+   of those is switched off under `prefers-reduced-motion`.
+   -------------------------------------------------------------------------- */
+
+.wl {
+  --wl-rx: 0deg;
+  --wl-ry: 0deg;
+  --wl-gx: 50%;
+  --wl-gy: 0%;
+  perspective: 1400px;
+  perspective-origin: 50% 40%;
+}
+
+.wl-card {
+  position: relative;
+  display: grid;                 /* both faces share one cell, so the card is
+                                    as tall as the taller face and nothing jumps */
+  transform-style: preserve-3d;
+  transform: rotateX(var(--wl-rx)) rotateY(var(--wl-ry));
+  transition: transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+.wl.is-done .wl-card { transform: rotateY(180deg); }
+/* Anything focused means somebody is filling the form in. Hold the card level
+   so the field under the caret does not drift. */
+.wl:focus-within .wl-card { transform: none; }
+.wl.is-done:focus-within .wl-card { transform: rotateY(180deg); }
+.wl.is-still .wl-card { transition: none; }
+
+.wl-face {
+  grid-area: 1 / 1;
+  position: relative;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background:
+    linear-gradient(160deg, var(--hull-2) 0%, var(--hull) 55%, #0a1c24 100%);
+  border: 1px solid var(--hull-line);
+  box-shadow:
+    0 1px 0 rgba(245, 241, 233, 0.06) inset,
+    0 24px 60px -30px rgba(5, 18, 24, 0.9);
+  color: var(--bone);
+  padding: var(--sp-6);
+}
+.wl-face-back {
+  transform: rotateY(180deg);
+  display: grid;
+  align-content: center;   /* the card is as tall as the form; the confirmation
+                              sits in the middle of it rather than at the top */
+}
+
+/* Both faces occupy the same grid cell, so the one facing away is still in the
+   hit-testing tree even though `backface-visibility` hides it — it would sit on
+   top of the form and swallow every click. Only the face you can see takes
+   pointer events. */
+.wl-face-back { pointer-events: none; }
+.wl.is-done .wl-face-back { pointer-events: auto; }
+.wl.is-done .wl-face-front { pointer-events: none; }
+
+/* A soft highlight that follows the pointer across the card's surface. */
+.wl-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(
+    26rem 20rem at var(--wl-gx) var(--wl-gy),
+    rgba(217, 151, 63, 0.16),
+    transparent 68%
+  );
+  transition: background 200ms linear;
+}
+.wl.is-still .wl-sheen { display: none; }
+
+/* Water ------------------------------------------------------------------- */
+
+.wl-water {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 42%;
+  pointer-events: none;
+  opacity: 0.5;
+}
+.wl-water svg { position: absolute; inset: 0; width: 200%; height: 100%; }
+.wl-swell { fill: none; stroke-width: 1.5px; }
+.wl-swell-1 { stroke: rgba(217, 151, 63, 0.32); animation: wl-drift 14s linear infinite; }
+.wl-swell-2 { stroke: rgba(139, 178, 194, 0.26); animation: wl-drift 21s linear infinite reverse; }
+.wl-swell-3 { stroke: rgba(29, 75, 58, 0.55); animation: wl-drift 29s linear infinite; }
+
+@keyframes wl-drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-600px); }
+}
+
+/* The buoy line, breathing rather than marching. */
+.wl-buoys {
+  position: absolute;
+  left: var(--sp-6);
+  bottom: var(--sp-5);
+  display: flex;
+  gap: 0.55rem;
+}
+.wl-buoys span {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--brass-500);
+  opacity: 0.35;
+  animation: wl-bob 2.6s ease-in-out infinite;
+}
+@keyframes wl-bob {
+  0%, 100% { transform: translateY(0); opacity: 0.3; }
+  50%      { transform: translateY(-4px); opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-swell, .wl-buoys span, .wl-boat-rock { animation: none !important; }
+}
+
+/* Fields ------------------------------------------------------------------ */
+
+.wl-form { position: relative; z-index: 2; }
+
+.wl-heading {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  color: var(--bone);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+.wl-heading-mark {
+  width: 2rem;
+  height: 2px;
+  background: var(--brass-500);
+  flex: none;
+}
+
+.wl-field { margin-bottom: var(--sp-4); min-width: 0; }
+.wl-field:last-child { margin-bottom: 0; }
+
+.wl-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #93a8b2;
+  margin-bottom: var(--sp-2);
+}
+.wl-optional {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  color: #7d919b;
+}
+
+.wl input,
+.wl select,
+.wl textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--bone);
+  background: rgba(6, 22, 29, 0.72);
+  border: 1.5px solid var(--hull-line);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.85rem;
+  transition: border-color 160ms ease, box-shadow 200ms ease, background 160ms ease;
+}
+.wl input::placeholder,
+.wl textarea::placeholder { color: #6d838e; }
+.wl input:hover,
+.wl select:hover,
+.wl textarea:hover { border-color: #3a6f83; }
+.wl input:focus,
+.wl select:focus,
+.wl textarea:focus {
+  outline: none;
+  border-color: var(--brass-500);
+  background: rgba(6, 22, 29, 0.92);
+  box-shadow: 0 0 0 3px rgba(201, 138, 52, 0.22);
+}
+.wl input:disabled, .wl select:disabled, .wl textarea:disabled { opacity: 0.55; }
+.wl select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #93a8b2 50%),
+    linear-gradient(135deg, #93a8b2 50%, transparent 50%);
+  background-position: right 1rem top 55%, right 0.65rem top 55%;
+  background-size: 0.35rem 0.35rem, 0.35rem 0.35rem;
+  background-repeat: no-repeat;
+}
+
+.wl-line { display: flex; gap: var(--sp-3); align-items: flex-end; flex-wrap: wrap; }
+.wl-line .wl-field { flex: 1 1 15rem; margin-bottom: 0; }
+
+.wl-row { display: flex; gap: var(--sp-4); flex-wrap: wrap; }
+.wl-row .wl-field { flex: 1 1 11rem; }
+
+.wl-hint {
+  font-size: var(--step--1);
+  color: #7d919b;
+  line-height: 1.5;
+  margin: calc(var(--sp-2) * -1) 0 var(--sp-4);
+}
+.wl-error {
+  font-size: var(--step--1);
+  color: #f0a79f;
+  margin: var(--sp-2) 0 0;
+}
+.wl-smallprint {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #7d919b;
+  margin: var(--sp-4) 0 0;
+  max-width: 46ch;
+}
+
+/* The submit button: a blade taking a stroke across it while it works. */
+.wl-submit {
+  position: relative;
+  overflow: hidden;
+  flex: none;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--hull);
+  background: linear-gradient(180deg, var(--brass-300), var(--brass-600));
+  border: 1px solid var(--brass-600);
+  border-radius: var(--radius);
+  padding: 0.78rem 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px -12px rgba(201, 138, 52, 0.9);
+  transition: transform 140ms ease, box-shadow 200ms ease, filter 160ms ease;
+}
+.wl-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px -14px rgba(201, 138, 52, 1);
+  filter: saturate(1.08);
+}
+.wl-submit:active:not(:disabled) { transform: translateY(1px); }
+.wl-submit:focus-visible { outline: 3px solid var(--bone); outline-offset: 2px; }
+.wl-submit:disabled { cursor: default; filter: saturate(0.7); }
+.wl-submit-label { position: relative; z-index: 2; }
+.wl-submit-stroke {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+}
+.wl-submit:disabled .wl-submit-stroke { animation: wl-stroke 1.1s ease-in-out infinite; }
+@keyframes wl-stroke {
+  to { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wl-submit-stroke { animation: none !important; }
+}
+
+/* The extra questions unfold rather than appearing. */
+.wl-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.wl-more.is-open { grid-template-rows: 1fr; }
+.wl-more-inner { overflow: hidden; min-height: 0; }
+.wl-more.is-open .wl-more-inner { padding-top: var(--sp-5); }
+@media (prefers-reduced-motion: reduce) {
+  .wl-more { transition: none; }
+}
+
+/* Interest chips. */
+.wl-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.wl-chip { position: relative; cursor: pointer; }
+.wl-chip input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.wl-chip span {
+  display: block;
+  padding: 0.45rem 0.8rem;
+  border: 1.5px solid var(--hull-line);
+  border-radius: 999px;
+  background: rgba(6, 22, 29, 0.55);
+  color: #b9c9d1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: transform 140ms ease, background 160ms ease, color 160ms ease,
+    border-color 160ms ease;
+}
+.wl-chip:hover span { border-color: var(--brass-600); color: var(--bone); }
+.wl-chip input:checked + span {
+  background: var(--brass-500);
+  border-color: var(--brass-500);
+  color: var(--hull);
+  transform: translateY(-1px);
+}
+.wl-chip input:focus-visible + span { outline: 3px solid var(--bone); outline-offset: 2px; }
+
+/* The confirmation face -------------------------------------------------- */
+
+.wl-confirm { position: relative; z-index: 2; text-align: left; }
+
+.wl-boat { width: 13rem; margin-bottom: var(--sp-4); overflow: visible; }
+.wl-boat-hull { fill: var(--brass-500); }
+.wl-boat-oar { stroke: var(--bone); stroke-width: 2.5; stroke-linecap: round; }
+.wl-boat-blade { fill: var(--bone); }
+.wl-boat-wake { stroke: rgba(139, 178, 194, 0.5); stroke-width: 2; stroke-dasharray: 4 10; }
+.wl-boat-rock { animation: wl-row 3.6s ease-in-out infinite; transform-origin: 50% 60%; }
+@keyframes wl-row {
+  0%, 100% { transform: translateX(0) rotate(-0.6deg); }
+  50%      { transform: translateX(10px) rotate(0.6deg); }
+}
+.wl.is-done .wl-boat { animation: wl-launch 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes wl-launch {
+  from { transform: translateX(-40%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.wl-confirm-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass-300);
+  margin-bottom: var(--sp-2);
+}
+.wl-number {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 2rem + 5vw, 5rem);
+  line-height: 0.9;
+  color: var(--bone);
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.1em;
+}
+.wl-number-hash { color: var(--brass-500); font-size: 0.5em; }
+.wl-confirm-title { font-size: var(--step-2); color: var(--bone); margin-bottom: var(--sp-3); }
+.wl-confirm-title-sub {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #93a8b2;
+  margin: var(--sp-2) 0 var(--sp-4);
+}
+.wl-confirm-body {
+  color: #a7b8c0;
+  font-size: var(--step--1);
+  line-height: 1.65;
+  max-width: 44ch;
+}
+.wl-again {
+  font: inherit;
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--bone);
+  background: transparent;
+  border: 1.5px solid var(--hull-line);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.95rem;
+  margin-top: var(--sp-4);
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+.wl-again:hover { border-color: var(--brass-500); background: rgba(201, 138, 52, 0.12); }
+.wl-again:focus-visible { outline: 3px solid var(--brass-500); outline-offset: 2px; }
+
+/* The hero instance is smaller and sits on an already-dark section. */
+.wl-compact .wl-face { padding: var(--sp-5); }
+.wl-compact .wl-boat { width: 10rem; }
+.hero-waitlist { margin: var(--sp-6) 0 var(--sp-4); max-width: 36rem; }
+
+/* --------------------------------------------------------------------------
+   The noticeboard
+   -------------------------------------------------------------------------- */
+
+.noticeboard-wrap { margin-top: var(--sp-8); }
+.noticeboard {
+  position: relative;
+  background: var(--bone-2);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 0 var(--bone-3) inset;
+  padding: var(--sp-7) var(--sp-6) var(--sp-6);
+}
+/* The batten across the top of every boathouse board. */
+.noticeboard::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 0.6rem;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--bone-3) 0 8px,
+    var(--line-soft) 8px 16px
+  );
+}
+.noticeboard-label {
+  position: absolute;
+  top: 1.1rem;
+  right: var(--sp-6);
+  margin: 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--slate);
+  opacity: 0.75;
+}
+.noticeboard-cards {
+  list-style: none;
+  margin: var(--sp-5) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--sp-6) var(--sp-5);
+}
+.noticeboard-cards li {
+  position: relative;
+  background: #fffdf8;
+  border: 1px solid var(--line-soft);
+  padding: var(--sp-5) var(--sp-4) var(--sp-4);
+  box-shadow: 0 10px 22px -16px rgba(13, 36, 45, 0.55);
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 220ms ease;
+}
+/* Nobody pins a card straight. */
+.noticeboard-cards li:nth-child(1) { transform: rotate(-1.1deg); }
+.noticeboard-cards li:nth-child(2) { transform: rotate(0.8deg); }
+.noticeboard-cards li:nth-child(3) { transform: rotate(-0.5deg); }
+.noticeboard-cards li:nth-child(4) { transform: rotate(1.3deg); }
+.noticeboard-cards li:hover {
+  transform: rotate(0deg) translateY(-3px);
+  box-shadow: 0 18px 30px -18px rgba(13, 36, 45, 0.6);
+  z-index: 2;
+}
+.pin {
+  position: absolute;
+  top: -0.45rem;
+  left: 50%;
+  translate: -50% 0;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e5a955, var(--brass-700));
+  box-shadow: 0 2px 4px rgba(13, 36, 45, 0.4);
+}
+.noticeboard-cards h3 { font-size: var(--step-1); margin-bottom: var(--sp-3); }
+.noticeboard-cards p {
+  margin: 0;
+  font-size: var(--step--1);
+  color: var(--slate);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   The solution, on hull
+   -------------------------------------------------------------------------- */
+
+.solution-grid {
+  list-style: none;
+  margin: var(--sp-7) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--hull-line);
+  border-left: 1px solid var(--hull-line);
+}
+.solution-grid li {
+  border-right: 1px solid var(--hull-line);
+  border-bottom: 1px solid var(--hull-line);
+  padding: var(--sp-5);
+  transition: background 200ms ease;
+}
+.solution-grid li:hover { background: rgba(201, 138, 52, 0.07); }
+.solution-grid h3 { font-size: var(--step-1); margin-bottom: var(--sp-3); color: var(--bone); }
+.solution-grid p { margin: 0; color: #a7b8c0; font-size: var(--step--1); line-height: 1.65; }
+
+/* --------------------------------------------------------------------------
+   Never holding the money
+   -------------------------------------------------------------------------- */
+
+.money-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  gap: var(--sp-8);
+  align-items: start;
+}
+.money-copy p { color: var(--slate); max-width: 60ch; }
+.money-copy .lede { color: var(--ink); }
+
+.money-facts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  border-top: 2px solid var(--hull);
+}
+.money-facts li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--line);
+}
+.money-figure {
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  line-height: 1;
+  color: var(--brass-700);
+  flex: none;
+  min-width: 3.6rem;
+}
+.money-facts p { margin: 0; font-size: var(--step--1); color: var(--slate); line-height: 1.55; }
+.money-facts strong { color: var(--ink); }
+
+.moneyflow {
+  margin: var(--sp-8) 0 0;
+  padding: var(--sp-6) var(--sp-5);
+  background: var(--bone-2);
+  border: 1px solid var(--line);
+  overflow-x: auto;
+}
+.moneyflow-svg { width: 100%; min-width: 44rem; height: auto; font-family: var(--font-body); }
+.mf-rowlabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  fill: var(--slate);
+}
+.mf-rowlabel-accent { fill: var(--brass-700); }
+.mf-node { font-size: 15px; font-weight: 600; fill: var(--ink); text-anchor: middle; }
+.mf-sub { font-size: 12px; fill: var(--slate); text-anchor: middle; }
+.mf-sub-strong { font-weight: 700; fill: var(--regatta); }
+.mf-tag {
+  font-size: 12px;
+  font-style: italic;
+  fill: var(--slate);
+  text-anchor: middle;
+}
+.mf-tag-accent { fill: var(--brass-700); font-style: normal; font-weight: 700; }
+.mf-note {
+  font-family: var(--font-display);
+  font-size: 17px;
+  fill: var(--brass-700);
+}
+.mf-muted rect { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.mf-muted .mf-holder { fill: var(--regatta-soft); stroke: var(--regatta); }
+.mf-muted .mf-node, .mf-muted .mf-sub { opacity: 0.9; }
+.mf-line { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.mf-live .mf-box { fill: var(--bone); stroke: var(--hull); stroke-width: 1.5; }
+.mf-live .mf-box-dashed { stroke: var(--brass-600); stroke-dasharray: 5 5; fill: none; }
+.mf-live .mf-line { stroke: var(--hull); }
+.mf-line-bold { stroke: var(--brass-500); stroke-width: 3.5; }
+.mf-line-dashed { stroke: var(--brass-600); stroke-width: 1.5; stroke-dasharray: 5 5; }
+.mf-arrowhead { fill: var(--brass-500); }
+.mf-arrowhead-muted { fill: var(--line); }
+
+@media (max-width: 62rem) {
+  .money-grid { grid-template-columns: 1fr; gap: var(--sp-6); }
+}
+
+/* --------------------------------------------------------------------------
+   Products, racked like a boathouse
+   -------------------------------------------------------------------------- */
+
+.rack { list-style: none; margin: var(--sp-7) 0 0; padding: 0; }
+.rack > li {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1.15fr) minmax(0, 1fr) auto;
+  gap: var(--sp-5);
+  align-items: start;
+  padding: var(--sp-5) 0;
+  border-top: 1px solid var(--line);
+  position: relative;
+  transition: background 180ms ease;
+}
+.rack > li:last-child { border-bottom: 1px solid var(--line); }
+.rack > li:hover { background: rgba(201, 138, 52, 0.06); }
+/* The rack upright each bay hangs from. */
+.rack > li::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--hull);
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+.rack > li:hover::before { opacity: 1; }
+
+.rack-bay { display: flex; flex-direction: column; gap: var(--sp-2); }
+.rack-kicker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass-700);
+}
+.rack-status {
+  align-self: flex-start;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid;
+  border-radius: 999px;
+}
+.rack-status.is-live { color: var(--green); border-color: var(--green); background: var(--green-soft); }
+.rack-status.is-soon { color: var(--brass-700); border-color: var(--brass-600); }
+.rack-status.is-later { color: var(--slate); border-color: var(--line); }
+
+.rack h3 { font-size: var(--step-2); }
+.rack-body { margin: 0; color: var(--slate); font-size: var(--step--1); line-height: 1.65; }
+.rack-cta { padding-top: var(--sp-2); white-space: nowrap; }
+
+@media (max-width: 66rem) {
+  .rack > li { grid-template-columns: 1fr; gap: var(--sp-3); }
+  .rack-cta { padding-top: var(--sp-3); }
+}
+
+/* A tick list, as opposed to .checkline which is a real checkbox row. */
+.ticklist { list-style: none; margin: var(--sp-4) 0 0; padding: 0; display: grid; gap: var(--sp-2); }
+.ticklist li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-size: var(--step--1);
+  color: var(--slate);
+  line-height: 1.5;
+}
+.ticklist li::before {
+  content: "";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.4rem;
+  width: 0.4rem;
+  height: 0.7rem;
+  border: solid var(--brass-600);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.on-hull .ticklist li { color: var(--bone-3); }
+.on-hull .ticklist li::before { border-color: var(--brass-300); }
+
+/* --------------------------------------------------------------------------
+   How it works — two lanes
+   -------------------------------------------------------------------------- */
+
+.how-columns {
+  margin-top: var(--sp-7);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: var(--sp-8);
+}
+.how-column-title {
+  font-size: var(--step-1);
+  padding-bottom: var(--sp-3);
+  margin-bottom: var(--sp-5);
+  border-bottom: 2px solid var(--hull);
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+}
+.how-column-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px);
+}
+.how-steps h4 { font-size: var(--step-0); margin-bottom: var(--sp-2); }
+
+/* --------------------------------------------------------------------------
+   Why this works — an essay with oversized numerals
+   -------------------------------------------------------------------------- */
+
+.why-list { list-style: none; margin: var(--sp-7) 0 0; padding: 0; }
+.why-list li {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: var(--sp-5);
+  padding: var(--sp-5) 0;
+  border-top: 1px solid var(--hull-line);
+  align-items: start;
+}
+.why-figure {
+  font-family: var(--font-display);
+  font-size: var(--step-4);
+  line-height: 0.85;
+  color: var(--hull-3);
+  -webkit-text-stroke: 1px var(--brass-500);
+  transition: color 220ms ease;
+}
+.why-list li:hover .why-figure { color: var(--brass-500); }
+.why-list h3 { font-size: var(--step-2); color: var(--bone); margin-bottom: var(--sp-3); }
+.why-list p { margin: 0; color: #a7b8c0; line-height: 1.7; max-width: 62ch; }
+
+@media (max-width: 46rem) {
+  .why-list li { grid-template-columns: 1fr; gap: var(--sp-2); }
+}
+
+/* --------------------------------------------------------------------------
+   The waiting-list section
+   -------------------------------------------------------------------------- */
+
+.waitlist-section {
+  background:
+    radial-gradient(60rem 40rem at 15% 0%, #17404f 0%, transparent 60%),
+    var(--hull);
+  color: var(--bone);
+}
+.waitlist-section h2, .waitlist-section .lede { color: var(--bone); }
+.waitlist-section .eyebrow { color: var(--brass-300); }
+.waitlist-section .muted { color: #a7b8c0; }
+.waitlist-section .ticklist li { color: var(--bone-3); }
+.waitlist-section .ticklist li::before { border-color: var(--brass-300); }
+.waitlist-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: var(--sp-8);
+  align-items: center;
+}
+
+@media (max-width: 62rem) {
+  .waitlist-grid { grid-template-columns: 1fr; gap: var(--sp-6); }
+}
+
+/* --------------------------------------------------------------------------
+   FAQ as disclosure rows
+   -------------------------------------------------------------------------- */
+
+.faq-list { border-top: 1px solid var(--line); margin-top: var(--sp-6); }
+.faq-list details { border-bottom: 1px solid var(--line); }
+.faq-list summary {
+  cursor: pointer;
+  list-style: none;
+  padding: var(--sp-4) 2.5rem var(--sp-4) 0;
+  position: relative;
+}
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary h3 { display: inline; font-size: var(--step-1); }
+.faq-list summary::after {
+  content: "";
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  width: 0.6rem;
+  height: 0.6rem;
+  border: solid var(--brass-700);
+  border-width: 0 2px 2px 0;
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform 200ms ease;
+}
+.faq-list details[open] summary::after { transform: translateY(-20%) rotate(-135deg); }
+.faq-list summary:hover h3 { color: var(--brass-700); }
+.faq-list summary:focus-visible { outline: 3px solid var(--brass-600); outline-offset: 2px; }
+.faq-body { padding: 0 2.5rem var(--sp-5) 0; color: var(--slate); max-width: 68ch; line-height: 1.65; }

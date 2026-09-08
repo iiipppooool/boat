@@ -57,8 +57,8 @@ export function SiteHeader() {
             <Link href="/account" className="btn btn-ghost btn-sm">
               Account
             </Link>
-            <Link href="/sell" className="btn btn-accent btn-sm">
-              List your boat
+            <Link href="/#waitlist" className="btn btn-accent btn-sm">
+              Join the waiting list
             </Link>
           </div>
         </nav>
