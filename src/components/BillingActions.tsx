@@ -10,7 +10,7 @@ type Action = "checkout" | "portal";
  * the browser there. No card details ever touch this application.
  *
  * When billing is not configured the API answers 503 with a readable message,
- * which is rendered in place rather than swallowed — "nothing happened when I
+ * which is rendered in place rather than swallowed, "nothing happened when I
  * clicked" is the worst possible failure mode for a payment button.
  */
 export function BillingActions({

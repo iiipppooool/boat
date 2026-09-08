@@ -18,7 +18,7 @@ import type { ConciergeMessage } from "./provider";
  * turn, this module reads the conversation, turns it into a `ListingQuery`,
  * runs that query against the same repository the Market page uses, and hands
  * the model a shortlist of real records. The model's job is to choose among
- * them and explain why — not to know what is for sale.
+ * them and explain why, not to know what is for sale.
  *
  * That ordering is what makes the answers trustworthy and what makes a small
  * model sufficient. It also means a boat that sells at 09:00 is gone from the
@@ -43,7 +43,7 @@ export interface ExtractedConstraints {
 export interface RetrievalResult {
   listings: Listing[];
   constraints: ExtractedConstraints;
-  /** Filters that had to be dropped to find anything — the model says so. */
+  /** Filters that had to be dropped to find anything, the model says so. */
   relaxed: string[];
   pinned: Listing | null;
 }
@@ -112,20 +112,20 @@ const SIZE_WORDS: [RegExp, ApparelSize][] = [
 export function extractConstraints(text: string): ExtractedConstraints {
   const out: ExtractedConstraints = {};
 
-  // Weight — kg directly, or pounds converted.
+  // Weight, kg directly, or pounds converted.
   const kg = text.match(/(\d{2,3}(?:\.\d)?)\s*(?:kg|kilo|kilos|kilograms?)\b/i);
   const lb = text.match(/(\d{2,3})\s*(?:lb|lbs|pounds?)\b/i);
   if (kg) out.weightKg = Math.round(Number(kg[1]));
   else if (lb) out.weightKg = Math.round(Number(lb[1]) * 0.4536);
 
-  // Height, for context only — it never becomes a filter, because manufacturers
+  // Height, for context only, it never becomes a filter, because manufacturers
   // publish weight bands and not height bands.
   const cm = text.match(/(\d{3})\s*cm\b/i);
   const ft = text.match(/(\d)\s*(?:'|ft|foot|feet)\s*(\d{1,2})?/i);
   if (cm) out.heightCm = Number(cm[1]);
   else if (ft) out.heightCm = Math.round(Number(ft[1]) * 30.48 + Number(ft[2] ?? 0) * 2.54);
 
-  // Budget — "£6,000", "$8k", "under 12000", "around 5 grand", "EUR 9000".
+  // Budget, "£6,000", "$8k", "under 12000", "around 5 grand", "EUR 9000".
   // The symbol matters: someone with £7,000 has a bigger budget than someone
   // with $7,000, and the inventory is priced in five currencies.
   const money = [
@@ -163,7 +163,7 @@ export function extractConstraints(text: string): ExtractedConstraints {
 
   // "single scull", "double scull", "quad scull" are boats, but the word scull
   // also matched the oars rule. When the message names a boat class and nothing
-  // unambiguously says oars, drop oars — otherwise the two filters intersect to
+  // unambiguously says oars, drop oars, otherwise the two filters intersect to
   // nothing and the shortlist relaxes its way into a page of blades.
   if (
     out.boatClasses?.length &&
@@ -255,8 +255,8 @@ export function retrieve(messages: ConciergeMessage[], pinnedSlug?: string | nul
 
   /**
    * Two tiers, because not all constraints are equal. Preference constraints get
-   * relaxed to fill out a thin shortlist; defining ones — what kind of boat, and
-   * whether it fits the rower — are only dropped when there is nothing at all,
+   * relaxed to fill out a thin shortlist; defining ones, what kind of boat, and
+   * whether it fits the rower, are only dropped when there is nothing at all,
    * since a page of singles is not a useful answer to a question about eights.
    */
   const relaxations: { label: string; hard: boolean; relax: () => void }[] = [
@@ -305,7 +305,7 @@ Each turn you are given a shortlist of real listings currently on BoatXchange, d
 - Never invent a boat, a price, a seller, a location or a specification.
 - Never recommend a boat that is not in the shortlist, even if you know the manufacturer makes one.
 - Refer to each boat by its reference in square brackets, exactly as given, e.g. [bx-1001]. The interface turns these into links, so get them right.
-- If the shortlist does not contain anything suitable, say so plainly and say what would need to change — a bigger budget, a different class, waiting for stock. Do not pad the answer with a boat you do not believe in.
+- If the shortlist does not contain anything suitable, say so plainly and say what would need to change, a bigger budget, a different class, waiting for stock. Do not pad the answer with a boat you do not believe in.
 
 ## How to advise
 Lead with a recommendation, then the reasoning. Two or three boats compared is more useful than a list of eight.
@@ -322,17 +322,17 @@ The inventory is not only boats. It also carries racing kit (all-in-ones, trou, 
 
 - **Size, and honesty about it.** Racing kit runs small and runs small differently at every brand. If someone gives you a size, check it against what each listing actually offers, and tell them to ask for flat chest and inside-leg measurements before buying a lot they cannot return.
 - **Lots versus single items.** A club clearing out twenty-two all-in-ones is solving a different problem from one person who needs one suit. Say which a listing is, and do not push a 22-piece lot at an individual sculler.
-- **What kit at a given price actually is.** Cheap second-hand trou is training kit, not race kit — thin lycra is see-through under stadium lights. Say so rather than letting someone find out at a regatta.
+- **What kit at a given price actually is.** Cheap second-hand trou is training kit, not race kit, thin lycra is see-through under stadium lights. Say so rather than letting someone find out at a regatta.
 - **For gear, what is included and whether it still works.** A cox box without its harness is half a purchase. Batteries are the part that dies. An erg's total metres matter far less than people think.
 
 ## Style
 - 150-250 words for a recommendation. Shorter for a follow-up.
 - Use the seller's own currency figures as given.
 - No headings unless comparing three or more boats.
-- If the rower has not told you their weight, budget or intended use, and it would change your answer, ask for it — one question, not a questionnaire.
+- If the rower has not told you their weight, budget or intended use, and it would change your answer, ask for it, one question, not a questionnaire.
 - Never claim a boat is "perfect" or "ideal". Say what it is good at and what it costs you.`;
 
-/** Compact digest of one listing — enough to reason over, no wasted tokens. */
+/** Compact digest of one listing, enough to reason over, no wasted tokens. */
 function digest(l: Listing): string {
   const band = weightBand(l.crewWeightMinKg, l.crewWeightMaxKg);
   const sizes = sizeRange(l.sizes);
@@ -364,7 +364,7 @@ function truncate(text: string, max: number): string {
  * Builds the turn sent to the model: the user's own words, with the retrieved
  * shortlist appended as context. The shortlist rides on the user turn rather
  * than in the system prompt so the system prompt stays byte-identical across
- * every request — the shape you want if prompt caching is turned on later.
+ * every request, the shape you want if prompt caching is turned on later.
  */
 export function buildMessages(
   history: ConciergeMessage[],
@@ -382,7 +382,7 @@ export function buildMessages(
   if (constraints.budgetUsd) notes.push(`stated budget: about ${constraints.budgetUsd} (USD equivalent)`);
   if (relaxed.length) {
     notes.push(
-      `nothing matched every constraint, so the shortlist ignores: ${relaxed.join(", ")} — mention this rather than pretending it is a clean match`,
+      `nothing matched every constraint, so the shortlist ignores: ${relaxed.join(", ")}, mention this rather than pretending it is a clean match`,
     );
   }
   if (pinned) notes.push(`the rower is asking specifically about [${pinned.id}]; address that boat first`);

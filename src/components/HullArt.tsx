@@ -1,16 +1,16 @@
 /**
  * Art-directed stand-in imagery.
  *
- * Real listings will carry photographs — every seed record has a `photoDirection`
+ * Real listings will carry photographs, every seed record has a `photoDirection`
  * brief describing the shot it wants (see data/seed-listings.json). Until those
  * photographs exist, a grey box or an obviously synthetic "boat photo" would both
  * cheapen the page, so each listing instead gets a flat two-tone illustration
  * drawn from four rowing-specific compositions:
  *
- *   waterline — hull profile above its own reflection, on banded water
- *   puddles   — blade puddles from above, with the wake line running off
- *   rigger    — wing rigger geometry as a workshop drawing, with dimension marks
- *   boathouse — dock pilings, horizon, a shell out on the water
+ *   waterline, hull profile above its own reflection, on banded water
+ *   puddles  , blade puddles from above, with the wake line running off
+ *   rigger   , wing rigger geometry as a workshop drawing, with dimension marks
+ *   boathouse, dock pilings, horizon, a shell out on the water
  *
  * Composition, palette and the small variations within each are picked from the
  * listing's `artSeed`, so a given boat always looks the same on every page, and
@@ -24,7 +24,7 @@ interface Duotone {
   base: string;
   /** Mid tone for secondary shapes. */
   mid: string;
-  /** Darkest tone — the subject. */
+  /** Darkest tone, the subject. */
   ink: string;
 }
 
@@ -55,7 +55,7 @@ const SCENES_BY_CATEGORY: Record<string, Scene[]> = {
   gear: ["gear"],
 };
 
-/** Small deterministic PRNG — same seed, same picture, every render. */
+/** Small deterministic PRNG, same seed, same picture, every render. */
 function rng(seed: number) {
   let s = (seed % 2147483647) + 1;
   return () => {
@@ -67,7 +67,7 @@ function rng(seed: number) {
 /**
  * Mixes the seed before taking a modulus. Seeds in the data are sequential
  * (1001, 1002, 1003…), and `seed % 3` over sequential ids would march through
- * the compositions in lockstep with the grid — mixing first means neighbouring
+ * the compositions in lockstep with the grid, mixing first means neighbouring
  * cards land on different pictures.
  */
 function mix(seed: number): number {
@@ -81,7 +81,7 @@ export interface HullArtProps {
   seed: number;
   /** Describes the picture for screen readers; omit for purely decorative use. */
   label?: string;
-  /** Force a composition — used for the hero, the gallery tabs and section art. */
+  /** Force a composition, used for the hero, the gallery tabs and section art. */
   scene?: Scene;
   /** Listing category, so equipment gets a picture of equipment. */
   category?: string;
@@ -198,7 +198,7 @@ function Waterline({ w, h, p, rand }: SceneProps) {
   );
 }
 
-/** Puddles from above — what a boat leaves behind, receding down the wake. */
+/** Puddles from above, what a boat leaves behind, receding down the wake. */
 function Puddles({ w, h, p, rand }: SceneProps) {
   const count = 6;
   const jitter = rand();
@@ -300,7 +300,7 @@ function Rigger({ w, h, p, rand }: SceneProps) {
   );
 }
 
-/** Dock pilings, horizon, a shell out on the water — the view from a boathouse. */
+/** Dock pilings, horizon, a shell out on the water, the view from a boathouse. */
 function Boathouse({ w, h, p, rand }: SceneProps) {
   const horizon = h * 0.5;
   const pilings = 5 + Math.floor(rand() * 3);
@@ -360,7 +360,7 @@ function Boathouse({ w, h, p, rand }: SceneProps) {
 
 /**
  * An all-in-one, flat-laid. The rowing unisuit is one of the few garments with a
- * silhouette a rower can name across a room — straps, a torso that runs
+ * silhouette a rower can name across a room, straps, a torso that runs
  * uninterrupted into the shorts, and a club stripe on the diagonal. The stripe
  * is drawn as an explicit parallelogram inside the body rather than clipped,
  * so several of these can sit on one page without colliding over an element id.
@@ -432,7 +432,7 @@ function Kit({ w, h, p, rand }: SceneProps) {
 }
 
 /**
- * A cox box in plan view, drawn on the same graph paper as the rigger sketch —
+ * A cox box in plan view, drawn on the same graph paper as the rigger sketch,
  * the two are the workshop half of the inventory, and sharing a visual language
  * makes a mixed grid feel deliberate rather than assembled.
  */

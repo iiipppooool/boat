@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-/** Sign out. A POST-shaped action behind a button, never a link — a GET that
+/** Sign out. A POST-shaped action behind a button, never a link, because a GET that
  *  ends your session can be triggered by anything that follows a URL. */
 export function SignOutButton() {
   const router = useRouter();

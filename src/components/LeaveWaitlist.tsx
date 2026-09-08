@@ -17,7 +17,7 @@ export function LeaveWaitlist({ defaultEmail = "" }: { defaultEmail?: string }) 
         </h2>
         <p className="muted">
           We will not email you about the launch. Your address stays recorded as
-          having left, so an import cannot quietly put you back on — and nothing
+          having left, so an import cannot quietly put you back on, and nothing
           else about you is kept.
         </p>
       </div>

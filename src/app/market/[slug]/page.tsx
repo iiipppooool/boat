@@ -34,7 +34,7 @@ export async function generateMetadata({
   if (!listing) return { title: "Listing not found" };
   return {
     title: listing.title,
-    description: `${listing.title} for sale in ${listing.location.city}, ${listing.location.country} — ${formatPrice(listing.price, listing.currency)}. ${listing.highlights[0] ?? ""}`,
+    description: `${listing.title} for sale in ${listing.location.city}, ${listing.location.country}. ${formatPrice(listing.price, listing.currency)}. ${listing.highlights[0] ?? ""}`,
   };
 }
 
@@ -56,7 +56,7 @@ export default async function ListingPage({
   const isApparel = listing.category === "apparel";
 
   /**
-   * The spec sheet is built per category — rows with nothing to say are dropped
+   * The spec sheet is built per category, rows with nothing to say are dropped
    * below, so a cox box does not get an empty "Crew weight band" line and a
    * hull does not get a size run. "Material" is the one label that has to change
    * wording rather than disappear: fabric is not hull material.
@@ -169,7 +169,7 @@ export default async function ListingPage({
               {isApparel && sizeRange(listing.sizes) && (
                 <p className="notice mt-5">
                   <strong>On sizing.</strong> Racing kit runs small, and it runs small
-                  differently at every brand — a {listing.manufacturer} medium is not a
+                  differently at every brand, a {listing.manufacturer} medium is not a
                   medium anywhere else. Ask the seller for the flat measurement across
                   the chest and the inside leg before you commit, particularly on a
                   lot you cannot return.
@@ -179,7 +179,7 @@ export default async function ListingPage({
                 <p className="notice mt-5">
                   <strong>On the weight band.</strong> {listing.manufacturer} publishes
                   this hull for rowers of {band}. Outside it a boat sits too deep or too
-                  high and never feels right, whatever you do to the rigging — it is the
+                  high and never feels right, whatever you do to the rigging, it is the
                   first thing to check, and the most common reason a good boat turns out
                   to be the wrong boat.
                 </p>
@@ -192,7 +192,7 @@ export default async function ListingPage({
               <p className="listing-price">{formatPrice(listing.price, listing.currency)}</p>
               <p className="listing-price-note small muted">
                 {listing.priceBasis === "ono" && "Or nearest offer · "}
-                {listing.priceBasis === "poa" && "Indicative — final quote on application · "}
+                {listing.priceBasis === "poa" && "Indicative, final quote on application · "}
                 approx. {formatUsdApprox(listing.priceUsd)}
               </p>
 
@@ -265,7 +265,7 @@ export default async function ListingPage({
                 <p className="notice mt-4">
                   <strong>Listed elsewhere.</strong> This boat is for sale on{" "}
                   {listing.sourceName}, not on BoatXchange. We show it so you can
-                  find it, and send you there to buy it — the price and availability
+                  find it, and send you there to buy it, the price and availability
                   are theirs, and may have moved since we last checked.
                 </p>
               )}

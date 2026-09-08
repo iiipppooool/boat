@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Free to browse, free to list. BoatXchange charges 2% when something sells, capped at £600 and waived under £750 — or a flat subscription for dealers and clubs moving fleets.",
+    "Free to browse, free to list. BoatXchange charges 2% when something sells, capped at £600 and waived under £750, or a flat subscription for dealers and clubs moving fleets.",
 };
 
 const TIERS = [
@@ -33,7 +33,7 @@ const TIERS = [
     featured: true,
     cta: { href: "/sell", label: "List a boat" },
     features: [
-      "Free to list — pay only when it sells",
+      "Free to list, pay only when it sells",
       "No fee at all if it does not sell",
       "Nothing to pay on anything under £750",
       "Listing verification and a verified badge",
@@ -41,7 +41,7 @@ const TIERS = [
       "Listing stays visible for six months after sale",
       "Photography and listing-copy guidance",
     ],
-    note: "Two per cent, capped at £600 above £30,000 and waived entirely below £750 — so most kit, oars and spares cost nothing to sell.",
+    note: "Two per cent, capped at £600 above £30,000 and waived entirely below £750, so most kit, oars and spares cost nothing to sell.",
   },
   {
     id: "boathouse",
@@ -58,14 +58,14 @@ const TIERS = [
       "Sales analytics: views, enquiries, time to sell",
       "A named contact, and support within four hours",
     ],
-    note: "Breaks even at about £39,500 of sales a year — one eight, or half a dozen club singles.",
+    note: "Breaks even at about £39,500 of sales a year, one eight, or half a dozen club singles.",
   },
 ];
 
 const FAQS = [
   {
     q: "When exactly do I pay the commission?",
-    a: "After the sale completes and you confirm it in your account. We invoice at the end of that month. We never hold the buyer's money, take a deposit, or act as escrow — the payment goes straight from buyer to seller, and we invoice you separately afterwards.",
+    a: "After the sale completes and you confirm it in your account. We invoice at the end of that month. We never hold the buyer's money, take a deposit, or act as escrow. The payment goes straight from buyer to seller, and we invoice you separately afterwards.",
   },
   {
     q: "What if it sells to someone I already knew?",
@@ -81,7 +81,7 @@ const FAQS = [
   },
   {
     q: "Do you take a cut of oars, kit, gear and parts?",
-    a: "The same 2% applies, but nothing under £750 is invoiced at all — the fee would be smaller than the cost of raising it. In practice a £620 pair of second-hand sculls, or a £640 lot of club kit, costs you nothing to sell.",
+    a: "The same 2% applies, but nothing under £750 is invoiced at all, because the fee would be smaller than the cost of raising it. In practice a £620 pair of second-hand sculls, or a £640 lot of club kit, costs you nothing to sell.",
   },
   {
     q: "Can I cancel Boathouse?",
@@ -162,13 +162,13 @@ export default function PricingPage() {
                 <tr>
                   <th scope="row">A used pair of sculls</th>
                   <td>£500</td>
-                  <td>Nothing — under the £750 threshold</td>
+                  <td>Nothing (under the £750 threshold)</td>
                   <td>Nothing</td>
                 </tr>
                 <tr>
                   <th scope="row">A club lot of racing kit</th>
                   <td>£640</td>
-                  <td>Nothing — under the £750 threshold</td>
+                  <td>Nothing (under the £750 threshold)</td>
                   <td>Nothing</td>
                 </tr>
                 <tr>
@@ -186,7 +186,7 @@ export default function PricingPage() {
                 <tr>
                   <th scope="row">An eight</th>
                   <td>£38,000</td>
-                  <td>£600 — the cap</td>
+                  <td>£600 (the cap)</td>
                   <td>Nothing</td>
                 </tr>
               </tbody>

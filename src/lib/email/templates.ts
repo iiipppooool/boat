@@ -60,8 +60,8 @@ export interface WelcomeInput {
 }
 
 /**
- * The confirmation. It promises exactly two things — a note when the market
- * opens in their part of the world, and nothing else — because that is the
+ * The confirmation. It promises exactly two things: a note when the market
+ * opens in their part of the world, and nothing else. That is the
  * only promise we can keep, and a waiting-list email that oversells is the
  * fastest way to be marked as spam.
  */
@@ -74,12 +74,12 @@ export function welcomeEmail(input: WelcomeInput): EmailMessage {
 
   const text = `${greeting}
 
-${place} Thank you — that genuinely helps.
+${place} Thank you, that genuinely helps.
 
 BoatXchange is being built as the marketplace rowing has never had: one place
 to buy and sell hulls, oars, riggers, trailers, kit and gear, with the specs
-that actually decide a purchase — crew weight band, layup, hull weight, repair
-history — on every listing.
+that actually decide a purchase, such as crew weight band, layup, hull weight and
+repair history, on every listing.
 
 What happens next:
 
@@ -93,9 +93,9 @@ We will email you when the market opens where you are, and when something is
 genuinely worth telling you about. Not weekly. Not a newsletter.
 
 If you have a boat you already want to move, reply to this message and tell us
-what it is — early listings shape what we build first.
+what it is. Early listings shape what we build first.
 
-— The BoatXchange team
+The BoatXchange team
 
 Leave the list at any time: ${unsubscribe}`;
 
@@ -103,9 +103,9 @@ Leave the list at any time: ${unsubscribe}`;
     "You are on the BoatXchange waiting list",
     [
       paragraph(escapeHtml(greeting)),
-      paragraph(`<strong>${escapeHtml(place)}</strong> Thank you — that genuinely helps.`),
+      paragraph(`<strong>${escapeHtml(place)}</strong> Thank you, that genuinely helps.`),
       paragraph(
-        "BoatXchange is being built as the marketplace rowing has never had: one place to buy and sell hulls, oars, riggers, trailers, kit and gear, with the specs that actually decide a purchase — crew weight band, layup, hull weight, repair history — on every listing.",
+        "BoatXchange is being built as the marketplace rowing has never had: one place to buy and sell hulls, oars, riggers, trailers, kit and gear, with the specs that actually decide a purchase, such as crew weight band, layup, hull weight and repair history, on every listing.",
       ),
       `<p style="margin:0 0 8px;font-weight:600;">What happens next</p>`,
       `<ol style="margin:0 0 14px;padding-left:20px;color:${SLATE};">
@@ -115,7 +115,7 @@ Leave the list at any time: ${unsubscribe}`;
        </ol>`,
       button(`${SITE.url}/market`, "See what is listed so far"),
       paragraph(
-        "If you have a boat you already want to move, just reply to this message and tell us what it is — early listings shape what we build first.",
+        "If you have a boat you already want to move, just reply to this message and tell us what it is. Early listings shape what we build first.",
       ),
     ].join(""),
     `You are receiving this because you joined the BoatXchange waiting list with ${escapeHtml(input.email)}.<br><a href="${unsubscribe}" style="color:${SLATE};">Leave the list</a>`,
@@ -147,13 +147,13 @@ export interface NotifyInput {
 /** The internal copy: what someone told us, in the order we care about it. */
 export function signupNotification(input: NotifyInput): EmailMessage {
   const lines = [
-    `${input.existing ? "Updated" : "New"} waiting-list signup — ${input.total} on the list.`,
+    `${input.existing ? "Updated" : "New"} waiting-list signup: ${input.total} on the list.`,
     "",
     `Email:     ${input.email}`,
-    `Name:      ${input.name || "—"}`,
+    `Name:      ${input.name || "not given"}`,
     `Role:      ${input.role}`,
-    `Country:   ${input.country || "—"}`,
-    `Interests: ${input.interests.length ? input.interests.join(", ") : "—"}`,
+    `Country:   ${input.country || "not given"}`,
+    `Interests: ${input.interests.length ? input.interests.join(", ") : "none picked"}`,
     "",
     input.note ? `Note:\n${input.note}` : "No note.",
   ];
@@ -165,14 +165,14 @@ export function signupNotification(input: NotifyInput): EmailMessage {
     text: lines.join("\n"),
     html: shell(
       "Waiting-list signup",
-      `<p style="margin:0 0 14px;">${input.existing ? "Updated" : "New"} signup — <strong>${input.total}</strong> on the list.</p>
+      `<p style="margin:0 0 14px;">${input.existing ? "Updated" : "New"} signup. <strong>${input.total}</strong> on the list.</p>
        <table role="presentation" cellpadding="0" cellspacing="0" style="font-size:14px;">
          ${[
            ["Email", input.email],
-           ["Name", input.name || "—"],
+           ["Name", input.name || "not given"],
            ["Role", input.role],
-           ["Country", input.country || "—"],
-           ["Interests", input.interests.length ? input.interests.join(", ") : "—"],
+           ["Country", input.country || "not given"],
+           ["Interests", input.interests.length ? input.interests.join(", ") : "none picked"],
          ]
            .map(
              ([k, v]) =>

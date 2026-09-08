@@ -6,6 +6,7 @@ import { WaitlistForm } from "@/components/WaitlistForm";
 import { MoneyFlow } from "@/components/landing/MoneyFlow";
 import { getFacets, getFeaturedListings } from "@/lib/inventory";
 import { waitlistStats } from "@/lib/waitlist";
+import { aggregatedCount, lastSyncAt } from "@/lib/sources/sync";
 import { BOAT_CLASS_LABELS } from "@/lib/format";
 import { SITE } from "@/lib/site";
 
@@ -14,26 +15,37 @@ import { SITE } from "@/lib/site";
  *
  * It has two jobs that pull in opposite directions: explain a marketplace that
  * is still being built, and collect the email address of somebody who wants it.
- * The resolution is the order — the waiting list is offered in the first
+ * The resolution is the order. The waiting list is offered in the first
  * screenful for the person who already knows they want in, and offered again at
  * the bottom for the person who needed the argument first. Everything between
  * the two is the argument.
  *
  * Live figures (inventory counts, waiting-list size) are read at render, so the
  * page is revalidated rather than frozen at build time. Where a real number is
- * too small to be worth showing, it is omitted rather than dressed up — see
+ * too small to be worth showing, it is omitted rather than dressed up. See
  * `waitlistStats().showCount`.
  */
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "BoatXchange — the marketplace for every boat, starting with rowing",
+  title: "BoatXchange: the marketplace for every boat, starting with rowing",
   description:
     "Buy and sell boats, oars, riggers, trailers, helmets, kit and gear in one place. Free to list, commission only on a sale, and we never hold your money. Join the waiting list.",
   alternates: { canonical: "/" },
 };
 
-/** Lane markers — the buoy line every rower has stared down for 2,000 metres. */
+/** "3 minutes ago" for the freshness line, without pulling in a date library. */
+function relativeSync(iso: string): string {
+  const minutes = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  if (minutes < 2) return "moments ago";
+  if (minutes < 60) return `${minutes} minutes ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+  const days = Math.round(hours / 24);
+  return `${days} ${days === 1 ? "day" : "days"} ago`;
+}
+
+/** Lane markers: the buoy line every rower has stared down for 2,000 metres. */
 function LaneMarkers({ count = 9 }: { count?: number }) {
   return (
     <span className="lane-markers" aria-hidden="true">
@@ -71,7 +83,7 @@ const PRODUCTS: {
     kicker: "Blades",
     title: "Oars & sculls",
     body:
-      "Sweep and sculling blades are the most traded item in the sport and the worst served: a set outlives three crews, and every club has a rack of the wrong length. Listed by length, stiffness, blade shape and collar type — the four things that decide whether they fit.",
+      "Sweep and sculling blades are the most traded item in the sport and the worst served: a set outlives three crews, and every club has a rack of the wrong length. Listed by length, stiffness, blade shape and collar type, the four things that decide whether they fit.",
     points: [
       "Matched sets and odd blades both listed properly",
       "Length and stiffness are fields, not a sentence in the description",
@@ -85,7 +97,7 @@ const PRODUCTS: {
     kicker: "Kit",
     title: "Merch, apparel & club kit",
     body:
-      "All-in-ones, trou, splash tops, pogies and the training kit that wears out every season. Club lots, dead stock from a supplier who over-ordered, and — as we grow — BoatXchange's own range, built to last more than one winter.",
+      "All-in-ones, trou, splash tops, pogies and the training kit that wears out every season. Club lots, dead stock from a supplier who over-ordered, and, as we grow, BoatXchange's own range, built to last more than one winter.",
     points: [
       "Sized properly, with the fit stated: nothing about rowing kit is standard",
       "Club bulk lots as a single listing rather than forty",
@@ -131,7 +143,7 @@ const PRODUCTS: {
     points: [
       "Fits-what compatibility on rigger and hardware listings",
       "Trailer capacity and towing weight stated",
-      "Spares from clubs clearing a shed — the cheapest way to keep a fleet running",
+      "Spares from clubs clearing a shed, the cheapest way to keep a fleet running",
     ],
     href: "/market?category=trailer",
     cta: "Browse trailers & parts",
@@ -141,7 +153,7 @@ const PRODUCTS: {
     kicker: "Access",
     title: "Rent a boat, anywhere",
     body:
-      "The long game. Most boats sit still for most of the year, and a rower travelling to a regatta or a holiday coastline has nowhere to hire one. When the marketplace is dense enough, the same listings become rentable by the day — with the club or owner setting the price and the terms.",
+      "The long game. Most boats sit still for most of the year, and a rower travelling to a regatta or a holiday coastline has nowhere to hire one. When the marketplace is dense enough, the same listings become rentable by the day, with the club or owner setting the price and the terms.",
     points: [
       "Club fleets earning in the months they would otherwise sit in the rack",
       "Insurance and deposit handled by the platform, money still never held by us",
@@ -178,7 +190,7 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
     a: (
       <>
         <p>
-          Browsing is free and always will be. Listing is free — for private
+          Browsing is free and always will be. Listing is free: for private
           sellers, for clubs, for dealers. We charge a commission of{" "}
           {Math.round(SITE.fees.rate * 100)}% only when something actually sells,
           capped at {SITE.fees.currencySymbol}
@@ -200,7 +212,7 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
       <>
         <p>
           No, and this is the part we would ask you to check on any competitor.
-          Buyer and seller settle directly — bank transfer, in person, or through
+          Buyer and seller settle directly: bank transfer, in person, or through
           whichever escrow the two of them choose for a boat worth escrowing.
         </p>
         <p>
@@ -228,7 +240,7 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
     a: (
       <p>
         Probably not on day one, which is why the waiting list asks for your
-        country. We open region by region and we start where the most of you are —
+        country. We open region by region and we start where the most of you are.
         a marketplace with three boats in your country is worse than no
         marketplace, because it teaches you not to come back. Tell us where you
         are and you are voting for your region.
@@ -240,9 +252,9 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
     a: (
       <p>
         Rowing first, because it is the sport we know, the one with no marketplace
-        of its own, and small enough to actually finish. The mechanics — long-lived
+        of its own, and small enough to actually finish. The mechanics, long-lived
         expensive hulls, specs that decide a purchase, sellers who are clubs rather
-        than dealers — are the same for kayaks, canoes, dinghies and small sail. We
+        than dealers, are the same for kayaks, canoes, dinghies and small sail. We
         will expand into them once rowing works properly, and not before.
       </p>
     ),
@@ -263,6 +275,8 @@ export default function HomePage() {
   const featured = getFeaturedListings(6);
   const facets = getFacets();
   const waiting = waitlistStats();
+  const aggregated = aggregatedCount();
+  const synced = lastSyncAt();
 
   return (
     <>
@@ -271,14 +285,14 @@ export default function HomePage() {
         <div className="wrap hero-grid">
           <div className="hero-copy">
             <LaneMarkers />
-            <p className="eyebrow">Boats · oars · gear · kit — new &amp; used</p>
+            <p className="eyebrow">Boats · oars · gear · kit · new &amp; used</p>
             <h1>
               Every boat,
               <br />
               one market.
             </h1>
             <p className="lede">
-              BoatXchange is the marketplace rowing never had — hulls, blades,
+              BoatXchange is the marketplace rowing never had: hulls, blades,
               riggers, trailers, helmets, kit and gear, listed with the specs that
               actually decide a purchase. Free to list. Commission only when it
               sells. <strong>We never hold your money.</strong>
@@ -346,7 +360,7 @@ export default function HomePage() {
               Rowing is small enough that nobody built it a marketplace, and specific
               enough that a generic one would not work. A boat listing needs a crew
               weight band, a layup, a rigger type and an honest account of every
-              repair — the fields that decide whether a boat is right, and the fields
+              repair. Those are the fields that decide whether a boat is right, and the fields
               a general classifieds site does not have.
             </p>
           </div>
@@ -446,7 +460,7 @@ export default function HomePage() {
               <h3>An AI concierge that reads the stock</h3>
               <p>
                 Tell it your weight, your budget and what you want to do on the
-                water. It answers only from the live inventory — it cannot invent a
+                water. It answers only from the live inventory, so it cannot invent a
                 boat that is not there.
               </p>
             </li>
@@ -485,7 +499,7 @@ export default function HomePage() {
             </p>
             <p>
               We are not in the payment. Buyer and seller settle directly, in
-              whatever way they agree — bank transfer, in person on collection, or a
+              whatever way they agree: bank transfer, in person on collection, or a
               third-party escrow the two of them choose for a boat worth escrowing.
               We invoice our commission to the seller after the sale has happened.
             </p>
@@ -550,7 +564,7 @@ export default function HomePage() {
               <h2>Everything that gets a crew on the water.</h2>
               <p>
                 Some of it is live today, some opens next, and some is honestly still
-                a plan — labelled so you can tell which is which.
+                a plan, labelled so you can tell which is which.
               </p>
             </div>
           </div>
@@ -680,7 +694,7 @@ export default function HomePage() {
                     <h4>You get paid, then we invoice</h4>
                     <p>
                       The money reaches you first. Our {Math.round(SITE.fees.rate * 100)}%
-                      is invoiced afterwards — and nothing if it never sold.
+                      is invoiced afterwards, and nothing if it never sold.
                     </p>
                   </div>
                 </li>
@@ -738,7 +752,7 @@ export default function HomePage() {
               <p>
                 Nobody buys an eight twice a year, so we do not need habit or
                 addiction mechanics. We need to be the place you remember and trust
-                the one time a decade you need it — which rewards being honest far
+                the one time a decade you need it, which rewards being honest far
                 more than being sticky.
               </p>
               </div>
@@ -780,7 +794,7 @@ export default function HomePage() {
                 Rentals turn the same listings into revenue for the months a hull sits
                 still. Own-brand blades, kit and helmets add a second margin on top of
                 a market we already own. Then the same machinery for kayaks, canoes
-                and dinghies — every boat, exactly as the name says.
+                and dinghies. Every boat, exactly as the name says.
               </p>
               </div>
             </li>
@@ -798,9 +812,19 @@ export default function HomePage() {
               <p>
                 {facets.total} listings, {facets.manufacturers.length} manufacturers,{" "}
                 {facets.continents.length} continents. You can browse, filter and
-                enquire today — the waiting list is for the regions and the products
+                enquire today. The waiting list is for the regions and the products
                 we have not opened yet.
               </p>
+              {aggregated > 0 && (
+                <p className="live-note small">
+                  <span className="live-dot" aria-hidden="true" />
+                  {aggregated} of these {aggregated === 1 ? "comes" : "come"} from
+                  live feeds and refresh on their own
+                  {synced ? `, last checked ${relativeSync(synced)}` : ""}. A boat
+                  that leaves its source is marked sold here rather than quietly
+                  vanishing, so the price history stays readable.
+                </p>
+              )}
             </div>
             <Link href="/market" className="link-arrow">
               See the whole market
@@ -835,7 +859,7 @@ export default function HomePage() {
             <p className="lede">
               Tell the concierge what you weigh, what you can spend and what you want
               to do on the water. It reads the live inventory before it answers, so
-              every boat it recommends is one you can go and buy today — with the
+              every boat it recommends is one you can go and buy today, with the
               reasoning, and the trade-offs, spelled out.
             </p>
             <div className="cluster mt-5">
@@ -883,12 +907,12 @@ export default function HomePage() {
             <p className="lede">
               We open region by region, and the list decides the order. Tell us where
               you row and what you need, and you will hear from us when there is
-              something real to see where you are — not before.
+              something real to see where you are, and not before.
             </p>
             <ul className="ticklist mt-5">
               <li>First access when your region opens</li>
               <li>Free listing for everything you put up in the first season</li>
-              <li>A say in what gets built — we read every note</li>
+              <li>A say in what gets built, because we read every note</li>
               <li>One email at signup, then nothing until it matters</li>
             </ul>
             {waiting.showCount && (

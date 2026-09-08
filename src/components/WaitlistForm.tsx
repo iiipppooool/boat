@@ -15,7 +15,7 @@ type Role = (typeof WAITLIST_ROLES)[number];
 /**
  * Three ways in, on one card.
  *
- * `interest` is the low-commitment door — an email address and nothing else
+ * `interest` is the low-commitment door: an email address and nothing else
  * required. `account` is for somebody who already knows they want to sell,
  * and creates a real account with a real session. `signin` is there because a
  * returning seller who lands on the home page should not have to hunt for it.
@@ -175,7 +175,7 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
   const counted = useCountUp(state === "done" ? (result?.position ?? null) : null, reduced);
 
   /**
-   * The card leans towards the pointer. Kept to a few degrees — enough that the
+   * The card leans towards the pointer. Kept to a few degrees, enough that the
    * surface reads as a physical object catching the light, not enough to make
    * the type wobble while somebody is trying to read it.
    */
@@ -390,7 +390,7 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
                 ) : (
                   mode === "account" && (
                     <p className="wl-hint">
-                      Twelve characters or more. Length beats punctuation — three
+                      Twelve characters or more. Length beats punctuation: three
                       unrelated words are stronger than <code>P@ssw0rd</code> and far
                       easier to remember.
                     </p>
@@ -591,9 +591,9 @@ export function WaitlistForm({ variant = "compact", defaultInterest, id }: Waitl
               {mode === "signin"
                 ? "You are signed in. Your listings, enquiries and invoices are on your account page."
                 : mode === "account"
-                  ? "You are signed in and on the waiting list. Listing a boat is free and open now — everything you put up goes live once a person has checked it."
+                  ? "You are signed in and on the waiting list. Listing a boat is free and open now, and everything you put up goes live once a person has checked it."
                   : result?.emailed
-                ? "A confirmation is on its way. If it is not there in a few minutes, look in spam and mark it as safe — that is the only way the launch email reaches you."
+                ? "A confirmation is on its way. If it is not there in a few minutes, look in spam and mark it as safe. That is the only way the launch email reaches you."
                     : "You are saved on the list. Our confirmation email did not go out just now, but that does not affect your place."}
             </p>
 

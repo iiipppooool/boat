@@ -5,7 +5,7 @@ import { authenticate, createSession, destroySession, getSessionAccount } from "
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** Who is signed in. Returns `{ account: null }` rather than a 401 — the header
+/** Who is signed in. Returns `{ account: null }` rather than a 401, the header
  *  and the landing page both ask this on a page nobody needs to be signed in for. */
 export async function GET() {
   const account = await getSessionAccount();

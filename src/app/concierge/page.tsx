@@ -32,7 +32,7 @@ export default async function ConciergePage({
               Most people looking for their first single do not know that hulls are
               built to a weight band, or that the boat they have been admiring is
               built for someone eight kilos heavier. Say what you weigh, what you can
-              spend and what you want to do — the concierge does the rest against{" "}
+              spend and what you want to do. The concierge does the rest against{" "}
               {facets.availableTotal} live listings.
             </p>
           </div>

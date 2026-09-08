@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
  *
  * The account is the thing that must succeed; the waiting-list row and both
  * emails are afterwards and best-effort, for the same reason as the waiting-list
- * endpoint — a mail outage should cost a confirmation, not a customer.
+ * endpoint, a mail outage should cost a confirmation, not a customer.
  *
  * A session is issued straight away rather than after an email confirmation.
  * The account cannot yet do anything that would be dangerous in the wrong hands

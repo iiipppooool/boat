@@ -4,7 +4,7 @@ import type { ListingQuery } from "@/lib/types";
 
 /**
  * Real links, one page at a time. The Market grid never loads the whole
- * inventory — the page size is enforced in SQL, and this walks the offsets.
+ * inventory, the page size is enforced in SQL, and this walks the offsets.
  */
 export function Pagination({
   query, page, pageCount, basePath = "/market",

@@ -17,7 +17,7 @@ const ILLUSTRATION_VIEWS = [
  *
  * With photographs it is an ordinary gallery: one large image, a thumbnail
  * strip, and photographer credit where given. Without them it shows the
- * generated illustration and says so — a buyer spending five figures deserves
+ * generated illustration and says so, a buyer spending five figures deserves
  * to know which pictures are real, and the seller's photo brief for this
  * specific item is printed beneath so it is obvious what is still missing.
  */
@@ -114,7 +114,7 @@ function IllustrationGallery({
   onSelect: (n: number) => void;
 }) {
   // Equipment has one composition of its own, so there is nothing to tab
-  // between — showing four identical thumbnails would be worse than none.
+  // between, showing four identical thumbnails would be worse than none.
   const isBoat = category === "shell";
   const views = isBoat ? ILLUSTRATION_VIEWS : [];
   const active = views[index] ?? null;
@@ -127,7 +127,7 @@ function IllustrationGallery({
           category={active ? undefined : category}
           scene={active?.scene}
           ratio={0.62}
-          label={`${active ? `${active.label} — i` : "I"}llustration standing in for photography of ${title}`}
+          label={`${active ? `${active.label}, i` : "I"}llustration standing in for photography of ${title}`}
         />
       </div>
 

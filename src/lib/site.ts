@@ -6,7 +6,7 @@
  * and phone number, which would have been false company information the moment
  * the site went live. They are gone.
  *
- * Fill in what is true. Anything left blank is simply not rendered — the footer
+ * Fill in what is true. Anything left blank is simply not rendered. The footer
  * and contact page omit missing details rather than printing a placeholder, so
  * a half-configured site looks sparse rather than fraudulent.
  */
@@ -48,7 +48,7 @@ export const SITE = {
 
   /**
    * Commission on a completed sale. Every one of these is a business decision,
-   * so they live here rather than being scattered through the pages — the
+   * so they live here rather than being scattered through the pages. The
    * pricing page, the account page and the invoicing endpoint all derive from
    * this, and cannot disagree with each other.
    *
@@ -67,7 +67,7 @@ export const SITE = {
    */
   fees: {
     rate: 0.02,
-    /** Flat amount added to every invoiced sale. Regressive — see `npm run fees`. */
+    /** Flat amount added to every invoiced sale. Regressive; see `npm run fees`. */
     flat: 0,
     /** Ceiling on a single commission. Set to Infinity for no cap. */
     cap: 600,

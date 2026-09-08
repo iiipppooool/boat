@@ -5,6 +5,7 @@ import seedListings from "../../data/seed-listings.json";
 import { ACCOUNTS_SCHEMA } from "./accounts";
 import { WAITLIST_SCHEMA } from "./waitlist";
 import { SESSIONS_SCHEMA, ACCOUNT_AUTH_COLUMNS } from "./auth";
+import { SOURCE_STATE_SCHEMA } from "./sources/sync";
 import { syncPhotos } from "./photos";
 import { toUsd } from "./fx";
 import type { Listing, SeedListing } from "./types";
@@ -21,7 +22,7 @@ import type { Listing, SeedListing } from "./types";
  * When write volume or multi-region reads justify it, the swap is contained:
  * everything above this file talks to the repository functions in
  * `inventory.ts`, not to SQL. Replacing this module with a Postgres pool means
- * rewriting the queries in `inventory.ts` and nothing else — no page, no
+ * rewriting the queries in `inventory.ts` and nothing else, no page, no
  * component and no API route reaches into the database directly.
  */
 
@@ -101,6 +102,7 @@ export function getDb(): Database.Database {
   db.exec(ACCOUNTS_SCHEMA);
   db.exec(WAITLIST_SCHEMA);
   db.exec(SESSIONS_SCHEMA);
+  db.exec(SOURCE_STATE_SCHEMA);
   migrate(db);
   seed(db);
   // Photographs live on disk, not in the seed file: drop files into
@@ -115,7 +117,7 @@ export function getDb(): Database.Database {
  * a database created before a column was added would be missing it. Adding the
  * apparel and gear columns to an existing install is exactly that case.
  *
- * Every column added here must be nullable or carry a default — SQLite will not
+ * Every column added here must be nullable or carry a default. SQLite will not
  * add a NOT NULL column without one, and more importantly a seller's existing
  * listing has no sensible value for a column invented after they wrote it.
  */
@@ -156,12 +158,12 @@ function migrateColumns(
 
 /**
  * Loads `data/seed-listings.json`. The JSON file is demo inventory, not
- * production data — see `data/README.md`. Real listings arrive through /sell
+ * production data, see `data/README.md`. Real listings arrive through /sell
  * and are written with `source = 'seller'`, so the seed rows can be deleted
  * later without touching anything else.
  *
  * This tops up by id rather than only filling an empty database: when new seed
- * listings are added to the JSON — a new category, say — they appear on the
+ * listings are added to the JSON, a new category, say, they appear on the
  * next boot without anyone having to wipe a database that already holds real
  * seller submissions. Seed rows already present are left alone, so a local edit
  * to a seed listing is not stamped back over on every restart.

@@ -1,6 +1,6 @@
 # BoatXchange
 
-The global marketplace for rowing boats — new and used. Single sculls, doubles,
+The global marketplace for rowing boats, new and used. Single sculls, doubles,
 quads, fours, eights and coastal hulls, plus the oars, riggers, trailers, racing
 kit and gear that go with them, with an AI concierge that reads the live
 inventory before it recommends anything.
@@ -13,17 +13,17 @@ alternative.
 > ### ⚠︎ Everything in this build is invented
 >
 > **No listing on this site is real.** All 46 are fabricated demo data. The
-> manufacturers and model families are real companies and real products — that
+> manufacturers and model families are real companies and real products, that
 > is deliberate, because the filters have to reflect what rowers actually search
-> for — but every specific item, price, seller, club, location, email address
+> for, but every specific item, price, seller, club, location, email address
 > and phone number was made up for this build.
 >
-> The invented company details are **gone** — there is no longer a company
+> The invented company details are **gone**, there is no longer a company
 > registration number, VAT number, postal address, phone number or email address
 > anywhere in the site. Contact details now live in `src/lib/site.ts`, blank by
 > default, and anything left blank is simply not rendered.
 >
-> There are also no photographs in the repository — every listing shows a
+> There are also no photographs in the repository, every listing shows a
 > generated illustration, clearly labelled as one. `npm run photos:fetch` pulls
 > real stock images if you want them for a demo; they are marked as stock on the
 > page, because a photograph of a *different* boat presented as the item for sale
@@ -74,11 +74,11 @@ that port 3000 is in use, run `npm run dev -- -p 3001` instead.
 
 | Route | |
 |---|---|
-| `/` | Landing page — the problem, the solution, the products, the money promise, live listings, waiting-list signup and FAQ |
+| `/` | Landing page, the problem, the solution, the products, the money promise, live listings, waiting-list signup and FAQ |
 | `/market` | The full inventory grid: filters, sort, pagination |
 | `/market/[slug]` | Listing detail: gallery, spec sheet, seller, related boats |
 | `/concierge` | The AI concierge chat |
-| `/sell` | Seller submission form — the real inventory source |
+| `/sell` | Seller submission form, the real inventory source |
 | `/pricing` | Fee model and tiers |
 | `/account` | Subscription, payment method, invoices, your listings *(auth stubbed)* |
 | `/contact` | Contact form and company details |
@@ -134,8 +134,8 @@ else's defaults, and the design tokens at the top of `src/app/globals.css` are
 less code than configuring a framework to override itself.
 
 SQLite is a deliberate choice, not a placeholder. This is a small-write,
-read-mostly application — a few hundred listings and a handful of submissions a
-day — which a single small instance with a mounted volume serves for the cost of
+read-mostly application, a few hundred listings and a handful of submissions a
+day, which a single small instance with a mounted volume serves for the cost of
 the instance. It also means `npm install && npm run dev` with no services to
 start.
 
@@ -158,7 +158,7 @@ start.
 
 ### Why a small model, deliberately
 
-Default: **Claude Haiku 4.5** (`claude-haiku-4-5`) — $1 / $5 per million input /
+Default: **Claude Haiku 4.5** (`claude-haiku-4-5`) ,  $1 / $5 per million input /
 output tokens, the cheapest current Claude model.
 
 The reasoning is about the shape of the job. By the time the model is called,
@@ -166,7 +166,7 @@ the hard part is already done: `concierge.ts` has turned the conversation into a
 database query and pulled a short, exact set of real listings. What remains is
 reading a dozen structured records, matching them against a stated weight,
 budget and use case, and explaining the trade-off in a few sentences. That is
-summarisation and explanation over a small, fully supplied context — not
+summarisation and explanation over a small, fully supplied context, not
 reasoning, not code, not long-horizon planning. A frontier model does it no
 better and costs several times more per conversation.
 
@@ -197,20 +197,20 @@ a CI run and a preview deploy all get a working concierge page instead of an
 error. It reads back the shortlist retrieval produced, and the UI says plainly
 that it is running offline.
 
-### Grounding — it cannot invent a boat
+### Grounding, it cannot invent a boat
 
 The model never sees the inventory and is never asked to remember it. Each turn:
 
-1. **Constraints are extracted in code.** Weight, budget (currency-aware —
+1. **Constraints are extracted in code.** Weight, budget (currency-aware,
    £7,000 is not $7,000), boat class, category, apparel size, region, new/used.
    Regular expressions, not a model call. Two ambiguities are handled
    explicitly: a bare "S"/"M"/"L" is only read as a size when the word "size"
-   precedes it or the word is spelled out, and "scull" is disambiguated — a
+   precedes it or the word is spelled out, and "scull" is disambiguated, a
    *single scull* is a boat, a *pair of sculls* is a set of oars, and reading
    the second sense in the first sentence used to return a page of blades.
 2. **Those become a `ListingQuery`** and run against the same repository the
    Market page uses. If too little comes back, constraints are relaxed in a
-   defined order — and in two tiers. Preferences (new/used, budget, region) are
+   defined order, and in two tiers. Preferences (new/used, budget, region) are
    relaxed to fill out a thin shortlist; *defining* constraints (boat class, the
    crew weight band, an apparel size) are only dropped when there is nothing at
    all, because a page of singles is not a useful answer to a question about
@@ -225,7 +225,7 @@ The model never sees the inventory and is never asked to remember it. Each turn:
    prose,** so the numbers in it are always the listing's own.
 
 Replies stream as NDJSON events (`context` → `delta`… → `done`) and are rendered
-by a small React-element-building markdown renderer — no `innerHTML`, so model
+by a small React-element-building markdown renderer, no `innerHTML`, so model
 output can never inject markup.
 
 ---
@@ -249,7 +249,7 @@ Taken from things you actually look at from a boat, not from a UI kit.
 
 Deliberately no blue-violet, no gradient, no glow. Those read as "software
 product", and this is a marketplace for objects that cost as much as a car.
-Brass is rationed — primary buttons, the X in the wordmark, eyebrow rules, and
+Brass is rationed, primary buttons, the X in the wordmark, eyebrow rules, and
 the concierge's live state. Everything else is hull, bone and slate.
 
 Every text pair is measured, not eyeballed; the table is in the header comment
@@ -260,7 +260,7 @@ allowance.
 
 **Fraunces** for display. A variable serif with an optical-size axis, so one
 family carries both the 5rem hero (high contrast, editorial) and a 1.35rem card
-heading (sturdy, readable) — a job that usually needs two faces. Its slight
+heading (sturdy, readable), a job that usually needs two faces. Its slight
 irregularity gives headings a hand-set feel that a neutral serif would not, and
 it is not a font anyone reaches for by default.
 
@@ -268,7 +268,7 @@ it is not a font anyone reaches for by default.
 public-service interfaces: legible at 13px in a spec table, real tabular figures
 for prices and hull weights, and emphatically not Inter or Roboto.
 
-Both self-hosted via `next/font` — no runtime request to Google, no layout shift.
+Both self-hosted via `next/font`, no runtime request to Google, no layout shift.
 
 ### Photographs
 
@@ -288,7 +288,7 @@ without a folder keep the illustration.
 
 `npm run photos` reports coverage: which listings have photographs, which files
 are relying on filename-derived alt text rather than written alt text, and
-whether any folder name matches no listing — a slug typo is otherwise invisible,
+whether any folder name matches no listing, a slug typo is otherwise invisible,
 you just never see your photos.
 
 Full conventions, formats and a shot list are in
@@ -299,7 +299,7 @@ add the hostname to `images.remotePatterns` in `next.config.mjs`.
 
 ### Imagery, while there are no photographs
 
-The two easy answers — grey boxes, or synthetic "boat photos" — would both
+The two easy answers, grey boxes, or synthetic "boat photos", would both
 cheapen a page where someone is deciding whether to spend £12,000.
 
 Instead every listing gets a flat two-tone illustration built from six
@@ -308,20 +308,20 @@ water; blade puddles from above with the wake running off; wing-rigger geometry
 drawn as a workshop dimension sketch; a boathouse horizon with dock pilings and
 a shell out on the water; an all-in-one flat-laid with a club stripe on the
 diagonal; and a cox box in plan view on the same graph paper as the rigger
-sketch. Composition follows the listing's category — kit gets kit, a cox box
-gets a cox box — and palette and variant come from its `artSeed`, so an item
+sketch. Composition follows the listing's category, kit gets kit, a cox box
+gets a cox box, and palette and variant come from its `artSeed`, so an item
 looks the same everywhere and a grid looks composed rather than random. See
 `src/components/HullArt.tsx`.
 
 The gallery labels them as illustration rather than passing them off as
 photography, and prints the seller's photo brief for that specific item
 underneath. Every seed listing carries a `photoDirection` field describing the
-shot that should replace it — three-quarter bow views on flat water at dawn,
+shot that should replace it, three-quarter bow views on flat water at dawn,
 rigger castings, honest close-ups of repairs, flat-lays of a full size run.
 
 ### Wordmark
 
-"Boat" set light, "Xchange" set heavy, with the X — the only brass element — as
+"Boat" set light, "Xchange" set heavy, with the X, the only brass element, as
 the hinge. Beside it, a cleaver blade seen flat on: the asymmetric quadrilateral
 every rower recognises from twenty metres away. `src/components/Wordmark.tsx`.
 
@@ -329,8 +329,8 @@ every rower recognises from twenty metres away. `src/components/Wordmark.tsx`.
 
 ## Inventory
 
-`data/seed-listings.json` holds 46 seed listings across six categories — boats,
-oars, riggers, trailers, kit and gear — spanning 27 manufacturers, 5 currencies
+`data/seed-listings.json` holds 46 seed listings across six categories, boats,
+oars, riggers, trailers, kit and gear, spanning 27 manufacturers, 5 currencies
 and 11 countries. Real manufacturers and model families; invented items, prices,
 sellers and locations. **It is demo data, not production inventory.**
 
@@ -361,30 +361,30 @@ Full schema notes are in `data/README.md`; the authoritative types are in
 | `gear` | Gear & electronics | Lot size, condition, what's included |
 
 `apparel` and `gear` are separate rather than one "everything else" bucket
-because they are searched on different things — nobody filters kit by hull
+because they are searched on different things, nobody filters kit by hull
 material and nobody filters a cox box by chest size. The card, the spec sheet,
 the filter panel and the sell form all switch on category, so a cox box never
 shows an empty "crew weight band" row and a hull is never asked for a size run.
 
 Three fields exist only for these categories: `sizes` (a list, because one club
-lot covers a whole size run), `fit` (men's/women's/unisex), and `quantity` — a
+lot covers a whole size run), `fit` (men's/women's/unisex), and `quantity`, a
 club clearing out 22 all-in-ones is solving a different problem from one person
 who needs one suit, and buyers filter for exactly that.
 
 Two more fields are worth calling out because a general classifieds schema would
 not have them:
 
-- **`crewWeightMinKg` / `crewWeightMaxKg`** — the manufacturer's per-rower weight
+- **`crewWeightMinKg` / `crewWeightMaxKg`**, the manufacturer's per-rower weight
   band. It is the spec that decides whether a hull will ever feel right, it is
   the first thing an experienced buyer checks, and most listings elsewhere bury
   it. It is a first-class filter here, and the concierge leans on it hardest.
-- **`priceUsd`** — every price normalised to USD at a frozen FX snapshot
+- **`priceUsd`**, every price normalised to USD at a frozen FX snapshot
   (`src/lib/fx.ts`) so one price filter and one sort order work across five
   currencies. It is an internal sorting key; prices are always *displayed* in the
   seller's own currency. Replace the snapshot with a daily ECB rate job and
   re-derive on the same schedule.
 
-### Syncing external marketplaces — out of scope for v1
+### Syncing external marketplaces, out of scope for v1
 
 Pulling live inventory from eBay, Facebook Marketplace, dealer sites and club
 noticeboards is a separate data-pipeline project, not a feature of this app: it
@@ -402,16 +402,16 @@ Each is a self-contained gap, marked with a comment in the file:
 
 - **Authentication.** `/login` collects an email and explains the intended
   emailed-link flow; `/account` renders a fixed demo account. The listings table
-  on that page is real — it reads live from the inventory. Wiring real auth means
+  on that page is real, it reads live from the inventory. Wiring real auth means
   replacing `DEMO_ACCOUNT` with the session's seller record and gating the route.
 - **Payments.** `/pricing` defines the fee model; `/account` shows a card on file
   and an invoice history as static data. No processor is integrated.
 - **Contact form.** Validates and acknowledges in the browser; does not yet post
-  anywhere. (The waiting-list form on `/` is *not* stubbed — it writes to the
+  anywhere. (The waiting-list form on `/` is *not* stubbed, it writes to the
   database and sends real email once a provider is configured.)
 - **Seller verification.** Submissions land as `pending` and go live after a
   human check, described on `/about#verification`. The check itself is manual by
-  design — for a market where one transaction can be £40,000, unchecked
+  design, for a market where one transaction can be £40,000, unchecked
   instant-publish would be the wrong default.
 - **Photo upload.** Sellers describe their photographs; there is no file upload
   or image pipeline yet.
@@ -426,10 +426,10 @@ trouble it causes if you miss it:
 
 | | Where |
 |---|---|
-| Your real contact details (all blank — nothing is rendered until you set them) | `src/lib/site.ts` |
+| Your real contact details (all blank, nothing is rendered until you set them) | `src/lib/site.ts` |
 | All 46 fabricated listings, sellers and clubs | `DELETE FROM listings WHERE source = 'seed';` |
 | Invoice numbers and the demo account | `src/app/account/page.tsx` |
-| Fee model — 2% capped at £600, waived under £750, £79/month — is a proposal | `src/app/pricing/page.tsx` and `src/lib/site.ts` |
+| Fee model, 2% capped at £600, waived under £750, £79/month, is a proposal | `src/app/pricing/page.tsx` and `src/lib/site.ts` |
 | The verification process described on /about is a description of intent, not a process that exists | `src/app/about/page.tsx` |
 | Auth, payments, contact form delivery and photo upload are all stubbed | see [Stubbed in v1](#stubbed-in-v1) |
 
@@ -448,7 +448,7 @@ npm run import -- my-stock.csv                  # create them
 
 `data/import-template.csv` is a working two-row example. The importer posts to
 `/api/sell` rather than writing to SQLite directly, so every row goes through
-exactly the same validation a seller's form submission does — there is no second
+exactly the same validation a seller's form submission does, there is no second
 copy of the rules to drift. Failures are reported per row and per field; the
 rest of the file still imports.
 
@@ -466,7 +466,7 @@ question entirely.
 
 ### What the importer is not for
 
-Copying listings — text, photographs, seller contact details — out of other
+Copying listings, text, photographs, seller contact details, out of other
 marketplaces and republishing them here. That is a different act from buying a
 boat and reselling it, and it goes wrong in three ways at once: the photographs
 belong to whoever took them, the source site's terms almost always forbid it,
@@ -501,7 +501,7 @@ lost customer. The database write happens first and decides the response, so a
 mail-provider outage costs an email and nothing else.
 
 **Email.** Everything goes through the one adapter in `src/lib/email/provider.ts`
-— the same arrangement as the AI adapter. With no credentials set, the `log`
+the same arrangement as the AI adapter. With no credentials set, the `log`
 adapter writes the message to the server log and reports success, so a fresh
 install still collects signups. Set `RESEND_API_KEY` (and `EMAIL_FROM` on a
 domain you have verified) to send for real. Adding Postmark or SES is one
@@ -514,7 +514,7 @@ function in that file.
 - A hidden honeypot field catches bots; a filled one gets a cheerful 200 and is
   thrown away.
 - Unsubscribing is a `POST` behind a confirmation page (`/waitlist/leave`), not a
-  GET link — mail clients and link previewers follow GET URLs by themselves.
+  GET link, mail clients and link previewers follow GET URLs by themselves.
   Leaving sets a timestamp rather than deleting the row, so an import cannot put
   somebody back on the list.
 - The landing page shows the real signup count only once it passes a floor of
@@ -536,7 +536,7 @@ email addresses is a page that can leak them.
 ## Billing (Stripe)
 
 Subscriptions and commission invoices run through Stripe. Nothing works until
-you configure it, and nothing breaks either — the account page renders a
+you configure it, and nothing breaks either, the account page renders a
 "billing is not configured" state and the endpoints answer 503 with a readable
 message rather than erroring.
 
@@ -556,14 +556,14 @@ stripe listen --forward-to localhost:3000/api/billing/webhook
 | Route | |
 |---|---|
 | `POST /api/billing/checkout` | Starts a Boathouse subscription, returns a Checkout URL |
-| `POST /api/billing/portal` | Opens Stripe's hosted portal — card, invoices, cancellation |
+| `POST /api/billing/portal` | Opens Stripe's hosted portal, card, invoices, cancellation |
 | `POST /api/billing/webhook` | The **only** thing that grants or removes access |
 | `POST /api/billing/commission` | Raises a commission invoice for a completed sale |
 
 Three things worth knowing about how this is wired:
 
 **The success redirect grants nothing.** Reaching `/account?checkout=success`
-proves a browser followed a link, not that money moved — anyone can type that
+proves a browser followed a link, not that money moved, anyone can type that
 URL. Entitlement is written only by the webhook, after signature verification.
 
 **A failed payment does not downgrade anyone.** Stripe retries for days and emits
@@ -597,7 +597,7 @@ fee = min(salePrice * rate + flat, cap),  or 0 when salePrice < freeBelow
 
 ## Getting listings, legitimately
 
-Three routes, and the difference between them matters more than it looks —
+Three routes, and the difference between them matters more than it looks,
 `src/lib/sources/README.md` has the detail.
 
 1. **Sellers submit them** (`/sell`). The primary source.
@@ -615,7 +615,7 @@ to carry.
 What is deliberately not built: scraping another marketplace and republishing its
 listings as your own. The photographs belong to whoever took them, the source's
 terms forbid it, and republishing a seller's contact details without asking is a
-data-protection problem. It also makes a worse product — enquiries you cannot
+data-protection problem. It also makes a worse product, enquiries you cannot
 fulfil, about boats that sold weeks ago.
 
 ## Deploying
@@ -634,11 +634,11 @@ in the repo. Railway and Render work from the same Dockerfile.
 The one thing that matters: SQLite needs a **persistent volume** and **one
 machine**. Without the volume, every deploy resets the database to seed data.
 Two machines on one volume corrupts it. At a few hundred listings that is the
-right architecture rather than a compromise — and about £5 a month.
+right architecture rather than a compromise, and about £5 a month.
 
 Vercel needs the Postgres swap first, including making the repository functions
 async; DEPLOY.md is honest about the size of that. **GitHub Pages cannot host
-this at all** — it serves static files, and this is a Node server with a database.
+this at all**, it serves static files, and this is a Node server with a database.
 
 Back up before there is anything to lose: `npm run backup` uses SQLite's backup
 API rather than copying the file, which matters in WAL mode.

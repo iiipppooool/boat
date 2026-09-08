@@ -42,7 +42,7 @@ if (process.argv.includes("--csv")) {
 
 const count = (column) => {
   const tally = new Map();
-  for (const row of rows) tally.set(row[column] || "—", (tally.get(row[column] || "—") ?? 0) + 1);
+  for (const row of rows) tally.set(row[column] || "not given", (tally.get(row[column] || "not given") ?? 0) + 1);
   return [...tally.entries()].sort((a, b) => b[1] - a[1]);
 };
 

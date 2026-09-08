@@ -74,7 +74,7 @@ export function parseListingQuery(params: ParamsLike): ListingQuery {
   };
 }
 
-/** Rebuilds a query string from a query object — used for pagination links. */
+/** Rebuilds a query string from a query object, used for pagination links. */
 export function toSearchParams(query: ListingQuery): URLSearchParams {
   const params = new URLSearchParams();
   const push = (key: string, values?: readonly (string | number)[]) => {
@@ -108,7 +108,7 @@ export function toSearchParams(query: ListingQuery): URLSearchParams {
   return params;
 }
 
-/** How many filters the user has actually applied — drives the "clear" affordance. */
+/** How many filters the user has actually applied, drives the "clear" affordance. */
 export function countActiveFilters(query: ListingQuery): number {
   const groups: (unknown[] | undefined)[] = [
     query.category, query.boatClass, query.discipline, query.condition,

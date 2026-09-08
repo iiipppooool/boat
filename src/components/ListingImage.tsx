@@ -20,7 +20,7 @@ export function ListingImage({
   category?: Category;
   /** Used for the illustration's accessible name; photos carry their own alt. */
   label: string;
-  /** Responsive hint for the image optimiser — the CSS width at each breakpoint. */
+  /** Responsive hint for the image optimiser, the CSS width at each breakpoint. */
   sizes?: string;
   priority?: boolean;
   ratio?: number;

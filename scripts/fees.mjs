@@ -4,7 +4,7 @@
  * so a change to the fee model is a decision made against numbers rather than
  * a guess. Run: npm run fees
  *
- * The inventory here is seed data — the shape is plausible, the exact figures
+ * The inventory here is seed data, the shape is plausible, the exact figures
  * are not market data. Re-run once real listings exist and the answer may move.
  */
 import fs from "node:fs";

@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
- * Opens Stripe's hosted billing portal — card changes, invoice history and
+ * Opens Stripe's hosted billing portal, card changes, invoice history and
  * cancellation all happen there rather than in screens we would have to build,
  * secure and keep in step with Stripe.
  */

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
  * Sign-in.
  *
  * Email and password, checked against a scrypt hash, issuing a real session
- * cookie — see src/lib/auth.ts for why those choices and not others. Somebody
+ * cookie. See src/lib/auth.ts for why those choices and not others. Somebody
  * already signed in is sent straight to their account rather than shown a form
  * they do not need.
  */
@@ -29,14 +29,14 @@ export default async function LoginPage() {
         <h1 className="login-title">Welcome back.</h1>
         <p className="muted small">
           The address and password you registered with. Buyers do not need an
-          account — this is for sellers, clubs and dealers.
+          account. This is for sellers, clubs and dealers.
         </p>
 
         <SignInForm />
 
         <p className="small muted mt-6">
           No account yet?{" "}
-          <Link href="/#waitlist">Create one from the home page</Link> — it takes a
+          <Link href="/#waitlist">Create one from the home page</Link>. It takes a
           name, an address and a password, and puts you on the waiting list at the
           same time.
         </p>

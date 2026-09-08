@@ -15,7 +15,7 @@ import type { BoatClass, Category, ListingQuery, MarketFacets } from "@/lib/type
 /**
  * The filter panel is a real GET form pointed at /market, so it works with
  * JavaScript disabled and every filtered view is a shareable URL. With JS on it
- * submits itself on change (debounced for typed fields) — the Apply button stays
+ * submits itself on change (debounced for typed fields), the Apply button stays
  * visible because some people would rather set six filters and then commit.
  *
  * Submitting drops `page`, which is what you want: changing a filter should
@@ -221,7 +221,7 @@ export function MarketFilters({
             ))}
           </div>
           <span className="field-hint">
-            Matches kit offering that size — including a club lot that happens to
+            Matches kit offering that size, including a club lot that happens to
             contain one.
           </span>
         </FilterGroup>

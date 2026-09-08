@@ -18,13 +18,13 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const menuId = useId();
 
-  // Close the mobile menu on navigation — otherwise it hangs over the new page.
+  // Close the mobile menu on navigation, or it hangs over the new page.
   useEffect(() => setOpen(false), [pathname]);
 
   return (
     <header className="site-header on-hull">
       <div className="wrap site-header-inner">
-        <Link href="/" className="site-header-brand" aria-label="BoatXchange — home">
+        <Link href="/" className="site-header-brand" aria-label="BoatXchange home">
           <Wordmark />
         </Link>
 

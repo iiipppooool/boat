@@ -84,7 +84,7 @@ async function download(photo, dir, index) {
   fs.writeFileSync(path.join(dir, name), Buffer.from(await image.arrayBuffer()));
 
   // Unsplash asks that clients ping the download endpoint when an image is
-  // actually used. Best effort — a failure here must not lose the file.
+  // actually used. Best effort, a failure here must not lose the file.
   if (photo?.links?.download_location) {
     try {
       await fetch(photo.links.download_location, {

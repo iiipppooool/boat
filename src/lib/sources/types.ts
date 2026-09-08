@@ -21,7 +21,7 @@ export interface SourceAdapter {
   /** Shown to buyers as "Listed on <name>". */
   name: string;
   /**
-   * Pulls current listings. Must resolve — never throw. A source that is down
+   * Pulls current listings. Must resolve, never throw. A source that is down
    * should return an empty array and log; one broken feed must not be able to
    * empty the market.
    */

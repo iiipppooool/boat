@@ -18,7 +18,7 @@ interface Success {
 }
 
 /**
- * The listing form. Long, because a rowing boat needs describing properly — the
+ * The listing form. Long, because a rowing boat needs describing properly. The
  * crew weight band and the repair history are the difference between a listing
  * someone can act on and a photograph with a phone number under it.
  *
@@ -124,14 +124,14 @@ export function SellForm() {
         <h2>{done.title} is in the queue.</h2>
         <p>
           Your listing has been created with reference <strong>{done.id}</strong> and is
-          marked <strong>sale pending</strong> until we have completed verification —
+          marked <strong>sale pending</strong> until we have completed verification,
           normally within one working day. We will email you when it goes live, and if
           anything in the specification looks off we will ask rather than guess.
         </p>
         <p className="muted small">
           Next: send us photographs. Three-quarter bow view, the full hull profile,
           the rigger, and an honest close-up of every repair. Boats with a photograph
-          of the damage sell faster than boats without one — buyers assume the worst
+          of the damage sell faster than boats without one. Buyers assume the worst
           about what they cannot see.
         </p>
         <div className="cluster mt-5">
@@ -243,7 +243,7 @@ export function SellForm() {
             label="Condition grade"
             name="conditionGrade"
             error={errors.conditionGrade}
-            hint="Be honest — buyers price in what they cannot see"
+            hint="Be honest, buyers price in what they cannot see"
           >
             <select
               id="conditionGrade"
@@ -338,7 +338,7 @@ export function SellForm() {
           <legend className="field-label">Crew weight band (kg, per rower)</legend>
           <p className="field-hint" style={{ marginTop: 0, marginBottom: "var(--sp-3)" }}>
             The single most useful number in the whole listing, and the one buyers
-            search on. It is on the builder&rsquo;s spec sheet — if you have lost it,
+            search on. It is on the builder&rsquo;s spec sheet, if you have lost it,
             ask them; they will tell you.
           </p>
           <div className="field-row">
@@ -491,7 +491,7 @@ export function SellForm() {
           {busy ? "Submitting…" : "Submit listing"}
         </button>
         <p className="tiny muted">
-          Listing is free. Nothing is charged unless the boat sells — see{" "}
+          Listing is free. Nothing is charged unless the boat sells. See{" "}
           <Link href="/pricing">pricing</Link>. Your listing goes live once we have
           completed <Link href="/about#verification">verification</Link>.
         </p>
@@ -502,7 +502,7 @@ export function SellForm() {
 
 /**
  * Example highlights, per category. Placeholder text is the most-read copy on
- * any form — it is where people learn what a good answer looks like — so a
+ * any form: it is where people learn what a good answer looks like, so a
  * seller listing kit should not be shown an example about wing riggers.
  */
 const HIGHLIGHT_PLACEHOLDERS: Record<string, React.ReactNode> = {
@@ -515,14 +515,14 @@ const HIGHLIGHT_PLACEHOLDERS: Record<string, React.ReactNode> = {
   ),
   apparel: (
     <>
-      <input name="highlight1" type="text" maxLength={120} placeholder="Full size run — 3 XS, 5 S, 7 M, 5 L, 2 XL" required />
-      <input name="highlight2" type="text" maxLength={120} placeholder="Plain navy, no club crest — wearable anywhere" />
+      <input name="highlight1" type="text" maxLength={120} placeholder="Full size run, 3 XS, 5 S, 7 M, 5 L, 2 XL" required />
+      <input name="highlight2" type="text" maxLength={120} placeholder="Plain navy, no club crest, wearable anywhere" />
       <input name="highlight3" type="text" maxLength={120} placeholder="Washed cold and hung dry, so the lycra has held" />
     </>
   ),
   gear: (
     <>
-      <input name="highlight1" type="text" maxLength={120} placeholder="Battery replaced 2025 — holds a full session" required />
+      <input name="highlight1" type="text" maxLength={120} placeholder="Battery replaced 2025, holds a full session" required />
       <input name="highlight2" type="text" maxLength={120} placeholder="Includes charger and boat wiring harness" />
       <input name="highlight3" type="text" maxLength={120} placeholder="Screen unmarked, every button works" />
     </>
@@ -531,7 +531,7 @@ const HIGHLIGHT_PLACEHOLDERS: Record<string, React.ReactNode> = {
     <>
       <input name="highlight1" type="text" maxLength={120} placeholder="Matched set from one production batch" required />
       <input name="highlight2" type="text" maxLength={120} placeholder="Shafts straight, adjustable 284–290 cm" />
-      <input name="highlight3" type="text" maxLength={120} placeholder="Blade edges chipped — training pair, not race" />
+      <input name="highlight3" type="text" maxLength={120} placeholder="Blade edges chipped, training pair, not race" />
     </>
   ),
 };

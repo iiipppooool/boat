@@ -12,7 +12,7 @@
  * produces a consistent snapshot with the app still serving.
  *
  * Keep these somewhere that is not the same disk as the database. A volume
- * snapshot from your host is a complement to this, not a replacement — restoring
+ * snapshot from your host is a complement to this, not a replacement, restoring
  * one is an operation, restoring this is a file copy.
  */
 import fs from "node:fs";

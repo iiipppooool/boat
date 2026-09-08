@@ -8,7 +8,7 @@
  *
  * Reads a CSV and creates one listing per row. It posts to the running app's
  * /api/sell endpoint rather than writing to SQLite directly, so every row goes
- * through exactly the same validation a seller's form submission does — there
+ * through exactly the same validation a seller's form submission does, there
  * is no second copy of the rules to drift out of date.
  *
  * Use this for stock you own, or for listings you have the seller's permission

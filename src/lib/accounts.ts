@@ -6,9 +6,9 @@ import { getDb } from "./db";
  *
  * Deliberately thin: Stripe is the source of truth for whether a subscription
  * is live, and this table is a local cache of what the webhook last told us.
- * Nothing here decides whether someone has paid — it records what Stripe said.
+ * Nothing here decides whether someone has paid, it records what Stripe said.
  *
- * Who is signed in is decided in `auth.ts` — `getSessionAccount()` — and every
+ * Who is signed in is decided in `auth.ts`, `getSessionAccount()`, and every
  * page and route uses that. `getCurrentAccount()` below survives only as the
  * demo-account fallback used by scripts and local poking; nothing user-facing
  * calls it.
@@ -105,7 +105,7 @@ export function getAccountByCustomerId(customerId: string): Account | null {
 }
 
 /**
- * Records what Stripe told us. Called only from the webhook — never from a
+ * Records what Stripe told us. Called only from the webhook, never from a
  * page or a checkout redirect, because a redirect proves the buyer reached the
  * success URL and nothing more.
  */
@@ -119,7 +119,7 @@ export function updateSubscription(
   },
 ): void {
   // 'active' and 'trialing' are the two Stripe states that mean "let them in".
-  // Everything else — past_due, unpaid, canceled, incomplete — does not.
+  // Everything else, past_due, unpaid, canceled, incomplete, does not.
   const entitled = input.status === "active" || input.status === "trialing";
 
   getDb()

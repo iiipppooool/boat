@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * The waiting-list contract, shared by the form and the API route so the two
- * cannot drift — same arrangement as the seller submission schema.
+ * cannot drift, same arrangement as the seller submission schema.
  *
  * Only the email address is required. Every extra field is a question we would
  * like answered, not a gate: a signup form that demands a name and a country

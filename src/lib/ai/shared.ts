@@ -5,7 +5,7 @@ import type { Listing } from "@/lib/types";
  * server-only import so the client component can use them directly.
  */
 
-/** Trimmed listing sent to the browser — enough for a card and a comparison row. */
+/** Trimmed listing sent to the browser, enough for a card and a comparison row. */
 export interface ConciergeListingRef {
   id: string;
   slug: string;

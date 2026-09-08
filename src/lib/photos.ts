@@ -16,7 +16,7 @@ import type { ListingPhoto } from "./types";
  * Anything without a folder keeps the generated illustration.
  *
  * Alt text comes from an optional `captions.json` in the same folder. Where it
- * is missing, a readable fallback is derived from the filename — good enough
+ * is missing, a readable fallback is derived from the filename, good enough
  * that no image ships without alt text, and `npm run photos` reports which
  * listings are relying on the fallback so they can be written properly.
  */
@@ -86,7 +86,7 @@ export function scanPhotoFolders(): ScannedListing[] {
       } catch {
         // A malformed captions file must not take the site down; the derived
         // alt text below is a working fallback, and `npm run photos` flags it.
-        console.warn(`[photos] ${entry.name}/captions.json is not valid JSON — ignoring it`);
+        console.warn(`[photos] ${entry.name}/captions.json is not valid JSON, ignoring it`);
       }
     }
 
@@ -116,7 +116,7 @@ export function scanPhotoFolders(): ScannedListing[] {
  *
  * Photos are keyed by folder name = listing slug. A folder that matches no
  * listing is reported rather than silently ignored, because a typo in a slug is
- * otherwise invisible — you just never see your photos.
+ * otherwise invisible, you just never see your photos.
  */
 export function syncPhotos(database: Database.Database): { updated: number; orphans: string[] } {
   const scanned = scanPhotoFolders();

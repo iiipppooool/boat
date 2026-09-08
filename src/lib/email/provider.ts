@@ -8,7 +8,7 @@ import "server-only";
  * vendor is behind it. Adding Postmark or SES later is a function in this file.
  *
  * The default adapter is `log`, not a live sender. An unconfigured install must
- * not silently drop a signup confirmation *or* fail the signup — so with no
+ * not silently drop a signup confirmation *or* fail the signup, so with no
  * credentials the message is written to the server log, the API still returns
  * ok, and the entry is safely on the list either way. Delivery is best-effort;
  * the database write is the thing that must not fail.
@@ -26,7 +26,7 @@ export interface EmailMessage {
 
 export interface EmailResult {
   ok: boolean;
-  /** Which adapter handled it — surfaced in logs, never to the recipient. */
+  /** Which adapter handled it, surfaced in logs, never to the recipient. */
   provider: string;
   id?: string;
   error?: string;
@@ -45,7 +45,7 @@ const logProvider: EmailProvider = {
   live: false,
   async send(message) {
     console.info(
-      `[email:log] would send to ${message.to} — "${message.subject}"\n${message.text}\n`,
+      `[email:log] would send to ${message.to}, "${message.subject}"\n${message.text}\n`,
     );
     return { ok: true, provider: "log" };
   },
@@ -112,7 +112,7 @@ export function getEmailProvider(): EmailProvider {
   if (choice === "resend") {
     const key = process.env.RESEND_API_KEY;
     if (!key) {
-      console.warn("[email] EMAIL_PROVIDER=resend but RESEND_API_KEY is unset — logging instead.");
+      console.warn("[email] EMAIL_PROVIDER=resend but RESEND_API_KEY is unset, logging instead.");
       return logProvider;
     }
     return resendProvider(key);

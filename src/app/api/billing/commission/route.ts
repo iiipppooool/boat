@@ -21,7 +21,7 @@ const BodySchema = z.object({
 /**
  * Raises a commission invoice for a completed sale.
  *
- * Called when a seller confirms a sale, not when a listing is marked sold —
+ * Called when a seller confirms a sale, not when a listing is marked sold,
  * those are different events, and only the seller knows the price that was
  * actually agreed.
  *
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
   }
   if (!account.stripeCustomerId) {
     return NextResponse.json(
-      { error: "This account has no Stripe customer yet — it has never been billed." },
+      { error: "This account has no Stripe customer yet, it has never been billed." },
       { status: 409 },
     );
   }

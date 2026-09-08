@@ -1,5 +1,5 @@
 /**
- * BoatXchange inventory schema — the single source of truth for the shape of a
+ * BoatXchange inventory schema, the single source of truth for the shape of a
  * listing. `data/seed-listings.json`, the SQLite table in `db.ts`, the Market
  * page, the Sell form and the AI Concierge all speak this vocabulary.
  */
@@ -12,7 +12,7 @@ export type Category = (typeof CATEGORIES)[number];
 /**
  * `apparel` and `gear` are separate categories rather than one "everything
  * else" bucket, because they are searched on different things. Nobody filters
- * kit by hull material and nobody filters a cox box by chest size — apparel
+ * kit by hull material and nobody filters a cox box by chest size, apparel
  * needs sizes and a cut, gear needs a quantity and not much else.
  */
 export const APPAREL_SIZES = ["XS", "S", "M", "L", "XL", "XXL"] as const;
@@ -59,7 +59,7 @@ export const RIGGING_TYPES = [
 export type RiggingType = (typeof RIGGING_TYPES)[number];
 
 /**
- * `platform` marks stock BoatXchange owns and is reselling itself — boats bought
+ * `platform` marks stock BoatXchange owns and is reselling itself, boats bought
  * in to sell on, rather than listed on someone else's behalf. It is a seller
  * type rather than a hidden flag precisely so it shows: a marketplace that
  * quietly competes with its own sellers stops being trusted the moment anyone
@@ -102,7 +102,7 @@ export interface ListingLocation {
 export interface ListingPhoto {
   /** Path under /public, or an absolute URL on a configured remote host. */
   src: string;
-  /** What the photograph shows. Required — a marketplace photo always says something. */
+  /** What the photograph shows. Required, a marketplace photo always says something. */
   alt: string;
   /** Photographer or source, shown under the gallery when present. */
   credit?: string;
@@ -113,7 +113,7 @@ export interface ListingPhoto {
 export interface ListingSeller {
   name: string;
   type: SellerType;
-  /** True once BoatXchange has confirmed identity and ownership — see /about. */
+  /** True once BoatXchange has confirmed identity and ownership, see /about. */
   verified: boolean;
   /** YYYY-MM. */
   memberSince: string;
@@ -152,7 +152,7 @@ export interface Listing {
   /** Cut, for apparel. Null for everything else. */
   fit: Fit | null;
   /**
-   * How many items are in the lot. Null means one, or not applicable — a boat
+   * How many items are in the lot. Null means one, or not applicable, a boat
    * is a boat. Kit and gear are frequently sold in bulk, and "22 all-in-ones"
    * is a completely different proposition from one.
    */
@@ -163,7 +163,7 @@ export interface Listing {
   /**
    * Price normalised to USD so that a single price-range filter and a single
    * sort order work across a global marketplace. Derived at write time from the
-   * FX snapshot in `fx.ts` — never entered by a seller.
+   * FX snapshot in `fx.ts`, never entered by a seller.
    */
   priceUsd: number;
   location: ListingLocation;
@@ -176,7 +176,7 @@ export interface Listing {
   description: string;
   /**
    * Photographs of this item, in display order. Empty means none yet, and the
-   * generated illustration stands in — see `photoDirection` for what to shoot.
+   * generated illustration stands in, see `photoDirection` for what to shoot.
    */
   photos: ListingPhoto[];
   /** Art-direction brief for the photography that should replace generated artwork. */
@@ -196,7 +196,7 @@ export interface Listing {
    *
    * An aggregated listing is a signpost, not a listing we hold. The detail page
    * sends the buyer to the source rather than offering to contact a seller who
-   * has no relationship with us — which is the difference between aggregating
+   * has no relationship with us, which is the difference between aggregating
    * and quietly republishing someone else's inventory.
    */
   sourceUrl: string | null;
@@ -226,7 +226,7 @@ export interface ListingQuery {
   /** Matches listings offering any of these sizes. */
   sizes?: ApparelSize[];
   fit?: Fit[];
-  /** Only lots — more than one item. Useful when kitting out a squad. */
+  /** Only lots, more than one item. Useful when kitting out a squad. */
   bulkOnly?: boolean;
   /** Inclusive bounds, in USD, against the normalised `priceUsd`. */
   minPriceUsd?: number;

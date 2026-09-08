@@ -94,7 +94,7 @@ export interface JoinInput {
 
 export interface JoinResult {
   entry: WaitlistEntry;
-  /** True when this email was already on the list — the caller should say so. */
+  /** True when this email was already on the list, the caller should say so. */
   existing: boolean;
   /** 1-based position, counted by signup order. */
   position: number;
@@ -191,7 +191,7 @@ export function waitlistCount(): number {
 /**
  * What the landing page shows.
  *
- * The signup count is real, and that is the point — but a real number is a
+ * The signup count is real, and that is the point, but a real number is a
  * small number on day one, and "3 people are waiting" is worse than saying
  * nothing. `showCount` is the honest way through: below the floor the page
  * omits the figure entirely rather than inflating it.

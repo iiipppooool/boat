@@ -6,12 +6,12 @@ import Anthropic from "@anthropic-ai/sdk";
  *
  * Every AI call in the product goes through `getConciergeProvider().stream()`.
  * No page, component or route handler imports an SDK directly, so changing model
- * or provider is a change to this file and an environment variable — the chat UI,
+ * or provider is a change to this file and an environment variable, the chat UI,
  * the retrieval step and the API route are all unaware of which model answered.
  *
  * ── Model choice ─────────────────────────────────────────────────────────────
  * Default: Claude Haiku 4.5 (`claude-haiku-4-5`), $1 / $5 per million input /
- * output tokens — the cheapest current Claude model.
+ * output tokens, the cheapest current Claude model.
  *
  * The reasoning is about the shape of the job, not brand loyalty. By the time
  * the model is called, the hard part is already done: `concierge.ts` has turned
@@ -92,7 +92,7 @@ class AnthropicProvider implements ConciergeProvider {
 /**
  * Offline stub. Runs when no API key is configured, so a fresh clone, a CI run
  * and a preview deploy all have a working concierge page instead of an error.
- * It is deliberately dumb — it reads the shortlist that retrieval already built
+ * It is deliberately dumb, it reads the shortlist that retrieval already built
  * and reads it back with the numbers filled in. Every listing it names is real,
  * because it can only name listings from that shortlist.
  */
@@ -114,7 +114,7 @@ class EchoProvider implements ConciergeProvider {
       .join("\n");
 
     const closing = shortlist.length
-      ? `\nSet \`ANTHROPIC_API_KEY\` in your environment and the concierge will compare these properly — weight band against your weight, price against your budget, and what each trade-off actually costs you on the water.`
+      ? `\nSet \`ANTHROPIC_API_KEY\` in your environment and the concierge will compare these properly, weight band against your weight, price against your budget, and what each trade-off actually costs you on the water.`
       : `\nTry widening the budget or the region, or browse the [market](/market) directly.`;
 
     for (const chunk of chunkText(opening + body + closing)) {

@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
  * proves the browser followed a link, not that money moved. Anyone can visit
  * `/account?checkout=success`.
  *
- * The raw request body is required for signature verification — parsing it as
+ * The raw request body is required for signature verification, parsing it as
  * JSON first would change the bytes and every signature would fail.
  */
 export async function POST(request: Request) {
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     // Returning 500 makes Stripe retry, which is what we want for a transient
-    // database problem — but log loudly, because a persistent failure here
+    // database problem, but log loudly, because a persistent failure here
     // means entitlements silently stop tracking reality.
     console.error(`[billing] failed handling ${event.type}`, error);
     return NextResponse.json({ error: "Handler failed" }, { status: 500 });

@@ -3,7 +3,7 @@
  * Reports photograph coverage across the inventory: which listings have
  * photographs, which are still showing the generated illustration, which files
  * are relying on filename-derived alt text, and whether any folder name matches
- * no listing (a slug typo is otherwise invisible — you just never see your
+ * no listing (a slug typo is otherwise invisible, you just never see your
  * photos).
  *
  *   npm run photos
@@ -60,7 +60,7 @@ if (withPhotos.length) {
 }
 
 if (derivedAlt) {
-  console.log(`${derivedAlt} image(s) have no written alt text. Add captions.json — see public/listings/README.md.\n`);
+  console.log(`${derivedAlt} image(s) have no written alt text. Add captions.json, see public/listings/README.md.\n`);
 }
 
 if (orphans.length) {

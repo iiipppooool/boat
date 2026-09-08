@@ -15,7 +15,7 @@ const TOPICS = [
 /**
  * v1 stub: submissions are validated and acknowledged in the browser but not yet
  * posted anywhere. Wiring it up means adding a POST handler that forwards to the
- * support inbox — the form contract below is already the one to send.
+ * support inbox, the form contract below is already the one to send.
  */
 export function ContactForm() {
   const [sent, setSent] = useState(false);
@@ -25,7 +25,7 @@ export function ContactForm() {
       <div className="panel">
         <p className="eyebrow">Sent</p>
         <h2 style={{ fontSize: "var(--step-2)", marginBottom: "var(--sp-3)" }}>
-          Thanks — that has reached us.
+          Thanks, that has reached us.
         </h2>
         <p className="muted">
           We reply to everything within one working day, usually sooner. If it is

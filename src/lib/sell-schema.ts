@@ -7,7 +7,7 @@ import {
 
 /**
  * The seller submission contract, shared by the form and the API route so the
- * two cannot drift. Everything a listing needs is here — including the fields a
+ * two cannot drift. Everything a listing needs is here, including the fields a
  * general classifieds site would not ask for and a rower would not buy without.
  */
 export const SellSubmissionSchema = z
@@ -67,7 +67,7 @@ export const SellSubmissionSchema = z
     path: ["conditionGrade"],
   })
   .refine((d) => d.category !== "shell" || Boolean(d.boatClass), {
-    message: "Boats need a class — a buyer filters on it before anything else.",
+    message: "Boats need a class, a buyer filters on it before anything else.",
     path: ["boatClass"],
   })
   .refine((d) => d.category !== "apparel" || d.sizes.length > 0, {

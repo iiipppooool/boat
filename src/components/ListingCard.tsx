@@ -33,7 +33,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
   return (
     <article className={`card${listing.status === "sold" ? " card-sold" : ""}`}>
       {/* The whole card is one click target via the stretched title link below,
-          so the artwork is not a second link — one tab stop per listing. */}
+          so the artwork is not a second link, one tab stop per listing. */}
       <div className="card-media">
         <ListingImage
           photos={listing.photos}

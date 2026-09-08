@@ -5,7 +5,7 @@ import type {
 } from "./types";
 
 /**
- * The inventory repository — the only module in the app that writes SQL.
+ * The inventory repository, the only module in the app that writes SQL.
  *
  * The Market grid, the listing detail page, the home page's featured strip and
  * the AI Concierge's retrieval step all call in here, so a listing that is
@@ -206,7 +206,7 @@ export function getFeaturedListings(limit = 6): Listing[] {
 
 /**
  * Every listing belonging to one seller, newest first. Powers the "your
- * listings" table on the account page — which reads the same rows the Market
+ * listings" table on the account page, which reads the same rows the Market
  * page does, so a boat marked sold changes in both places at once.
  */
 export function getListingsBySeller(sellerName: string): Listing[] {
@@ -246,7 +246,7 @@ export interface CreateListingResult {
 }
 
 /**
- * Writes a seller submission. In v1 every submission lands as `pending` — it is
+ * Writes a seller submission. In v1 every submission lands as `pending`, it is
  * visible to the seller and to BoatXchange, and goes live once the verification
  * check described on /about is done. That check is a human step today.
  */

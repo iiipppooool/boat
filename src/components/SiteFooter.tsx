@@ -49,7 +49,7 @@ export function SiteFooter() {
           <div className="site-footer-brand">
             <Wordmark size="1.5rem" />
             <p className="small">
-              The global marketplace for rowing boats, kit and gear — new and used.
+              The global marketplace for rowing boats, kit and gear, new and used.
               Built by rowers, for a sport whose boats have never had a market of
               their own.
             </p>

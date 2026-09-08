@@ -10,7 +10,7 @@ import { countActiveFilters, parseListingQuery } from "@/lib/query";
 export const metadata: Metadata = {
   title: "Market",
   description:
-    "Everything currently for sale on BoatXchange: singles, doubles, quads, fours, eights, coastal hulls, oars, riggers, trailers, racing kit and gear — filtered by class, crew weight band, size, material, price and region.",
+    "Everything currently for sale on BoatXchange: singles, doubles, quads, fours, eights, coastal hulls, oars, riggers, trailers, racing kit and gear, filtered by class, crew weight band, size, material, price and region.",
 };
 
 /**
@@ -41,10 +41,10 @@ export default async function MarketPage({
           <div className="page-head-grid">
             <h1>Everything a rowing club buys, in one place.</h1>
             <p className="lede">
-              {facets.availableTotal} live listings — boats, oars, kit, gear and
-              trailers — from clubs, dealers, builders and private owners across{" "}
+              {facets.availableTotal} live listings: boats, oars, kit, gear and
+              trailers, from clubs, dealers, builders and private owners across{" "}
               {facets.continents.length} continents. Filter by class, crew weight
-              band, size or region — or{" "}
+              band, size or region, or{" "}
               <Link href="/concierge">ask the concierge</Link> to do it for you.
             </p>
           </div>
@@ -75,12 +75,12 @@ export default async function MarketPage({
 
           {total === 0 ? (
             <div className="panel empty-state">
-              <h2>Nothing matches — yet</h2>
+              <h2>Nothing matches, yet</h2>
               <p className="muted">
                 Rowing is a small market and the right boat often is not listed on the
                 day you look for it. Two things worth trying: widen the crew weight band
                 by a couple of kilos, since manufacturers publish these conservatively,
-                or drop the region filter — most sellers here will arrange freight.
+                or drop the region filter. Most sellers here will arrange freight.
               </p>
               <div className="cluster">
                 <Link href="/market" className="btn">

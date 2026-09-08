@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 /**
  * Account and billing.
  *
- * Subscription state here is real — it comes from the accounts table, which only
+ * Subscription state here is real: it comes from the accounts table, which only
  * the Stripe webhook writes to. So is *who you are*: the page resolves the
  * session set at sign-in and sends anyone without one to /login.
  *
@@ -61,7 +61,7 @@ export default async function AccountPage() {
       <div className="wrap section-tight">
         <p className="notice mb-6">
           <strong>Signed in as {account.email}.</strong> Subscription state below is
-          real — it is written only by the Stripe webhook — and the listings table is
+          real (it is written only by the Stripe webhook), and the listings table is
           read live from the same inventory the market runs on. The table currently
           shows a seed seller&rsquo;s stock so there is something to look at before
           your first listing.
@@ -82,7 +82,7 @@ export default async function AccountPage() {
             <dl className="spec-table-dl mt-4">
               <div>
                 <dt>Commission</dt>
-                <dd>{subscribed ? "0% — included" : rateLabel()}</dd>
+                <dd>{subscribed ? "0%, included" : rateLabel()}</dd>
               </div>
               {!subscribed && (
                 <>
@@ -137,7 +137,7 @@ export default async function AccountPage() {
                 <p className="small muted">
                   Cards, billing address and invoice history are held by Stripe and
                   managed in its hosted portal. No card details ever reach this
-                  application — we store a customer reference and nothing else.
+                  application, we store a customer reference and nothing else.
                 </p>
                 <dl className="spec-table-dl mt-4">
                   <div>
@@ -149,7 +149,7 @@ export default async function AccountPage() {
             ) : (
               <p className="small muted">
                 Nothing on file. A payment method is collected the first time you
-                subscribe or are invoiced — through Stripe&rsquo;s own checkout, never
+                subscribe or are invoiced, through Stripe&rsquo;s own checkout, never
                 through a form here.
               </p>
             )}

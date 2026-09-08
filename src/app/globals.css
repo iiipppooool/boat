@@ -1,7 +1,7 @@
 /* ==========================================================================
    BoatXchange design tokens
 
-   COLOUR — the palette is taken from things you actually look at from a boat:
+   COLOUR, the palette is taken from things you actually look at from a boat:
    the near-black blue-green of deep water seen over a gunwale (`hull`), the
    warm bone of an old boathouse wall and of unpainted spruce (`bone`), the
    racing green of a club blade (`green`), and the brass of rigger hardware and
@@ -9,7 +9,7 @@
    read as "software product", and this is a marketplace for objects that cost
    as much as a car.
 
-   Brass is the only accent and it is rationed — primary buttons, the X in the
+   Brass is the only accent and it is rationed, primary buttons, the X in the
    wordmark, eyebrow rules, and the concierge's live state. Everything else is
    hull, bone and slate.
 
@@ -21,13 +21,13 @@
      slate     on bone    5.71:1    slate on panel       6.32:1
      hull on brass-500    5.48:1    slate on bone-2      5.12:1
      brass-700 on bone    5.40:1    brass-700 on bone-2  4.85:1
-   Every combination used for text clears 4.5:1, including large display type —
+   Every combination used for text clears 4.5:1, including large display type,
    nothing here leans on the 3:1 large-text allowance.
 
-   TYPE — Fraunces for display, Public Sans for everything else.
+   TYPE. Fraunces for display, Public Sans for everything else.
    Fraunces is a variable serif with an optical-size axis, so a 72px headline
    gets genuine high-contrast editorial drama while a 20px sub-head stays sturdy
-   and readable — one family covering a job that usually needs two. Its slight
+   and readable, one family covering a job that usually needs two. Its slight
    irregularity (the "wonk" in its design) keeps headings from reading as a
    default template serif. Public Sans is a workhorse humanist sans built for
    dense public-sector interfaces: it holds up at 13px in a spec table, has real
@@ -89,7 +89,7 @@
 
   --wrap: 76rem;
   --wrap-narrow: 46rem;
-  --radius: 2px; /* almost none — hardware, not bubbles */
+  --radius: 2px; /* almost none, hardware, not bubbles */
   --radius-lg: 3px;
 }
 
@@ -1256,7 +1256,7 @@ legend { padding: 0; }
 }
 
 /* --------------------------------------------------------------------------
-   Home — hero
+   Home, hero
    -------------------------------------------------------------------------- */
 
 .hero { padding-top: var(--sp-8); }
@@ -1327,7 +1327,7 @@ legend { padding: 0; }
 }
 
 /* --------------------------------------------------------------------------
-   Home — the gap
+   Home, the gap
    -------------------------------------------------------------------------- */
 
 .gap-grid {
@@ -1342,7 +1342,7 @@ legend { padding: 0; }
 .gap-copy p { max-width: 58ch; color: var(--slate); }
 
 /* --------------------------------------------------------------------------
-   Home — trust band
+   Home, trust band
    -------------------------------------------------------------------------- */
 
 .trust-band { border-block: 1px solid var(--line); }
@@ -1359,7 +1359,7 @@ legend { padding: 0; }
 .trust-list p { font-size: var(--step--1); color: var(--slate); line-height: 1.6; margin: 0; }
 
 /* --------------------------------------------------------------------------
-   Home — concierge band
+   Home, concierge band
    -------------------------------------------------------------------------- */
 
 .concierge-band-grid {
@@ -1390,7 +1390,7 @@ legend { padding: 0; }
 .concierge-band-points strong { color: var(--bone); }
 
 /* --------------------------------------------------------------------------
-   Home — browse grid & sell CTA
+   Home, browse grid & sell CTA
    -------------------------------------------------------------------------- */
 
 .browse-grid {
@@ -1708,7 +1708,7 @@ legend { padding: 0; }
 .notfound-art svg { width: 100%; display: block; }
 .notfound h1 { font-size: var(--step-4); margin-bottom: var(--sp-4); }
 
-/* Size chips — a six-way toggle reads better as a row than as six checkboxes. */
+/* Size chips, a six-way toggle reads better as a row than as six checkboxes. */
 .size-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(2.6rem, 1fr));
@@ -1756,7 +1756,7 @@ legend { padding: 0; }
   grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
 }
 /* Stock the platform owns outright. Deliberately distinct from the verified
-   badge — one is a check we ran on someone else, the other is a disclosure
+   badge, one is a check we ran on someone else, the other is a disclosure
    about ourselves. */
 .pill-platform {
   border-color: var(--hull);
@@ -1768,8 +1768,8 @@ legend { padding: 0; }
    Landing page
 
    The home page carries more sections than any other route, so its parts live
-   together here. Everything reuses the existing tokens — no new colours, no new
-   type scale — so a change to the palette still reaches the landing page.
+   together here. Everything reuses the existing tokens, no new colours, no new
+   type scale, so a change to the palette still reaches the landing page.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -1829,7 +1829,7 @@ legend { padding: 0; }
 }
 
 /* Both faces occupy the same grid cell, so the one facing away is still in the
-   hit-testing tree even though `backface-visibility` hides it — it would sit on
+   hit-testing tree even though `backface-visibility` hides it, it would sit on
    top of the form and swallow every click. Only the face you can see takes
    pointer events. */
 .wl-face-back { pointer-events: none; }
@@ -2437,7 +2437,7 @@ legend { padding: 0; }
 .on-hull .ticklist li::before { border-color: var(--brass-300); }
 
 /* --------------------------------------------------------------------------
-   How it works — two lanes
+   How it works, two lanes
    -------------------------------------------------------------------------- */
 
 .how-columns {
@@ -2464,7 +2464,7 @@ legend { padding: 0; }
 .how-steps h4 { font-size: var(--step-0); margin-bottom: var(--sp-2); }
 
 /* --------------------------------------------------------------------------
-   Why this works — an essay with oversized numerals
+   Why this works, an essay with oversized numerals
    -------------------------------------------------------------------------- */
 
 .why-list { list-style: none; margin: var(--sp-7) 0 0; padding: 0; }
@@ -2627,3 +2627,32 @@ legend { padding: 0; }
 }
 .wl-go-quiet:hover { border-color: var(--brass-500); }
 .wl-go:focus-visible { outline: 3px solid var(--bone); outline-offset: 2px; }
+
+/* The freshness line under the live market heading. The dot is the only thing
+   on the page that pulses, so it reads as "this is moving" rather than decoration. */
+.live-note {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  color: var(--slate);
+  margin-top: var(--sp-4);
+  max-width: 60ch;
+}
+.live-dot {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 0 rgba(29, 75, 58, 0.5);
+  animation: live-pulse 2.4s ease-out infinite;
+  translate: 0 -0.05rem;
+}
+@keyframes live-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(29, 75, 58, 0.45); }
+  70%  { box-shadow: 0 0 0 0.45rem rgba(29, 75, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(29, 75, 58, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot { animation: none; }
+}

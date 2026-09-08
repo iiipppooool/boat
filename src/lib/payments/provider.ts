@@ -108,7 +108,7 @@ class StripePayments implements PaymentsProvider {
   }): Promise<CommissionInvoice> {
     // Invoice first, then attach the line item to it. Creating the item without
     // an invoice id leaves it floating on the customer, where it would be swept
-    // into whatever invoice happens to be drafted next — including a
+    // into whatever invoice happens to be drafted next, including a
     // subscription renewal.
     const invoice = await this.#stripe.invoices.create({
       customer: customerId,

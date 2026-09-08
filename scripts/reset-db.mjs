@@ -23,5 +23,5 @@ for (const target of targets) {
 console.log(
   removed
     ? `Removed ${removed} file(s). The seed listings will be reloaded on next start.`
-    : `Nothing to remove — no database at ${file}.`,
+    : `Nothing to remove, no database at ${file}.`,
 );

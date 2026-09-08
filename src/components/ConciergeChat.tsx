@@ -9,7 +9,7 @@ import type {
 } from "@/lib/ai/shared";
 
 interface Turn extends ConciergeChatMessage {
-  /** Listings retrieved for this turn — the set the answer had to choose from. */
+  /** Listings retrieved for this turn, the set the answer had to choose from. */
   shortlist?: ConciergeListingRef[];
   /** Listings the answer actually named. */
   referenced?: string[];
@@ -183,7 +183,7 @@ export function ConciergeChat({
                 <>Answers grounded in the live inventory · {meta.model}</>
               ) : (
                 <>
-                  Offline mode — no model configured, so you are seeing raw retrieval
+                  Offline mode, no model configured, so you are seeing raw retrieval
                   results. Set <code>ANTHROPIC_API_KEY</code> to enable the concierge.
                 </>
               )
@@ -236,7 +236,7 @@ function AssistantTurn({ turn }: { turn: Turn }) {
 }
 
 /**
- * The boats the answer named, shown as real cards — and as a comparison table
+ * The boats the answer named, shown as real cards, and as a comparison table
  * when it named two or three, which is the case the concierge is asked to aim
  * for. The table is built from inventory data, not from the model's prose, so
  * the numbers in it are always the listing's own.
@@ -278,7 +278,7 @@ function ReferencedListings({ listings }: { listings: ConciergeListingRef[] }) {
                   <tr key={label}>
                     <th scope="row">{label}</th>
                     {listings.map((l) => (
-                      <td key={l.id}>{get(l) ?? "—"}</td>
+                      <td key={l.id}>{get(l) ?? "not stated"}</td>
                     ))}
                   </tr>
                 ))}

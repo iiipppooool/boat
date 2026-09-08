@@ -15,11 +15,11 @@ export default function SellPage() {
         <div className="wrap">
           <p className="eyebrow">Sell</p>
           <div className="page-head-grid">
-            <h1>List a boat — or the kit that goes with it.</h1>
+            <h1>List a boat, or the kit that goes with it.</h1>
             <p className="lede">
               Boats, oars, riggers, trailers, racing kit and gear. Free to list, and
               nothing to pay unless it sells. Ten minutes with the spec sheet to
-              hand — and the listings that fill in the details other people leave out
+              hand, and the listings that fill in the details other people leave out
               are the ones that sell.
             </p>
           </div>
@@ -35,7 +35,7 @@ export default function SellPage() {
             <ol className="numbered-list">
               <li>You submit the listing. It is saved immediately as sale pending.</li>
               <li>
-                We verify you own what you are selling — normally within one working
+                We verify you own what you are selling, normally within one working
                 day. <Link href="/about#verification">How that works</Link>.
               </li>
               <li>It goes live, appears in the market, and the concierge starts recommending it.</li>
@@ -54,7 +54,7 @@ export default function SellPage() {
             <h2 className="concierge-aside-title">Writing a listing that sells</h2>
             <ul className="tip-list">
               <li>
-                <strong>Photograph the wear.</strong> Every used thing has some — a
+                <strong>Photograph the wear.</strong> Every used thing has some, a
                 repaired stern, a scuffed cox box, a thin seat panel. Buyers who
                 cannot see it assume it is worse than it is.
               </li>

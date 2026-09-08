@@ -35,7 +35,7 @@ export const myFeed: SourceAdapter = {
   name: "Example Marketplace",
   async fetchListings() {
     // Call the source's official API with your own key.
-    // Map its response onto AggregatedListing. Return [] on failure —
+    // Map its response onto AggregatedListing. Return [] on failure,
     // never throw: one broken feed must not empty the market.
     return [];
   },
@@ -49,7 +49,7 @@ Register it in `registry.ts` and run `npm run sync-sources`.
 - **An official API with an affiliate or partner programme.** eBay's Partner
   Network is the obvious one for used boats and kit: you register, get a key, and
   their terms permit displaying results with links back. Check the current terms
-  yourself — they change, and they are the thing that makes this lawful.
+  yourself, they change, and they are the thing that makes this lawful.
 - **A dealer who gives you their feed.** Ask. Dealers on the Boathouse tier
   actively want their stock in front of buyers, and a CSV or JSON feed is a
   five-minute conversation.
@@ -60,5 +60,5 @@ Register it in `registry.ts` and run `npm run sync-sources`.
 Scraping a marketplace and republishing its listings. The photographs belong to
 whoever took them, the source's terms will forbid it, and republishing a
 seller's contact details without asking is a data-protection problem in the UK
-and EU. `npm run import` exists for listings you have permission to carry — use
+and EU. `npm run import` exists for listings you have permission to carry, use
 it after someone says yes, not instead of asking.

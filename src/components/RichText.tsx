@@ -7,7 +7,7 @@ import { Fragment, type ReactNode } from "react";
  * A very small renderer for the concierge's replies.
  *
  * It builds React elements rather than setting innerHTML, so model output can
- * never inject markup — the worst a strange response can do is look odd. It
+ * never inject markup, the worst a strange response can do is look odd. It
  * understands exactly what the concierge is asked to produce: paragraphs,
  * bold, ordered and unordered lists, ordinary links, and BoatXchange listing
  * references like [bx-1001], which become links to the listing itself.

@@ -1,6 +1,6 @@
 # Deploying BoatXchange
 
-Everything below has been run except the Docker image build itself — this
+Everything below has been run except the Docker image build itself, this
 repository was developed in a container without a Docker daemon. What *was*
 verified is the thing the image runs: the standalone server, started with the
 same environment and copy layout the Dockerfile produces, serving every page,
@@ -17,10 +17,10 @@ drives every decision here:
   it. Scaling past one instance means moving to Postgres first.
 
 For a few hundred listings and a handful of submissions a day, one small
-instance is genuinely the right architecture — not a compromise. It is also
+instance is genuinely the right architecture, not a compromise. It is also
 about £5 a month.
 
-## Fly.io — the tested path
+## Fly.io, the tested path
 
 `fly.toml` in this repo is ready to go.
 
@@ -56,7 +56,7 @@ Health check path: `/api/health`. It reads the database rather than just
 confirming Node is alive, so a process that is up but cannot see its own
 inventory is correctly reported as unhealthy.
 
-## Vercel — needs work first
+## Vercel, needs work first
 
 Vercel's filesystem is ephemeral, so SQLite cannot persist there. Making this run
 on Vercel means:
@@ -65,11 +65,11 @@ on Vercel means:
    usable free tiers).
 2. Rewriting the queries in `src/lib/inventory.ts` for `pg`.
 3. **Making the repository functions async**, which is the part that is easy to
-   underestimate — `searchListings`, `getFacets`, `getListingBySlug` and friends
+   underestimate, `searchListings`, `getFacets`, `getListingBySlug` and friends
    are synchronous today, and every call site becomes an `await`. TypeScript will
    find all of them, but it is a real change, not a config toggle.
 
-Nothing else moves. No page, component or route handler touches SQL directly —
+Nothing else moves. No page, component or route handler touches SQL directly,
 that was the point of routing everything through the repository.
 
 At this scale, the container path is cheaper and simpler. Vercel becomes the
@@ -85,7 +85,7 @@ nothing here.
 Point your domain at whichever host you chose (`fly certs add boatxchange.com`
 on Fly), then set `NEXT_PUBLIC_SITE_URL` to match.
 
-## Backups — do this before you have anything to lose
+## Backups, do this before you have anything to lose
 
 ```bash
 npm run backup            # -> backups/boatxchange-YYYY-MM-DD-HHmm.db
@@ -118,7 +118,7 @@ Worth automating on a schedule the day the first real listing arrives.
 | `ANTHROPIC_API_KEY` | The AI Concierge | Concierge runs in offline mode and says so |
 | `STRIPE_SECRET_KEY` | Billing | Billing disabled, endpoints return 503 |
 | `STRIPE_BOATHOUSE_PRICE_ID` | Subscriptions | As above |
-| `STRIPE_WEBHOOK_SECRET` | Granting access after payment | Webhooks rejected — **nobody gets upgraded** |
+| `STRIPE_WEBHOOK_SECRET` | Granting access after payment | Webhooks rejected ,  **nobody gets upgraded** |
 
 Every one of these degrades to a clearly-stated disabled state rather than an
 error. Nothing crashes because a key is missing.
@@ -137,7 +137,7 @@ invoice.payment_failed
 ```
 
 Paste its signing secret into `STRIPE_WEBHOOK_SECRET`. The webhook is the only
-thing that grants Boathouse access — without it, people will pay and get nothing.
+thing that grants Boathouse access, without it, people will pay and get nothing.
 
 ## Offline builds
 
@@ -154,6 +154,6 @@ with network and push it to your registry.
 - [ ] Stripe webhook endpoint added, secret set
 - [ ] `/api/health` returning `{"status":"ok"}`
 - [ ] `npm run backup` run once, and the file stored off the machine
-- [ ] Contact details filled into `src/lib/site.ts` — until then the site shows
+- [ ] Contact details filled into `src/lib/site.ts`, until then the site shows
       none, which is correct but not useful
 - [ ] Seed listings removed: `DELETE FROM listings WHERE source = 'seed';`

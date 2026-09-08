@@ -7,7 +7,7 @@
  * reader compare them: the top row is what every other marketplace does, the
  * bottom row is what happens here.
  *
- * Hand-built SVG rather than a chart library — there is no data here, only a
+ * Hand-built SVG rather than a chart library, there is no data here, only a
  * shape, and the shape is the argument. It inherits type and colour from the
  * page so a palette change reaches it, and every label is real text, so it can
  * be selected, translated and read aloud.

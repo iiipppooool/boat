@@ -12,7 +12,7 @@ export const RegisterSchema = z.object({
   email: z.email("That does not look like an email address.").max(180),
   password: z
     .string()
-    .min(12, "Twelve characters or more, please — length beats punctuation.")
+    .min(12, "Twelve characters or more, please, length beats punctuation.")
     .max(200),
   name: z.string().trim().min(2, "We need something to call you or your club.").max(90),
   /** Joins the waiting list at the same time. Defaults on, and says so. */

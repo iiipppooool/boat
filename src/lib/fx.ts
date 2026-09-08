@@ -7,7 +7,7 @@ import type { Currency } from "./types";
  *
  * This is deliberately a frozen snapshot rather than a live feed: a listing's
  * position in a price filter should not silently move because the euro had a
- * bad afternoon. Prices are always *displayed* in the seller's own currency —
+ * bad afternoon. Prices are always *displayed* in the seller's own currency,
  * `priceUsd` is an internal sorting key, never shown as a quote.
  *
  * Replace with a daily rate job (ECB reference rates are free and sufficient)

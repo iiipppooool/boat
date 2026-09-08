@@ -6,7 +6,7 @@ import { SITE, hasContactDetails } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Contact us",
   description:
-    "Get in touch with BoatXchange — support, listing verification, dealer enquiries and press.",
+    "Get in touch with BoatXchange: support, listing verification, dealer enquiries and press.",
 };
 
 export default function ContactPage() {
@@ -87,8 +87,8 @@ export default function ContactPage() {
             <h2 className="concierge-aside-title">Response times</h2>
             <p className="small muted">
               The form is the fastest route and reaches the same people as email.
-              If your message is about a specific listing, quoting its reference —
-              the <code>bx-</code> code on the listing page — gets you an answer
+              If your message is about a specific listing, quoting its reference,
+              the <code>bx-</code> code on the listing page, gets you an answer
               without a round trip.
             </p>
           </div>

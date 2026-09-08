@@ -24,7 +24,7 @@ const BUYER_STEPS = [
   },
   {
     title: "Talk to the seller directly",
-    body: "We introduce; we do not intermediate. You agree the price, the inspection and the handover between yourselves — the way boats have always changed hands, just with a bigger pool of them.",
+    body: "We introduce; we do not intermediate. You agree the price, the inspection and the handover between yourselves, the way boats have always changed hands, just with a bigger pool of them.",
   },
 ];
 
@@ -35,7 +35,7 @@ const SELLER_STEPS = [
   },
   {
     title: "We verify before it goes live",
-    body: "Identity and ownership, checked by a person. It usually takes a working day. Unverified listings can still go up — they are labelled as unverified, plainly, and they get less attention, which is the point.",
+    body: "Identity and ownership, checked by a person. It usually takes a working day. Unverified listings can still go up. They are labelled as unverified, plainly, and they get less attention, which is the point.",
   },
   {
     title: "Pay only when it sells",
@@ -69,16 +69,16 @@ export default function AboutPage() {
           <div className="prose about-prose">
             <p className="about-standfirst">
               Every other kind of boat has a market. Sailing has YachtWorld. Motor
-              boats have Boats.com. Rowing — a sport with a quarter of a million
-              registered athletes and fleets worth millions sitting in boathouses —
+              boats have Boats.com. Rowing, a sport with a quarter of a million
+              registered athletes and fleets worth millions sitting in boathouses,
               has a club noticeboard, a regional Facebook group, and word of mouth.
             </p>
             <p>
               The consequence is not just inconvenience. It is that boats are
               mispriced in both directions, that clubs replace hulls they could have
               sold, that a sculler in Ohio never hears about the right boat in
-              Vancouver, and that the second-hand market — the thing that actually
-              makes an expensive sport affordable to enter — barely functions.
+              Vancouver, and that the second-hand market, the thing that actually
+              makes an expensive sport affordable to enter, barely functions.
             </p>
             <p>
               We started this after spending four months trying to sell a club double
@@ -156,8 +156,8 @@ export default function AboutPage() {
               <li>
                 <strong>The seller owns the boat.</strong> Original invoice, a
                 builder&rsquo;s certificate, or club minutes authorising the sale.
-                Where none of those exist — and for a 2004 club four they often do
-                not — a photograph of the hull identification number alongside a
+                Where none of those exist, and for a 2004 club four they often do
+                not, a photograph of the hull identification number alongside a
                 dated note, plus a reference from the club it has been rowed at.
               </li>
             </ol>
@@ -197,7 +197,7 @@ export default function AboutPage() {
             <p>So the architecture puts the model last, not first:</p>
             <ol>
               <li>
-                Your message is read for constraints — weight, budget, class, region —
+                Your message is read for constraints, weight, budget, class, region,
                 by ordinary code, not by a model.
               </li>
               <li>
@@ -216,7 +216,7 @@ export default function AboutPage() {
             </ol>
             <p>
               We also use a small, cheap model on purpose. By the time it is called,
-              the hard work is done — the remaining task is reading a dozen structured
+              the hard work is done. The remaining task is reading a dozen structured
               records and explaining a trade-off in plain English, which does not need
               a frontier model. Cheap inference is what lets the concierge stay free
               and unmetered for buyers.

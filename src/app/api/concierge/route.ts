@@ -30,7 +30,7 @@ const BodySchema = z.object({
 
 /**
  * Crude per-IP throttle. Every request here costs money, so an unbounded
- * endpoint is a bill waiting to happen. In-process and therefore per-instance —
+ * endpoint is a bill waiting to happen. In-process and therefore per-instance,
  * good enough for one small server, and the thing to replace with a shared
  * counter the day there is more than one.
  */
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
         send(controller, {
           type: "error",
           message:
-            "The concierge could not reach the model just now. The listings above are real and current — browse them directly, or try again shortly.",
+            "The concierge could not reach the model just now. The listings above are real and current, browse them directly, or try again shortly.",
         });
       } finally {
         controller.close();

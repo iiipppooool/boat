@@ -74,7 +74,7 @@ export const GRADE_LABELS: Record<ConditionGrade, string> = {
   new: "New",
   excellent: "Excellent",
   good: "Good",
-  fair: "Fair — needs work",
+  fair: "Fair, needs work",
 };
 
 export const SELLER_TYPE_LABELS: Record<SellerType, string> = {
@@ -90,7 +90,7 @@ export function isPlatformOwned(sellerType: SellerType): boolean {
   return sellerType === "platform";
 }
 
-/** "3 days ago" / "last updated 2 weeks ago" — listing freshness matters here. */
+/** "3 days ago" / "last updated 2 weeks ago", listing freshness matters here. */
 export function relativeDate(iso: string, now = new Date()): string {
   const then = new Date(`${iso}T12:00:00Z`).getTime();
   const days = Math.round((now.getTime() - then) / 86_400_000);
@@ -109,7 +109,7 @@ export function formatDate(iso: string): string {
   });
 }
 
-/** "75–85 kg" — the per-rower weight band. */
+/** "75–85 kg", the per-rower weight band. */
 export function weightBand(min: number | null, max: number | null): string | null {
   if (min == null && max == null) return null;
   if (min != null && max != null) return `${min}–${max} kg`;
@@ -134,7 +134,7 @@ export function sizeRange(sizes: ApparelSize[]): string | null {
   return contiguous ? `${present[0]}\u2013${present[present.length - 1]}` : present.join(", ");
 }
 
-/** "22 items" — only worth saying when a listing is a lot rather than a thing. */
+/** "22 items", only worth saying when a listing is a lot rather than a thing. */
 export function lotSize(quantity: number | null): string | null {
   return quantity && quantity > 1 ? `${quantity} items` : null;
 }

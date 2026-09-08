@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
  * written here is marked `source = 'seller'`.
  *
  * Submissions land as `pending`, not `available`. A listing goes live once a
- * human has done the verification described on /about — for a market where a
+ * human has done the verification described on /about. For a market where a
  * single transaction can be £40,000, an unchecked instant-publish flow would be
  * the wrong default.
  */

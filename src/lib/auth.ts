@@ -9,7 +9,7 @@ import { getAccountById, type Account } from "./accounts";
  * Authentication.
  *
  * Written against Node's own crypto rather than a dependency, because the two
- * jobs here — hash a password properly, and sign a session id — are exactly the
+ * jobs here, hash a password properly, and sign a session id, are exactly the
  * two things `node:crypto` already does well, and an auth dependency is a thing
  * you then have to keep patched for the life of the product.
  *
@@ -20,7 +20,7 @@ import { getAccountById, type Account } from "./accounts";
  * sign-in does not feel broken. Comparison is `timingSafeEqual`, so the check
  * takes the same time whether the first byte is wrong or the last.
  *
- * Stored as `scrypt$N$r$p$<salt hex>$<hash hex>` — the parameters travel with
+ * Stored as `scrypt$N$r$p$<salt hex>$<hash hex>`, the parameters travel with
  * the hash, so raising them later does not invalidate everyone's password.
  *
  * ── Sessions ─────────────────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ export async function hashPassword(password: string): Promise<string> {
 /**
  * Checks a password against a stored hash.
  *
- * Returns false rather than throwing on a malformed or empty stored hash — an
+ * Returns false rather than throwing on a malformed or empty stored hash, an
  * account created before passwords existed has an empty one, and that account
  * must simply be unable to sign in, not crash the endpoint.
  */
@@ -134,7 +134,7 @@ function sessionSecret(): string {
     );
   }
   if (!warnedAboutSecret) {
-    console.warn("[auth] SESSION_SECRET unset — using a development-only key.");
+    console.warn("[auth] SESSION_SECRET unset, using a development-only key.");
     warnedAboutSecret = true;
   }
   return "development-only-session-key-do-not-use-in-production";
